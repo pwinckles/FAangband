@@ -389,10 +389,10 @@ s16b m_bonus(int max, int level) {
 	int bonus, stand, value;
 
 	/* Make sure level is reasonable */
-	if (level >= MAX_DEPTH) level = MAX_DEPTH - 1;
+	if (level >= MAX_RAND_DEPTH) level = MAX_RAND_DEPTH - 1;
 
-	/* The bonus approaches max as level approaches MAX_DEPTH */
-	bonus = simulate_division(max * level, MAX_DEPTH);
+	/* The bonus approaches max as level approaches MAX_RAND_DEPTH */
+	bonus = simulate_division(max * level, MAX_RAND_DEPTH);
 
 	/* The standard deviation is 1/4 of the max */
 	stand = simulate_division(max, 4);
@@ -419,7 +419,7 @@ s16b m_bonus_calc(int max, int level, aspect bonus_aspect) {
 		case MAXIMISE:  return max;
 		case RANDOMISE: return m_bonus(max, level);
 		case MINIMISE:  return 0;
-		case AVERAGE:   return max * level / MAX_DEPTH;
+		case AVERAGE:   return max * level / MAX_RAND_DEPTH;
 	}
 
 	assert(0 && "Should never reach here");
