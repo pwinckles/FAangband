@@ -2460,7 +2460,7 @@ extern bool build_vault(int y0, int x0, int ymax, int xmax,
 					break;
 				}
 				/* Permanent wall (inner) */
-			case 'X':
+			case '@':
 				{
 					cave_set_feat(y, x, FEAT_PERM_INNER);
 					break;
@@ -2475,13 +2475,13 @@ extern bool build_vault(int y0, int x0, int ymax, int xmax,
 					break;
 				}
 				/* Lava. */
-			case '@':
+			case '`':
 				{
 					cave_set_feat(y, x, FEAT_LAVA);
 					break;
 				}
 				/* Water. */
-			case 'x':
+			case '/':
 				{
 					cave_set_feat(y, x, FEAT_WATER);
 					break;
@@ -2503,9 +2503,10 @@ extern bool build_vault(int y0, int x0, int ymax, int xmax,
 					break;
 				}
 				/* Sand dune */
-			case '/':
+			case '(':
 				{
-					cave_set_feat(y, x, FEAT_DUNE);
+					if (p_ptr->themed_level)
+						cave_set_feat(y, x, FEAT_DUNE);
 					break;
 				}
 				/* Treasure/trap */
@@ -2737,7 +2738,7 @@ extern bool build_vault(int y0, int x0, int ymax, int xmax,
 						break;
 					}
 					/* Very out of depth monster. */
-				case '8':
+				case '0':
 					{
 						monster_level = p_ptr->depth + 20;
 						place_monster(y, x, TRUE, TRUE, FALSE);
@@ -2758,7 +2759,7 @@ extern bool build_vault(int y0, int x0, int ymax, int xmax,
 					}
 
 					/* Nasty monster and "great" (or better) object */
-				case '0':
+				case '8':
 					{
 						monster_level = p_ptr->depth + 30;
 						place_monster(y, x, TRUE, TRUE, FALSE);
