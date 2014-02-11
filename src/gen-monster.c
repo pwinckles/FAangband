@@ -176,10 +176,10 @@ static bool vault_aux_elemental(int r_idx)
 		return (TRUE);
 
 	/* Otherwise, try selecting by breath attacks. */
-	if (rf_has(r_ptr->spell_flags, RSF_BRTH_ACID)
-		|| rf_has(r_ptr->spell_flags, RSF_BRTH_ELEC)
-		|| rf_has(r_ptr->spell_flags, RSF_BRTH_FIRE)
-		|| rf_has(r_ptr->spell_flags, RSF_BRTH_COLD))
+	if (rsf_has(r_ptr->spell_flags, RSF_BRTH_ACID)
+		|| rsf_has(r_ptr->spell_flags, RSF_BRTH_ELEC)
+		|| rsf_has(r_ptr->spell_flags, RSF_BRTH_FIRE)
+		|| rsf_has(r_ptr->spell_flags, RSF_BRTH_COLD))
 		return (TRUE);
 
 	/* Nope */
@@ -256,7 +256,7 @@ static bool mon_select(int r_idx)
 				return (FALSE);
 
 			/* Hack - this deals with all current Ds that need excluding */
-			if (rsf_has(r_ptr->flags, RSF_BRTH_SOUND))
+			if (rsf_has(r_ptr->spell_flags, RSF_BRTH_SOUND))
 				return (FALSE);
 		}
 	}
@@ -276,11 +276,11 @@ static bool mon_select(int r_idx)
 		/* Hack -- No multihued dragons allowed in the arcane dragon pit. */
 		if ((strchr(d_char_req, 'd') || strchr(d_char_req, 'D'))
 			&& (d_attr_req[0] == TERM_VIOLET)
-			&& (rf_has(r_ptr->flags, RSF_BRTH_ACID)
-				|| rf_has(r_ptr->flags, RSF_BRTH_ELEC)
-				|| rf_has(r_ptr->flags, RSF_BRTH_FIRE)
-				|| rf_has(r_ptr->flags, RSF_BRTH_COLD)
-				|| rf_has(r_ptr->flags, RSF_BRTH_POIS))) {
+			&& (rsf_has(r_ptr->spell_flags, RSF_BRTH_ACID)
+				|| rsf_has(r_ptr->spell_flags, RSF_BRTH_ELEC)
+				|| rsf_has(r_ptr->spell_flags, RSF_BRTH_FIRE)
+				|| rsf_has(r_ptr->spell_flags, RSF_BRTH_COLD)
+				|| rsf_has(r_ptr->spell_flags, RSF_BRTH_POIS))) {
 			return (FALSE);
 		}
 

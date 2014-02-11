@@ -1899,17 +1899,17 @@ static void spoil_mon_info(const char *fname)
 
 		/* Collect inate attacks */
 		vn = 0;
-		if (rsf_has(r_ptr->flags, RSF_SHRIEK))
+		if (rsf_has(r_ptr->spell_flags, RSF_SHRIEK))
 			vp[vn++] = "shriek for help";
-		if (rsf_has(r_ptr->flags, RSF_LASH))
+		if (rsf_has(r_ptr->spell_flags, RSF_LASH))
 			vp[vn++] = "lash you if nearby";
-		if (rsf_has(r_ptr->flags, RSF_BOULDER)) {
+		if (rsf_has(r_ptr->spell_flags, RSF_BOULDER)) {
 			if (spower < 10)
 				vp[vn++] = "throw rocks";
 			else
 				vp[vn++] = "throw boulders";
 		}
-		if (rsf_has(r_ptr->flags, RSF_SHOT)) {
+		if (rsf_has(r_ptr->spell_flags, RSF_SHOT)) {
 			if (spower < 5)
 				vp[vn++] = "sling pebbles";
 			else if (spower < 15)
@@ -1917,7 +1917,7 @@ static void spoil_mon_info(const char *fname)
 			else
 				vp[vn++] = "sling seeker shot";
 		}
-		if (rsf_has(r_ptr->flags, RSF_ARROW)) {
+		if (rsf_has(r_ptr->spell_flags, RSF_ARROW)) {
 			if (spower < 8)
 				vp[vn++] = "shoot little arrows";
 			else if (spower < 15)
@@ -1925,7 +1925,7 @@ static void spoil_mon_info(const char *fname)
 			else
 				vp[vn++] = "shoot seeker arrows";
 		}
-		if (rsf_has(r_ptr->flags, RSF_BOLT)) {
+		if (rsf_has(r_ptr->spell_flags, RSF_BOLT)) {
 			if (spower < 8)
 				vp[vn++] = "fire bolts";
 			else if (spower < 15)
@@ -1933,7 +1933,7 @@ static void spoil_mon_info(const char *fname)
 			else
 				vp[vn++] = "fire seeker bolts";
 		}
-		if (rsf_has(r_ptr->flags, RSF_MISSL)) {
+		if (rsf_has(r_ptr->spell_flags, RSF_MISSL)) {
 			if (spower < 8)
 				vp[vn++] = "fire little missiles";
 			else if (spower < 15)
@@ -1941,7 +1941,7 @@ static void spoil_mon_info(const char *fname)
 			else
 				vp[vn++] = "fire heavy missiles";
 		}
-		if (rsf_has(r_ptr->flags, RSF_PMISSL)) {
+		if (rsf_has(r_ptr->spell_flags, RSF_PMISSL)) {
 			if (rf_has(r_ptr->flags, RF_MORGUL_MAGIC))
 				vp[vn++] = "hurl black darts";
 			else
@@ -1967,59 +1967,59 @@ static void spoil_mon_info(const char *fname)
 
 		/* Collect breaths */
 		vn = 0;
-		if (rsf_has(r_ptr->flags, RSF_BRTH_ACID))
+		if (rsf_has(r_ptr->spell_flags, RSF_BRTH_ACID))
 			vp[vn++] = "acid";
-		if (rsf_has(r_ptr->flags, RSF_BRTH_ELEC))
+		if (rsf_has(r_ptr->spell_flags, RSF_BRTH_ELEC))
 			vp[vn++] = "lightning";
-		if (rsf_has(r_ptr->flags, RSF_BRTH_FIRE))
+		if (rsf_has(r_ptr->spell_flags, RSF_BRTH_FIRE))
 			vp[vn++] = "fire";
-		if (rsf_has(r_ptr->flags, RSF_BRTH_COLD))
+		if (rsf_has(r_ptr->spell_flags, RSF_BRTH_COLD))
 			vp[vn++] = "frost";
-		if (rsf_has(r_ptr->flags, RSF_BRTH_POIS))
+		if (rsf_has(r_ptr->spell_flags, RSF_BRTH_POIS))
 			vp[vn++] = "poison";
-		if (rsf_has(r_ptr->flags, RSF_BRTH_PLAS))
+		if (rsf_has(r_ptr->spell_flags, RSF_BRTH_PLAS))
 			vp[vn++] = "plasma";
-		if (rsf_has(r_ptr->flags, RSF_BRTH_LIGHT))
+		if (rsf_has(r_ptr->spell_flags, RSF_BRTH_LIGHT))
 			vp[vn++] = "light";
-		if (rsf_has(r_ptr->flags, RSF_BRTH_DARK)) {
+		if (rsf_has(r_ptr->spell_flags, RSF_BRTH_DARK)) {
 			if (rf_has(r_ptr->flags, RF_MORGUL_MAGIC))
 				vp[vn++] = "Night";
 			else
 				vp[vn++] = "darkness";
 		}
-		if (rsf_has(r_ptr->flags, RSF_BRTH_CONFU))
+		if (rsf_has(r_ptr->spell_flags, RSF_BRTH_CONFU))
 			vp[vn++] = "confusion";
-		if (rsf_has(r_ptr->flags, RSF_BRTH_SOUND))
+		if (rsf_has(r_ptr->spell_flags, RSF_BRTH_SOUND))
 			vp[vn++] = "sound";
-		if (rsf_has(r_ptr->flags, RSF_BRTH_SHARD))
+		if (rsf_has(r_ptr->spell_flags, RSF_BRTH_SHARD))
 			vp[vn++] = "shards";
-		if (rsf_has(r_ptr->flags, RSF_BRTH_INER))
+		if (rsf_has(r_ptr->spell_flags, RSF_BRTH_INER))
 			vp[vn++] = "inertia";
-		if (rsf_has(r_ptr->flags, RSF_BRTH_GRAV))
+		if (rsf_has(r_ptr->spell_flags, RSF_BRTH_GRAV))
 			vp[vn++] = "gravity";
-		if (rsf_has(r_ptr->flags, RSF_BRTH_FORCE))
+		if (rsf_has(r_ptr->spell_flags, RSF_BRTH_FORCE))
 			vp[vn++] = "force";
 
-		if (rsf_has(r_ptr->flags, RSF_BRTH_NEXUS))
+		if (rsf_has(r_ptr->spell_flags, RSF_BRTH_NEXUS))
 			vp[vn++] = "nexus";
-		if (rsf_has(r_ptr->flags, RSF_BRTH_NETHR))
+		if (rsf_has(r_ptr->spell_flags, RSF_BRTH_NETHR))
 			vp[vn++] = "nether";
-		if (rsf_has(r_ptr->flags, RSF_BRTH_CHAOS))
+		if (rsf_has(r_ptr->spell_flags, RSF_BRTH_CHAOS))
 			vp[vn++] = "chaos";
-		if (rsf_has(r_ptr->flags, RSF_BRTH_DISEN))
+		if (rsf_has(r_ptr->spell_flags, RSF_BRTH_DISEN))
 			vp[vn++] = "disenchantment";
-		if (rsf_has(r_ptr->flags, RSF_BRTH_TIME))
+		if (rsf_has(r_ptr->spell_flags, RSF_BRTH_TIME))
 			vp[vn++] = "time";
 
-		if (rsf_has(r_ptr->flags, RSF_BRTH_STORM))
+		if (rsf_has(r_ptr->spell_flags, RSF_BRTH_STORM))
 			vp[vn++] = "storm";
-		if (rsf_has(r_ptr->flags, RSF_BRTH_DFIRE))
+		if (rsf_has(r_ptr->spell_flags, RSF_BRTH_DFIRE))
 			vp[vn++] = "dragonfire";
-		if (rsf_has(r_ptr->flags, RSF_BRTH_ICE))
+		if (rsf_has(r_ptr->spell_flags, RSF_BRTH_ICE))
 			vp[vn++] = "ice";
-		if (rsf_has(r_ptr->flags, RSF_BRTH_ALL))
+		if (rsf_has(r_ptr->spell_flags, RSF_BRTH_ALL))
 			vp[vn++] = "the elements";
-		if (rsf_has(r_ptr->flags, RSF_XXX1))
+		if (rsf_has(r_ptr->spell_flags, RSF_XXX1))
 			vp[vn++] = "something";
 
 		if (vn) {
@@ -2041,19 +2041,19 @@ static void spoil_mon_info(const char *fname)
 		/* Collect spells */
 		vn = 0;
 
-		if (rsf_has(r_ptr->flags, RSF_BALL_ACID)) {
+		if (rsf_has(r_ptr->spell_flags, RSF_BALL_ACID)) {
 			if (spower < 70)
 				vp[vn++] = "produce acid balls";
 			else
 				vp[vn++] = "produce acid storms";
 		}
-		if (rsf_has(r_ptr->flags, RSF_BALL_ELEC)) {
+		if (rsf_has(r_ptr->spell_flags, RSF_BALL_ELEC)) {
 			if (spower < 70)
 				vp[vn++] = "produce lightning balls";
 			else
 				vp[vn++] = "produce lightning storms";
 		}
-		if (rsf_has(r_ptr->flags, RSF_BALL_FIRE)) {
+		if (rsf_has(r_ptr->spell_flags, RSF_BALL_FIRE)) {
 			if (rf_has(r_ptr->flags, RF_UDUN_MAGIC)) {
 				if (spower < 70)
 					vp[vn++] = "produce balls of hellfire";
@@ -2068,7 +2068,7 @@ static void spoil_mon_info(const char *fname)
 					vp[vn++] = "produce fire storms";
 			}
 		}
-		if (rsf_has(r_ptr->flags, RSF_BALL_COLD)) {
+		if (rsf_has(r_ptr->spell_flags, RSF_BALL_COLD)) {
 			if (rf_has(r_ptr->flags, RF_MORGUL_MAGIC)) {
 				if (spower < 70)
 					vp[vn++] = "produce spheres of deadly cold";
@@ -2081,7 +2081,7 @@ static void spoil_mon_info(const char *fname)
 					vp[vn++] = "produce frost storms";
 			}
 		}
-		if (rsf_has(r_ptr->flags, RSF_BALL_POIS)) {
+		if (rsf_has(r_ptr->spell_flags, RSF_BALL_POIS)) {
 			if (rf_has(r_ptr->flags, RF_MORGUL_MAGIC)) {
 				if (spower < 15)
 					vp[vn++] = "produce clouds of venom";
@@ -2098,7 +2098,7 @@ static void spoil_mon_info(const char *fname)
 					vp[vn++] = "produce storms of poison";
 			}
 		}
-		if (rsf_has(r_ptr->flags, RSF_BALL_LIGHT)) {
+		if (rsf_has(r_ptr->spell_flags, RSF_BALL_LIGHT)) {
 			if (spower < 15)
 				vp[vn++] = "produce spheres of light";
 			else if (spower < 70)
@@ -2106,7 +2106,7 @@ static void spoil_mon_info(const char *fname)
 			else
 				vp[vn++] = "invoke starbursts";
 		}
-		if (rsf_has(r_ptr->flags, RSF_BALL_DARK)) {
+		if (rsf_has(r_ptr->spell_flags, RSF_BALL_DARK)) {
 			if (rf_has(r_ptr->flags, RF_MORGUL_MAGIC)) {
 				if (spower < 70)
 					vp[vn++] = "produce spheres of Night";
@@ -2119,13 +2119,13 @@ static void spoil_mon_info(const char *fname)
 					vp[vn++] = "produce storms of darkness";
 			}
 		}
-		if (rsf_has(r_ptr->flags, RSF_BALL_CONFU)) {
+		if (rsf_has(r_ptr->spell_flags, RSF_BALL_CONFU)) {
 			if (spower < 70)
 				vp[vn++] = "produce confusion balls";
 			else
 				vp[vn++] = "produce storms of confusion";
 		}
-		if (rsf_has(r_ptr->flags, RSF_BALL_SOUND)) {
+		if (rsf_has(r_ptr->spell_flags, RSF_BALL_SOUND)) {
 			if (spower < 15)
 				vp[vn++] = "produce explosions of sound";
 			else if (spower < 70)
@@ -2133,7 +2133,7 @@ static void spoil_mon_info(const char *fname)
 			else
 				vp[vn++] = "unleash storms of sound";
 		}
-		if (rsf_has(r_ptr->flags, RSF_BALL_SHARD)) {
+		if (rsf_has(r_ptr->spell_flags, RSF_BALL_SHARD)) {
 			if (spower < 15)
 				vp[vn++] = "produce blasts of shards";
 			else if (spower < 90)
@@ -2141,7 +2141,7 @@ static void spoil_mon_info(const char *fname)
 			else
 				vp[vn++] = "call up shardstorms";
 		}
-		if (rsf_has(r_ptr->flags, RSF_BALL_STORM)) {
+		if (rsf_has(r_ptr->spell_flags, RSF_BALL_STORM)) {
 			if (spower < 30)
 				vp[vn++] = "produce little storms";
 			else if (spower < 70)
@@ -2149,7 +2149,7 @@ static void spoil_mon_info(const char *fname)
 			else
 				vp[vn++] = "call up raging storms";
 		}
-		if (rsf_has(r_ptr->flags, RSF_BALL_NETHR)) {
+		if (rsf_has(r_ptr->spell_flags, RSF_BALL_NETHR)) {
 			if (spower < 30)
 				vp[vn++] = "produce nether orbs";
 			else if (spower < 70)
@@ -2157,7 +2157,7 @@ static void spoil_mon_info(const char *fname)
 			else
 				vp[vn++] = "invoke nether storms";
 		}
-		if (rsf_has(r_ptr->flags, RSF_BALL_CHAOS)) {
+		if (rsf_has(r_ptr->spell_flags, RSF_BALL_CHAOS)) {
 			if (spower < 20)
 				vp[vn++] = "produce spheres of chaos";
 			else if (spower < 70)
@@ -2165,7 +2165,7 @@ static void spoil_mon_info(const char *fname)
 			else
 				vp[vn++] = "call up maelstroms of raw chaos";
 		}
-		if (rsf_has(r_ptr->flags, RSF_BALL_MANA)) {
+		if (rsf_has(r_ptr->spell_flags, RSF_BALL_MANA)) {
 			if (spower < 40)
 				vp[vn++] = "produce manabursts";
 			else if (spower < 90)
@@ -2173,37 +2173,37 @@ static void spoil_mon_info(const char *fname)
 			else
 				vp[vn++] = "invoke mana storms";
 		}
-		if (rsf_has(r_ptr->flags, RSF_BOLT_ACID))
+		if (rsf_has(r_ptr->spell_flags, RSF_BOLT_ACID))
 			vp[vn++] = "produce acid bolts";
-		if (rsf_has(r_ptr->flags, RSF_BOLT_ELEC))
+		if (rsf_has(r_ptr->spell_flags, RSF_BOLT_ELEC))
 			vp[vn++] = "produce lightning bolts";
-		if (rsf_has(r_ptr->flags, RSF_BOLT_FIRE))
+		if (rsf_has(r_ptr->spell_flags, RSF_BOLT_FIRE))
 			vp[vn++] = "produce fire bolts";
-		if (rsf_has(r_ptr->flags, RSF_BOLT_COLD))
+		if (rsf_has(r_ptr->spell_flags, RSF_BOLT_COLD))
 			vp[vn++] = "produce frost bolts";
-		if (rsf_has(r_ptr->flags, RSF_BOLT_POIS))
+		if (rsf_has(r_ptr->spell_flags, RSF_BOLT_POIS))
 			vp[vn++] = "produce poison bolts";
-		if (rsf_has(r_ptr->flags, RSF_BOLT_PLAS))
+		if (rsf_has(r_ptr->spell_flags, RSF_BOLT_PLAS))
 			vp[vn++] = "produce plasma bolts";
-		if (rsf_has(r_ptr->flags, RSF_BOLT_ICE))
+		if (rsf_has(r_ptr->spell_flags, RSF_BOLT_ICE))
 			vp[vn++] = "produce ice bolts";
-		if (rsf_has(r_ptr->flags, RSF_BOLT_WATER))
+		if (rsf_has(r_ptr->spell_flags, RSF_BOLT_WATER))
 			vp[vn++] = "produce water bolts";
-		if (rsf_has(r_ptr->flags, RSF_BOLT_NETHR))
+		if (rsf_has(r_ptr->spell_flags, RSF_BOLT_NETHR))
 			vp[vn++] = "produce nether bolts";
-		if (rsf_has(r_ptr->flags, RSF_BOLT_DARK))
+		if (rsf_has(r_ptr->spell_flags, RSF_BOLT_DARK))
 			vp[vn++] = "produce dark bolts";
-		if (rsf_has(r_ptr->flags, RSF_BEAM_ELEC))
+		if (rsf_has(r_ptr->spell_flags, RSF_BEAM_ELEC))
 			vp[vn++] = "shoot sparks of lightning";
-		if (rsf_has(r_ptr->flags, RSF_BEAM_ICE))
+		if (rsf_has(r_ptr->spell_flags, RSF_BEAM_ICE))
 			vp[vn++] = "cast lances of ice";
-		if (rsf_has(r_ptr->flags, RSF_BEAM_NETHR)) {
+		if (rsf_has(r_ptr->spell_flags, RSF_BEAM_NETHR)) {
 			if (spower < 40)
 				vp[vn++] = "cast lances of nether";
 			else if (spower < 90)
 				vp[vn++] = "shoot rays of death";
 		}
-		if (rsf_has(r_ptr->flags, RSF_ARC_HFIRE)) {
+		if (rsf_has(r_ptr->spell_flags, RSF_ARC_HFIRE)) {
 			if (rf_has(r_ptr->flags, RF_UDUN_MAGIC)) {
 				if (spower < 50)
 					vp[vn++] = "produce a column of hellfire";
@@ -2218,7 +2218,7 @@ static void spoil_mon_info(const char *fname)
 					vp[vn++] = "envelop you in fire";
 			}
 		}
-		if (rsf_has(r_ptr->flags, RSF_ARC_FORCE)) {
+		if (rsf_has(r_ptr->spell_flags, RSF_ARC_FORCE)) {
 			if (spower < 50)
 				vp[vn++] = "thrust you away";
 			else if (spower < 100)
@@ -2226,39 +2226,39 @@ static void spoil_mon_info(const char *fname)
 			else
 				vp[vn++] = "snatches you up, and throws you away";
 		}
-		if (rsf_has(r_ptr->flags, RSF_HASTE))
+		if (rsf_has(r_ptr->spell_flags, RSF_HASTE))
 			vp[vn++] = "haste-self";
-		if (rsf_has(r_ptr->flags, RSF_ADD_MANA))
+		if (rsf_has(r_ptr->spell_flags, RSF_ADD_MANA))
 			vp[vn++] = "restore mana";
-		if (rsf_has(r_ptr->flags, RSF_HEAL))
+		if (rsf_has(r_ptr->spell_flags, RSF_HEAL))
 			vp[vn++] = "heal-self";
-		if (rsf_has(r_ptr->flags, RSF_CURE))
+		if (rsf_has(r_ptr->spell_flags, RSF_CURE))
 			vp[vn++] = "cure what ails it";
-		if (rsf_has(r_ptr->flags, RSF_BLINK))
+		if (rsf_has(r_ptr->spell_flags, RSF_BLINK))
 			vp[vn++] = "blink-self";
-		if (rsf_has(r_ptr->flags, RSF_TPORT))
+		if (rsf_has(r_ptr->spell_flags, RSF_TPORT))
 			vp[vn++] = "teleport-self";
-		if (rsf_has(r_ptr->flags, RSF_TELE_TO))
+		if (rsf_has(r_ptr->spell_flags, RSF_TELE_TO))
 			vp[vn++] = "teleport to";
-		if (rsf_has(r_ptr->flags, RSF_TELE_AWAY))
+		if (rsf_has(r_ptr->spell_flags, RSF_TELE_AWAY))
 			vp[vn++] = "teleport away";
-		if (rsf_has(r_ptr->flags, RSF_TELE_LEVEL))
+		if (rsf_has(r_ptr->spell_flags, RSF_TELE_LEVEL))
 			vp[vn++] = "teleport level";
-		if (rsf_has(r_ptr->flags, RSF_DARKNESS))
+		if (rsf_has(r_ptr->spell_flags, RSF_DARKNESS))
 			vp[vn++] = "create darkness";
-		if (rsf_has(r_ptr->flags, RSF_TRAPS))
+		if (rsf_has(r_ptr->spell_flags, RSF_TRAPS))
 			vp[vn++] = "create traps";
-		if (rsf_has(r_ptr->flags, RSF_FORGET))
+		if (rsf_has(r_ptr->spell_flags, RSF_FORGET))
 			vp[vn++] = "cause amnesia";
-		if (rsf_has(r_ptr->flags, RSF_DRAIN_MANA))
+		if (rsf_has(r_ptr->spell_flags, RSF_DRAIN_MANA))
 			vp[vn++] = "drain mana";
-		if (rsf_has(r_ptr->flags, RSF_DISPEL))
+		if (rsf_has(r_ptr->spell_flags, RSF_DISPEL))
 			vp[vn++] = "dispel magic";
-		if (rsf_has(r_ptr->flags, RSF_MIND_BLAST))
+		if (rsf_has(r_ptr->spell_flags, RSF_MIND_BLAST))
 			vp[vn++] = "cause mind blasting";
-		if (rsf_has(r_ptr->flags, RSF_BRAIN_SMASH))
+		if (rsf_has(r_ptr->spell_flags, RSF_BRAIN_SMASH))
 			vp[vn++] = "cause brain smashing";
-		if (rsf_has(r_ptr->flags, RSF_WOUND)) {
+		if (rsf_has(r_ptr->spell_flags, RSF_WOUND)) {
 			if (spower < 7)
 				vp[vn++] = "cause light wounds";
 			else if (spower < 15)
@@ -2270,50 +2270,50 @@ static void spoil_mon_info(const char *fname)
 			else
 				vp[vn++] = "cause mortal wounds";
 		}
-		if (rsf_has(r_ptr->flags, RSF_SHAPECHANGE))
+		if (rsf_has(r_ptr->spell_flags, RSF_SHAPECHANGE))
 			vp[vn++] = "change shape";
-		if (rsf_has(r_ptr->flags, RSF_SCARE))
+		if (rsf_has(r_ptr->spell_flags, RSF_SCARE))
 			vp[vn++] = "terrify";
-		if (rsf_has(r_ptr->flags, RSF_BLIND))
+		if (rsf_has(r_ptr->spell_flags, RSF_BLIND))
 			vp[vn++] = "blind";
-		if (rsf_has(r_ptr->flags, RSF_CONF))
+		if (rsf_has(r_ptr->spell_flags, RSF_CONF))
 			vp[vn++] = "confuse";
-		if (rsf_has(r_ptr->flags, RSF_SLOW))
+		if (rsf_has(r_ptr->spell_flags, RSF_SLOW))
 			vp[vn++] = "slow";
-		if (rsf_has(r_ptr->flags, RSF_HOLD))
+		if (rsf_has(r_ptr->spell_flags, RSF_HOLD))
 			vp[vn++] = "paralyze";
 
-		if (rsf_has(r_ptr->flags, RSF_S_MONSTER))
+		if (rsf_has(r_ptr->spell_flags, RSF_S_MONSTER))
 			vp[vn++] = "summon a monster";
-		if (rsf_has(r_ptr->flags, RSF_S_MONSTERS))
+		if (rsf_has(r_ptr->spell_flags, RSF_S_MONSTERS))
 			vp[vn++] = "summon monsters";
-		if (rsf_has(r_ptr->flags, RSF_S_ANT))
+		if (rsf_has(r_ptr->spell_flags, RSF_S_ANT))
 			vp[vn++] = "summon ants";
-		if (rsf_has(r_ptr->flags, RSF_S_SPIDER))
+		if (rsf_has(r_ptr->spell_flags, RSF_S_SPIDER))
 			vp[vn++] = "summon spiders";
-		if (rsf_has(r_ptr->flags, RSF_S_HOUND))
+		if (rsf_has(r_ptr->spell_flags, RSF_S_HOUND))
 			vp[vn++] = "summon hounds";
-		if (rsf_has(r_ptr->flags, RSF_S_ANIMAL))
+		if (rsf_has(r_ptr->spell_flags, RSF_S_ANIMAL))
 			vp[vn++] = "summon natural creatures";
-		if (rsf_has(r_ptr->flags, RSF_S_THIEF))
+		if (rsf_has(r_ptr->spell_flags, RSF_S_THIEF))
 			vp[vn++] = "summon thieves";
-		if (rsf_has(r_ptr->flags, RSF_S_SWAMP))
+		if (rsf_has(r_ptr->spell_flags, RSF_S_SWAMP))
 			vp[vn++] = "summon swamp creatures";
-		if (rsf_has(r_ptr->flags, RSF_S_DRAGON))
+		if (rsf_has(r_ptr->spell_flags, RSF_S_DRAGON))
 			vp[vn++] = "summon a dragon";
-		if (rsf_has(r_ptr->flags, RSF_S_HI_DRAGON))
+		if (rsf_has(r_ptr->spell_flags, RSF_S_HI_DRAGON))
 			vp[vn++] = "summon Ancient Dragons";
-		if (rsf_has(r_ptr->flags, RSF_S_DEMON))
+		if (rsf_has(r_ptr->spell_flags, RSF_S_DEMON))
 			vp[vn++] = "summon a demon";
-		if (rsf_has(r_ptr->flags, RSF_S_HI_DEMON))
+		if (rsf_has(r_ptr->spell_flags, RSF_S_HI_DEMON))
 			vp[vn++] = "summon Greater Demons";
-		if (rsf_has(r_ptr->flags, RSF_S_UNDEAD))
+		if (rsf_has(r_ptr->spell_flags, RSF_S_UNDEAD))
 			vp[vn++] = "summon an undead";
-		if (rsf_has(r_ptr->flags, RSF_S_HI_UNDEAD))
+		if (rsf_has(r_ptr->spell_flags, RSF_S_HI_UNDEAD))
 			vp[vn++] = "summon Greater Undead";
-		if (rsf_has(r_ptr->flags, RSF_S_QUEST))
+		if (rsf_has(r_ptr->spell_flags, RSF_S_QUEST))
 			vp[vn++] = "summon the Quest monsters";
-		if (rsf_has(r_ptr->flags, RSF_S_UNIQUE))
+		if (rsf_has(r_ptr->spell_flags, RSF_S_UNIQUE))
 			vp[vn++] = "summon Unique Monsters";
 
 		if (vn) {
@@ -2479,29 +2479,29 @@ static void spoil_mon_info(const char *fname)
 
 		/* Collect resistances */
 		vn = 0;
-		if (rsf_has(r_ptr->flags, RSF_BRTH_LIGHT))
+		if (rsf_has(r_ptr->spell_flags, RSF_BRTH_LIGHT))
 			vp[vn++] = "light";
-		if ((rsf_has(r_ptr->flags, RSF_BRTH_DARK)) ||
+		if ((rsf_has(r_ptr->spell_flags, RSF_BRTH_DARK)) ||
 			(rf_has(r_ptr->flags, RF_MORGUL_MAGIC)) ||
 			(rf_has(r_ptr->flags, RF_ORC)))
 			vp[vn++] = "darkness";
 
-		if (rsf_has(r_ptr->flags, RSF_BRTH_CONFU))
+		if (rsf_has(r_ptr->spell_flags, RSF_BRTH_CONFU))
 			vp[vn++] = "confusion";
-		if (rsf_has(r_ptr->flags, RSF_BRTH_SOUND))
+		if (rsf_has(r_ptr->spell_flags, RSF_BRTH_SOUND))
 			vp[vn++] = "sound";
-		if (rsf_has(r_ptr->flags, RSF_BRTH_SHARD))
+		if (rsf_has(r_ptr->spell_flags, RSF_BRTH_SHARD))
 			vp[vn++] = "shards";
-		if (rsf_has(r_ptr->flags, RSF_BRTH_INER))
+		if (rsf_has(r_ptr->spell_flags, RSF_BRTH_INER))
 			vp[vn++] = "inertia";
-		if (rsf_has(r_ptr->flags, RSF_BRTH_GRAV))
+		if (rsf_has(r_ptr->spell_flags, RSF_BRTH_GRAV))
 			vp[vn++] = "gravity";
-		if (rsf_has(r_ptr->flags, RSF_BRTH_FORCE))
+		if (rsf_has(r_ptr->spell_flags, RSF_BRTH_FORCE))
 			vp[vn++] = "force";
 		if ((rf_has(r_ptr->flags, RF_RES_WATE)) || (prefix(name, "Water")))
 			vp[vn++] = "water";
 
-		if ((rsf_has(r_ptr->flags, RSF_BRTH_PLAS))
+		if ((rsf_has(r_ptr->spell_flags, RSF_BRTH_PLAS))
 			|| (rf_has(r_ptr->flags, RF_RES_PLAS)) || ((vn)
 													   &&
 													   ((rf_has
@@ -2515,17 +2515,17 @@ static void spoil_mon_info(const char *fname)
 			vp[vn++] = "plasma";
 
 		if ((rf_has(r_ptr->flags, RF_RES_NEXUS)) || prefix(name, "Nexus")
-			|| (rsf_has(r_ptr->flags, RSF_BRTH_NEXUS)))
+			|| (rsf_has(r_ptr->spell_flags, RSF_BRTH_NEXUS)))
 			vp[vn++] = "nexus";
 		if ((rf_has(r_ptr->flags, RF_UNDEAD))
 			|| (rf_has(r_ptr->flags, RF_RES_NETH))
-			|| (rsf_has(r_ptr->flags, RSF_BRTH_NETHR)))
+			|| (rsf_has(r_ptr->spell_flags, RSF_BRTH_NETHR)))
 			vp[vn++] = "nether";
 		if ((rf_has(r_ptr->flags, RF_RES_DISE))
-			|| (rsf_has(r_ptr->flags, RSF_BRTH_DISEN))
+			|| (rsf_has(r_ptr->spell_flags, RSF_BRTH_DISEN))
 			|| prefix(name, "Disen"))
 			vp[vn++] = "disenchantment";
-		if (rsf_has(r_ptr->flags, RSF_BRTH_TIME))
+		if (rsf_has(r_ptr->spell_flags, RSF_BRTH_TIME))
 			vp[vn++] = "time";
 
 		if (vn) {
@@ -2545,14 +2545,14 @@ static void spoil_mon_info(const char *fname)
 		/* Collect non-effects */
 		vn = 0;
 		if ((rf_has(r_ptr->flags, RF_NO_STUN))
-			|| (rsf_has(r_ptr->flags, RSF_BRTH_SOUND))
-			|| (rsf_has(r_ptr->flags, RSF_BRTH_FORCE)))
+			|| (rsf_has(r_ptr->spell_flags, RSF_BRTH_SOUND))
+			|| (rsf_has(r_ptr->spell_flags, RSF_BRTH_FORCE)))
 			vp[vn++] = "stunned";
 		if (rf_has(r_ptr->flags, RF_NO_FEAR))
 			vp[vn++] = "frightened";
 		if ((rf_has(r_ptr->flags, RF_NO_CONF))
-			|| (rsf_has(r_ptr->flags, RSF_BRTH_CONFU))
-			|| (rsf_has(r_ptr->flags, RSF_BRTH_CHAOS)))
+			|| (rsf_has(r_ptr->spell_flags, RSF_BRTH_CONFU))
+			|| (rsf_has(r_ptr->spell_flags, RSF_BRTH_CHAOS)))
 			vp[vn++] = "confused";
 		if (rf_has(r_ptr->flags, RF_NO_SLEEP))
 			vp[vn++] = "slept";

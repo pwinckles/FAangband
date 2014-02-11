@@ -1225,7 +1225,7 @@ bool cave_exist_mon(monster_race * r_ptr, int y, int x, bool occupied_ok)
 			if (rf_has(r_ptr->flags, RF_FLYING))
 				return (TRUE);
 
-			if ((rsf_has(r_ptr->flags, RSF_BRTH_FIRE))
+			if ((rsf_has(r_ptr->spell_flags, RSF_BRTH_FIRE))
 				|| (strchr("uU", r_ptr->d_char))
 				|| ((strchr("E", r_ptr->d_char))
 					&& ((r_ptr->d_attr == TERM_RED)
@@ -1383,7 +1383,7 @@ static int cave_passable_mon(monster_type * m_ptr, int y, int x,
 				return (move_chance);
 
 			/* Earthbound demons and firebreathers cannot cross water */
-			if (rsf_has(r_ptr->flags, RSF_BRTH_FIRE))
+			if (rsf_has(r_ptr->spell_flags, RSF_BRTH_FIRE))
 				return (0);
 			if (strchr("uU", r_ptr->d_char))
 				return (0);
@@ -4427,7 +4427,7 @@ static void process_monster(monster_type * m_ptr)
 	chance = r_ptr->freq_ranged;
 
 	/* Are we an unchanged shapeshifter? */
-	if ((rsf_has(r_ptr->flags, RSF_SHAPECHANGE)) && (!m_ptr->schange))
+	if ((rsf_has(r_ptr->spell_flags, RSF_SHAPECHANGE)) && (!m_ptr->schange))
 		shape_rate =
 			assess_shapechange(cave_m_idx[m_ptr->fy][m_ptr->fx], m_ptr);
 

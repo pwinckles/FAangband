@@ -1277,7 +1277,7 @@ extern void describe_monster(int r_idx, bool spoilers)
 	if (flags_test(mon_spells, RSF_SIZE, RSF_SUMMON_MASK, FLAG_END)) {
 		/* Summons */
 		if (rsf_has(mon_spells, RSF_S_KIN)) {
-			if (rf_has(r_ptr->spell_flags, RF_UNIQUE))
+			if (rf_has(r_ptr->flags, RF_UNIQUE))
 				vp[vn++] = "its minions";
 			else
 				vp[vn++] = "similar monsters";
@@ -2405,12 +2405,12 @@ static void process_ghost_class(int ghost_class, monster_type * m_ptr)
 			else
 				r_ptr->freq_ranged += 10;
 
-			if (rsf_has(r_ptr->flags, RSF_SHOT))
-				rsf_off(r_ptr->flags, RSF_SHOT);
-			if (rsf_has(r_ptr->flags, RSF_ARROW))
-				rsf_off(r_ptr->flags, RSF_ARROW);
-			if (rsf_has(r_ptr->flags, RSF_BOLT))
-				rsf_off(r_ptr->flags, RSF_BOLT);
+			if (rsf_has(r_ptr->spell_flags, RSF_SHOT))
+				rsf_off(r_ptr->spell_flags, RSF_SHOT);
+			if (rsf_has(r_ptr->spell_flags, RSF_ARROW))
+				rsf_off(r_ptr->spell_flags, RSF_ARROW);
+			if (rsf_has(r_ptr->spell_flags, RSF_BOLT))
+				rsf_off(r_ptr->spell_flags, RSF_BOLT);
 
 			rsf_on(r_ptr->spell_flags, RSF_BOLT_FIRE);
 
@@ -2580,12 +2580,12 @@ static void process_ghost_class(int ghost_class, monster_type * m_ptr)
 			if (r_ptr->freq_ranged == 0)
 				r_ptr->freq_ranged = 8;
 
-			if (rsf_has(r_ptr->flags, RSF_SHOT))
-				rsf_off(r_ptr->flags, RSF_SHOT);
-			if (rsf_has(r_ptr->flags, RSF_ARROW))
-				rsf_off(r_ptr->flags, RSF_ARROW);
-			if (rsf_has(r_ptr->flags, RSF_BOLT))
-				rsf_off(r_ptr->flags, RSF_BOLT);
+			if (rsf_has(r_ptr->spell_flags, RSF_SHOT))
+				rsf_off(r_ptr->spell_flags, RSF_SHOT);
+			if (rsf_has(r_ptr->spell_flags, RSF_ARROW))
+				rsf_off(r_ptr->spell_flags, RSF_ARROW);
+			if (rsf_has(r_ptr->spell_flags, RSF_BOLT))
+				rsf_off(r_ptr->spell_flags, RSF_BOLT);
 
 			if (dun_level > 59)
 				rsf_on(r_ptr->spell_flags, RSF_BALL_LIGHT);
