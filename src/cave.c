@@ -3407,3 +3407,64 @@ void disturb(int stop_search, int unused_flag)
 	/* Flush the input */
 	flush();
 }
+
+
+struct cave *cave = NULL;
+
+struct cave *cave_new(void) {
+	int y, x;
+
+	struct cave *c = mem_zalloc(sizeof *c);
+	c->feat_count = mem_zalloc((z_info->f_max + 1) * sizeof(int));
+	c->info = mem_zalloc(DUNGEON_HGT * sizeof(bitflag**));
+	c->feat = mem_zalloc(DUNGEON_HGT * sizeof(byte*));
+	c->cost = mem_zalloc(DUNGEON_HGT * sizeof(byte*));
+	c->when = mem_zalloc(DUNGEON_HGT * sizeof(byte*));
+	c->m_idx = mem_zalloc(DUNGEON_HGT * sizeof(s16b*));
+	c->o_idx = mem_zalloc(DUNGEON_HGT * sizeof(s16b*));
+	for (y = 0; y < DUNGEON_HGT; y++){
+		c->info[y] = mem_zalloc(DUNGEON_WID * sizeof(bitflag*));
+		for (x = 0; x < DUNGEON_WID; x++)
+			c->info[y][x] = mem_zalloc(SQUARE_SIZE * sizeof(bitflag));
+		c->feat[y] = mem_zalloc(DUNGEON_WID * sizeof(byte));
+		c->cost[y] = mem_zalloc(DUNGEON_WID * sizeof(byte));
+		c->when[y] = mem_zalloc(DUNGEON_WID * sizeof(byte));
+		c->m_idx[y] = mem_zalloc(DUNGEON_WID * sizeof(s16b));
+		c->o_idx[y] = mem_zalloc(DUNGEON_WID * sizeof(s16b));
+	}
+
+	c->monsters = mem_zalloc(z_info->m_max * sizeof(struct monster));
+	c->mon_max = 1;
+
+	c->traps = mem_zalloc(z_info->l_max * sizeof(struct trap_type));
+	c->trap_max = 1;
+	c->trap_cnt = 0;
+
+	c->created_at = 1;
+	return c;
+}
+
+void cave_free(struct cave *c) {
+	int y, x;
+	for (y = 0; y < DUNGEON_HGT; y++){
+		for (x = 0; x < DUNGEON_WID; x++)
+			mem_free(c->info[y][x]);
+		mem_free(c->info[y]);
+		mem_free(c->feat[y]);
+		mem_free(c->cost[y]);
+		mem_free(c->when[y]);
+		mem_free(c->m_idx[y]);
+		mem_free(c->o_idx[y]);
+	}
+	mem_free(c->feat_count);
+	mem_free(c->info);
+	mem_free(c->feat);
+	mem_free(c->cost);
+	mem_free(c->when);
+	mem_free(c->m_idx);
+	mem_free(c->o_idx);
+	mem_free(c->monsters);
+	mem_free(c->traps);
+	mem_free(c);
+}
+

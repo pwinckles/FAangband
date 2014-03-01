@@ -4089,6 +4089,8 @@ static errr init_other(void)
 
 	/*** Prepare grid arrays ***/
 
+	cave = cave_new();
+
 	/* Array of grids */
 	temp_g = C_ZNEW(TEMP_MAX, u16b);
 
@@ -4928,6 +4930,8 @@ void cleanup_angband(void)
 
 	/* Free the temp array */
 	FREE(temp_g);
+
+	cave_free(cave);
 
 	/* Free the messages */
 	messages_free();

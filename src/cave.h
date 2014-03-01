@@ -243,6 +243,33 @@ typedef struct
 } grid_data;
 
 
+struct cave {
+	s32b created_at;
+	int depth;
+
+	byte feeling;
+
+	int height;
+	int width;
+	
+	int *feat_count;
+
+	bitflag ***info;
+	byte **feat;
+	byte **cost;
+	byte **when;
+	s16b **m_idx;
+	s16b **o_idx;
+
+	struct monster *monsters;
+	int mon_max;
+	int mon_cnt;
+
+	struct trap_type *traps;
+	s16b trap_max;
+	int trap_cnt;
+};
+
 /**** Available Types ****/
 
 
@@ -296,6 +323,19 @@ extern void track_object(int item);
 extern void track_object_kind(int k_idx);
 extern void disturb(int stop_search, int unused_flag);
 extern bool dtrap_edge(int y, int x);
+
+extern struct cave *cave;
+
+extern struct cave *cave_new(void);
+extern void cave_free(struct cave *c);
+
+extern struct feature *square_feat(struct cave *c, int y, int x);
+extern void square_set_feat(struct cave *c, int y, int x, int feat);
+extern void square_note_spot(struct cave *c, int y, int x);
+extern void square_light_spot(struct cave *c, int y, int x);
+extern void cave_update_flow(struct cave *c);
+extern void cave_forget_flow(struct cave *c);
+extern void cave_illuminate(struct cave *c, bool daytime);
 
 #define CAVE_INFO_Y	DUNGEON_HGT
 #define CAVE_INFO_X	256
