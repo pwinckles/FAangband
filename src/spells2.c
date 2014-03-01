@@ -5251,17 +5251,14 @@ bool tremor(void)
  * NORMAL monsters wake up 1/4 the time when illuminated
  * STUPID monsters wake up 1/10 the time when illuminated
  */
-static void cave_temp_room_light(void)
+static void cave_light(struct point_set *ps)
 {
 	int i;
 
 	/* Apply flag changes */
-	for (i = 0; i < temp_n; i++) {
-		int y = temp_y[i];
-		int x = temp_x[i];
-
-		/* No longer in the array */
-		sqinfo_off(cave->info[y][x], SQUARE_TEMP);
+	for (i = 0; i < ps->n; i++) {
+		int y = ps->pts[i].y;
+		int x = ps->pts[i].x;
 
 		/* Perma-Light */
 		sqinfo_on(cave->info[y][x], SQUARE_GLOW);
@@ -5274,9 +5271,9 @@ static void cave_temp_room_light(void)
 	update_stuff(p_ptr);
 
 	/* Process the grids */
-	for (i = 0; i < temp_n; i++) {
-		int y = temp_y[i];
-		int x = temp_x[i];
+	for (i = 0; i < ps->n; i++) {
+		int y = ps->pts[i].y;
+		int x = ps->pts[i].x;
 
 		/* Redraw the grid */
 		light_spot(y, x);
@@ -5317,9 +5314,6 @@ static void cave_temp_room_light(void)
 			}
 		}
 	}
-
-	/* None left */
-	temp_n = 0;
 }
 
 
@@ -5333,14 +5327,14 @@ static void cave_temp_room_light(void)
  *
  * This routine is used (only) by "unlight_room()"
  */
-static void cave_temp_room_unlight(void)
+static void cave_unlight(struct point_set *ps)
 {
 	int i;
 
 	/* Apply flag changes */
-	for (i = 0; i < temp_n; i++) {
-		int y = temp_y[i];
-		int x = temp_x[i];
+	for (i = 0; i < ps->n; i++) {
+		int y = ps->pts[i].y;
+		int x = ps->pts[i].x;
 		feature_type *f_ptr = &f_info[cave->feat[y][x]];
 
 		/* No longer in the array */
@@ -5364,16 +5358,13 @@ static void cave_temp_room_unlight(void)
 	update_stuff(p_ptr);
 
 	/* Process the grids */
-	for (i = 0; i < temp_n; i++) {
-		int y = temp_y[i];
-		int x = temp_x[i];
+	for (i = 0; i < ps->n; i++) {
+		int y = ps->pts[i].y;
+		int x = ps->pts[i].x;
 
 		/* Redraw the grid */
 		light_spot(y, x);
 	}
-
-	/* None left */
-	temp_n = 0;
 }
 
 
@@ -5382,31 +5373,22 @@ static void cave_temp_room_unlight(void)
 /**
  * Aux function -- see below
  */
-static void cave_temp_room_aux(int y, int x)
+static void cave_temp_room_aux(struct point_set *seen, int y, int x)
 {
 	/* Check in bounds - thanks George */
 	if (!in_bounds(y, x))
 		return;
 
 	/* Avoid infinite recursion */
-	if (sqinfo_has(cave->info[y][x], SQUARE_TEMP))
+	if (point_set_contains(seen, y, x))
 		return;
 
 	/* Do not "leave" the current room */
 	if (!sqinfo_has(cave->info[y][x], SQUARE_ROOM))
 		return;
 
-	/* Paranoia -- verify space */
-	if (temp_n == TEMP_MAX)
-		return;
-
-	/* Mark the grid as "seen" */
-	sqinfo_on(cave->info[y][x], SQUARE_TEMP);
-
 	/* Add it to the "seen" set */
-	temp_y[temp_n] = y;
-	temp_x[temp_n] = x;
-	temp_n++;
+	add_to_point_set(seen, y, x);
 }
 
 
@@ -5415,17 +5397,19 @@ static void cave_temp_room_aux(int y, int x)
 /**
  * Illuminate any room containing the given location.
  */
-void light_room(int y1, int x1)
+void light_room(int y1, int x1, bool light)
 {
 	int i, x, y;
+	struct point_set *ps;
 	feature_type *f_ptr = NULL;
 
+	ps = point_set_new(200);
 	/* Add the initial grid */
-	cave_temp_room_aux(y1, x1);
+	cave_temp_room_aux(ps, y1, x1);
 
 	/* While grids are in the queue, add their neighbors */
-	for (i = 0; i < temp_n; i++) {
-		x = temp_x[i], y = temp_y[i];
+	for (i = 0; i < ps->n; i++) {
+		x = ps->pts[i].x, y = ps->pts[i].y;
 
 		/* Walls (but not trees) get lit, but stop light */
 		f_ptr = &f_info[cave->feat[y][x]];
@@ -5433,58 +5417,26 @@ void light_room(int y1, int x1)
 			continue;
 
 		/* Spread adjacent */
-		cave_temp_room_aux(y + 1, x);
-		cave_temp_room_aux(y - 1, x);
-		cave_temp_room_aux(y, x + 1);
-		cave_temp_room_aux(y, x - 1);
+		cave_temp_room_aux(ps, y + 1, x);
+		cave_temp_room_aux(ps, y - 1, x);
+		cave_temp_room_aux(ps, y, x + 1);
+		cave_temp_room_aux(ps, y, x - 1);
 
 		/* Spread diagonal */
-		cave_temp_room_aux(y + 1, x + 1);
-		cave_temp_room_aux(y - 1, x - 1);
-		cave_temp_room_aux(y - 1, x + 1);
-		cave_temp_room_aux(y + 1, x - 1);
+		cave_temp_room_aux(ps, y + 1, x + 1);
+		cave_temp_room_aux(ps, y - 1, x - 1);
+		cave_temp_room_aux(ps, y - 1, x + 1);
+		cave_temp_room_aux(ps, y + 1, x - 1);
 	}
 
-	/* Now, light them all up at once */
-	cave_temp_room_light();
-}
-
-
-/**
- * Darken all rooms containing the given location
- */
-void unlight_room(int y1, int x1)
-{
-	int i, x, y;
-
-	/* Add the initial grid */
-	cave_temp_room_aux(y1, x1);
-
-	/* Spread, breadth first */
-	for (i = 0; i < temp_n; i++) {
-		x = temp_x[i], y = temp_y[i];
-
-		/* Walls get dark, but stop darkness */
-		if (!cave_project(y, x))
-			continue;
-
-		/* Spread adjacent */
-		cave_temp_room_aux(y + 1, x);
-		cave_temp_room_aux(y - 1, x);
-		cave_temp_room_aux(y, x + 1);
-		cave_temp_room_aux(y, x - 1);
-
-		/* Spread diagonal */
-		cave_temp_room_aux(y + 1, x + 1);
-		cave_temp_room_aux(y - 1, x - 1);
-		cave_temp_room_aux(y - 1, x + 1);
-		cave_temp_room_aux(y + 1, x - 1);
+	/* Now, lighten or darken them all at once */
+	if (light) {
+		cave_light(ps);
+	} else {
+		cave_unlight(ps);
 	}
-
-	/* Now, darken them all at once */
-	cave_temp_room_unlight();
+	point_set_dispose(ps);
 }
-
 
 
 /**
@@ -5507,7 +5459,7 @@ bool light_area(int dam, int rad)
 	(void) project(-1, rad, py, px, dam, GF_LIGHT_WEAK, flg, 0, 0);
 
 	/* Light up the room */
-	light_room(py, px);
+	light_room(py, px, TRUE);
 
 	/* Assume seen */
 	return (TRUE);
@@ -5534,7 +5486,7 @@ bool unlight_area(int dam, int rad)
 	(void) project(-1, rad, py, px, dam, GF_DARK_WEAK, flg, 0, 0);
 
 	/* Light up the room */
-	unlight_room(py, px);
+	light_room(py, px, FALSE);
 
 	/* Assume seen */
 	return (TRUE);

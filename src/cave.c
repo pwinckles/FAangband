@@ -1911,9 +1911,7 @@ void do_cmd_view_map(void)
  * flag is used to determine if the "SQUARE_SEEN" flag for a grid has changed
  * during the "update_view()" function.   This flag is used to "spread" light
  * or darkness through a room.  This flag is used by the "monster flow code".
- * This flag must always be cleared by any code which sets it, often, this
- * can be optimized by the use of the special "temp_g", "temp_y", "temp_x"
- * arrays (and the special "temp_n" global).  This flag must be very fast.
+ * This flag must always be cleared by any code which sets it.
  *
  * Note that the "SQUARE_MARK" flag is used for many reasons, some of which
  * are strictly for optimization purposes.  The "SQUARE_MARK" flag means that

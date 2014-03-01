@@ -1513,7 +1513,7 @@ bool target_set_interactive(int mode, int x, int y)
 				if ((mode & TARGET_OBJ) && (cave->o_idx[y][x] > 0)
 					&& target_able_obj(cave->o_idx[y][x]))
 					good_target = TRUE;
-				target_display_help(good_target, !(flag && temp_n));
+				target_display_help(good_target, !(flag && point_set_size(targets)));
 			}
 
 			/* Find the path. */

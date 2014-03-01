@@ -174,14 +174,6 @@ char angband_term_name[TERM_WIN_MAX][16] = {
 
 
 
-/*
- * Arrays[TEMP_MAX] used for various things
- */
-int temp_n = 0;
-u16b *temp_g;
-byte *temp_y;
-byte *temp_x;
-
 /* 
  * Arrays[NUM_STAGES][NUM_STAGES] of numbers of paths between nearby stages
  */

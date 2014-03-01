@@ -4091,14 +4091,6 @@ static errr init_other(void)
 
 	cave = cave_new();
 
-	/* Array of grids */
-	temp_g = C_ZNEW(TEMP_MAX, u16b);
-
-	/* Hack -- use some memory twice */
-	temp_y = ((byte *) (temp_g)) + 0;
-	temp_x = ((byte *) (temp_g)) + TEMP_MAX;
-
-
 	/*** Prepare entity arrays ***/
 
 	/* Objects */
@@ -4900,9 +4892,6 @@ void cleanup_angband(void)
 	FREE(trap_list);
 	FREE(m_list);
 	FREE(o_list);
-
-	/* Free the temp array */
-	FREE(temp_g);
 
 	cave_free(cave);
 
