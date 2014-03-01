@@ -455,7 +455,7 @@ void process_command(cmd_context ctx, bool no_request)
 					int n_closed_doors, n_locked_chests;
 
 					n_closed_doors =
-						count_feats(&y, &x, TF_DOOR_CLOSED, FALSE);
+						count_feats(&y, &x, square_iscloseddoor, FALSE);
 					n_locked_chests = count_chests(&y, &x, FALSE);
 
 					if (n_closed_doors + n_locked_chests == 1)
@@ -473,7 +473,7 @@ void process_command(cmd_context ctx, bool no_request)
 					int y, x;
 
 					/* Count open doors */
-					if (count_feats(&y, &x, TF_CLOSABLE, FALSE) == 1)
+					if (count_feats(&y, &x, square_isopendoor, FALSE) == 1)
 						cmd_set_arg_direction(cmd, 0, coords_to_dir(y, x));
 				}
 
@@ -483,8 +483,9 @@ void process_command(cmd_context ctx, bool no_request)
 		case CMD_DISARM:
 			{
 				/* Player is in a web */
-				if (cave_web(p_ptr->py, p_ptr->px)) {
-					remove_trap_kind(p_ptr->py, p_ptr->px, TRUE, OBST_WEB);
+				if (square_web(cave, p_ptr->py, p_ptr->px)) {
+					square_remove_trap_kind(cave, p_ptr->py, p_ptr->px, TRUE, 
+											OBST_WEB);
 
 					disturb(0, 0);
 

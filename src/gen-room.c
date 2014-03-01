@@ -135,7 +135,7 @@ static void spread_traps(int num, int y0, int x0, int dy, int dx)
 			continue;
 
 		/* Place the trap */
-		place_trap(y, x, -1, p_ptr->depth);
+		place_trap(cave, y, x, -1, p_ptr->depth);
 
 		/* Count the trap, reset the loop count */
 		count++;
@@ -2448,7 +2448,7 @@ extern bool build_vault(int y0, int x0, int ymax, int xmax,
 						else
 							cave_set_feat(y, x, FEAT_TREE2);
 
-						place_trap(y, x, OBST_WEB, 0);
+						place_trap(cave, y, x, OBST_WEB, 0);
 					} else
 						cave_set_feat(y, x, FEAT_WALL_OUTER);
 					break;
@@ -2516,7 +2516,7 @@ extern bool build_vault(int y0, int x0, int ymax, int xmax,
 						place_object(y, x, FALSE, FALSE, FALSE,
 									 ORIGIN_VAULT);
 					} else {
-						place_trap(y, x, -1, p_ptr->depth);
+						place_trap(cave, y, x, -1, p_ptr->depth);
 					}
 					break;
 				}
@@ -2529,7 +2529,7 @@ extern bool build_vault(int y0, int x0, int ymax, int xmax,
 				/* Trap */
 			case '^':
 				{
-					place_trap(y, x, -1, p_ptr->depth);
+					place_trap(cave, y, x, -1, p_ptr->depth);
 					break;
 				}
 				/* Up stairs (and player location in themed level).  */
@@ -2674,7 +2674,7 @@ extern bool build_vault(int y0, int x0, int ymax, int xmax,
 											 ORIGIN_VAULT);
 
 						} else {
-							place_trap(y, x, -1, p_ptr->depth);
+							place_trap(cave, y, x, -1, p_ptr->depth);
 						}
 						break;
 					}

@@ -488,7 +488,7 @@ static bool target_set_interactive_accept(int y, int x)
 	}
 
 	/* Traps */
-	if (cave_visible_trap(y, x))
+	if (square_visible_trap(cave, y, x))
 		return (TRUE);
 
 	/* Scan all objects in the grid */
@@ -951,8 +951,8 @@ static ui_event target_set_interactive_aux(int y, int x, int mode)
 		}
 
 		/* A trap */
-		if (cave_visible_trap(y, x)) {
-			trap_type *t_ptr = &trap_list[visible_trap_idx(y, x)];
+		if (square_visible_trap(cave, y, x)) {
+			trap_type *t_ptr = &trap_list[visible_trap_idx(cave, y, x)];
 
 			/* Not boring */
 			boring = FALSE;
@@ -1001,7 +1001,7 @@ static ui_event target_set_interactive_aux(int y, int x, int mode)
 		}
 
 		/* Double break */
-		if (cave_visible_trap(y, x))
+		if (square_visible_trap(cave, y, x))
 			break;
 
 		/* Assume not floored */

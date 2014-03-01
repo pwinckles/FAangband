@@ -278,7 +278,7 @@ static int summon_possible(int y1, int x1)
 				continue;
 
 			/* Hack: no summon on glyph of warding */
-			if (cave_trap_specific(y, x, RUNE_PROTECT))
+			if (square_trap_specific(cave, y, x, RUNE_PROTECT))
 				continue;
 
 			/* Require empty floor grid in line of sight */
@@ -1208,7 +1208,7 @@ bool cave_exist_mon(monster_race * r_ptr, int y, int x, bool occupied_ok)
 	}
 
 	/* Glyphs -- must break first */
-	if (cave_trap_specific(y, x, RUNE_PROTECT))
+	if (square_trap_specific(cave, y, x, RUNE_PROTECT))
 		return (FALSE);
 
 	/*** Check passability of various features. ***/
@@ -1367,7 +1367,7 @@ static int cave_passable_mon(monster_type * m_ptr, int y, int x,
 		move_chance = 100;
 
 	/* Glyphs */
-	if (cave_trap_specific(y, x, RUNE_PROTECT)) {
+	if (square_trap_specific(cave, y, x, RUNE_PROTECT)) {
 		/* Glyphs are hard to break */
 		return (MIN(100 * r_ptr->level / BREAK_GLYPH, move_chance));
 	}
@@ -3079,7 +3079,7 @@ static bool make_move(monster_type * m_ptr, int *ty, int *tx, bool fear,
 			}
 
 			/* XXX XXX -- Sometimes attempt to break glyphs. */
-			if (cave_trap_specific(ny, nx, RUNE_PROTECT) && (!fear)
+			if (square_trap_specific(cave, ny, nx, RUNE_PROTECT) && (!fear)
 				&& ((randint0(5) == 0) || (cave->m_idx[ny][nx] < 0))) {
 				break;
 			}
@@ -3288,14 +3288,14 @@ static bool push_aside(monster_type * m_ptr, monster_type * n_ptr)
  *
  * "death" tells the calling function if the monster is killed by the trap.
  */
-static void apply_monster_trap(monster_type * m_ptr, int y, int x,
-							   bool * death)
+static void apply_monster_trap(monster_type *m_ptr, int y, int x,
+							   bool *death)
 {
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
 	monster_lore *l_ptr = &l_list[m_ptr->r_idx];
 	int dis_chance;
 
-	int trap = monster_trap_idx(y, x);
+	int trap = monster_trap_idx(cave, y, x);
 	trap_type *t_ptr;
 
 	/* Assume monster not frightened by trap */
@@ -3313,7 +3313,7 @@ static void apply_monster_trap(monster_type * m_ptr, int y, int x,
 	char m_name[80];
 
 	/* Sanity check */
-	if (!cave_monster_trap(y, x))
+	if (!square_monster_trap(cave, y, x))
 		return;
 
 	if ((trap < 0) || (trap >= trap_max))
@@ -3617,7 +3617,7 @@ static void apply_monster_trap(monster_type * m_ptr, int y, int x,
 
 	if (trap_destroyed) {
 		/* Kill the trap */
-		(void) remove_trap(y, x, FALSE, trap);
+		(void) square_remove_trap(cave, y, x, FALSE, trap);
 	}
 
 	/* Report death */
@@ -3643,7 +3643,7 @@ static void apply_monster_trap(monster_type * m_ptr, int y, int x,
  * A monster's move may disturb the character, depending on which 
  * disturbance options are set.
  */
-static void process_move(monster_type * m_ptr, int ty, int tx, bool bash)
+static void process_move(monster_type *m_ptr, int ty, int tx, bool bash)
 {
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
 	monster_lore *l_ptr = &l_list[m_ptr->r_idx];
@@ -3709,7 +3709,7 @@ static void process_move(monster_type * m_ptr, int ty, int tx, bool bash)
 	}
 
 	/* Check if the monster is in a web */
-	if (cave_web(oy, ox)) {
+	if (square_web(cave, oy, ox)) {
 		/* Insects and bats get stuck */
 		if (strchr("abcFIKl", r_ptr->d_char))
 			do_move = FALSE;
@@ -3724,7 +3724,7 @@ static void process_move(monster_type * m_ptr, int ty, int tx, bool bash)
 		/* If you can destroy a wall, you can destroy a web */
 		else if (rf_has(r_ptr->flags, RF_KILL_WALL)) {
 			/* Remove the web */
-			remove_trap_kind(oy, ox, FALSE, OBST_WEB);
+			square_remove_trap_kind(cave, oy, ox, FALSE, OBST_WEB);
 
 			/* Notice */
 			did_kill_wall = TRUE;
@@ -3733,7 +3733,7 @@ static void process_move(monster_type * m_ptr, int ty, int tx, bool bash)
 		/* Otherwise have to spend a turn tearing the web */
 		else {
 			/* Remove the web */
-			remove_trap_kind(oy, ox, FALSE, OBST_WEB);
+			square_remove_trap_kind(cave, oy, ox, FALSE, OBST_WEB);
 
 			/* Now can't do anything else */
 			do_move = FALSE;
@@ -3742,7 +3742,7 @@ static void process_move(monster_type * m_ptr, int ty, int tx, bool bash)
 
 
 	/* Glyphs */
-	if (cave_trap_specific(ny, nx, RUNE_PROTECT)) {
+	if (square_trap_specific(cave, ny, nx, RUNE_PROTECT)) {
 		/* Describe observable breakage */
 		if (sqinfo_has(cave->info[ny][nx], SQUARE_MARK)) {
 			msg("The rune of protection is broken!");
@@ -3752,7 +3752,7 @@ static void process_move(monster_type * m_ptr, int ty, int tx, bool bash)
 		sqinfo_off(cave->info[ny][nx], SQUARE_MARK);
 
 		/* Break the rune */
-		remove_trap_kind(ny, nx, FALSE, RUNE_PROTECT);
+		square_remove_trap_kind(cave, ny, nx, FALSE, RUNE_PROTECT);
 	}
 
 	/* Get the feature in the grid that the monster is trying to enter. */
@@ -3939,7 +3939,7 @@ static void process_move(monster_type * m_ptr, int ty, int tx, bool bash)
 
 
 		/* Check for monster trap */
-		if (cave_monster_trap(ny, nx)) {
+		if (square_monster_trap(cave, ny, nx)) {
 			bool death = FALSE;
 
 			/* Apply trap */
@@ -3951,7 +3951,7 @@ static void process_move(monster_type * m_ptr, int ty, int tx, bool bash)
 		}
 
 		/* Check for runes of speed, slow if not slowed already */
-		if (cave_trap_specific(ny, nx, RUNE_SPEED)
+		if (square_trap_specific(cave, ny, nx, RUNE_SPEED)
 			&& (m_ptr->mspeed > r_ptr->speed - 5)) {
 			char m_name[80];
 
@@ -3971,7 +3971,7 @@ static void process_move(monster_type * m_ptr, int ty, int tx, bool bash)
 
 
 		/* Check for runes of mana */
-		if (cave_trap_specific(ny, nx, RUNE_MANA)) {
+		if (square_trap_specific(cave, ny, nx, RUNE_MANA)) {
 			int drain = BASE_MANA_BURN;
 			char m_name[80];
 
@@ -3993,7 +3993,7 @@ static void process_move(monster_type * m_ptr, int ty, int tx, bool bash)
 		}
 
 		/* Check for runes of instability */
-		if (cave_trap_specific(ny, nx, RUNE_QUAKE))
+		if (square_trap_specific(cave, ny, nx, RUNE_QUAKE))
 			earthquake(ny, nx, 4, FALSE);
 
 		/* 

@@ -124,7 +124,7 @@ void shapechange(s16b shape)
 		if (tf_has(f_ptr->flags, TF_FALL))
 			fall_off_cliff();
 
-		else if (cave_invisible_trap(y, x)) {
+		else if (square_invisible_trap(cave, y, x)) {
 			/* Disturb */
 			disturb(0, 0);
 
@@ -133,7 +133,7 @@ void shapechange(s16b shape)
 		}
 
 		/* Set off a visible trap */
-		else if (cave_visible_trap(y, x)) {
+		else if (square_visible_trap(cave, y, x)) {
 			/* Disturb */
 			disturb(0, 0);
 
@@ -685,7 +685,7 @@ bool lay_rune(int type)
 	bool takes_rune = tf_has(f_info[cave->feat[py][px]].flags, TF_RUNE);
 
 	/* If we're standing on a rune of mana, we can add mana to it */
-	if ((type == RUNE_MANA) && (cave_trap_specific(py, px, RUNE_MANA))) {
+	if ((type == RUNE_MANA) && (square_trap_specific(cave, py, px, RUNE_MANA))) {
 		/* Standard mana amount */
 		int mana = 40;
 
@@ -757,7 +757,7 @@ bool lay_rune(int type)
 	}
 
 	/* Create a rune */
-	place_trap(py, px, type, 0);
+	place_trap(cave, py, px, type, 0);
 
 	/* Increment the rune count. */
 	num_runes_on_level[type - 1]++;
@@ -1564,14 +1564,14 @@ bool detect_traps(int range, bool show)
 			/* check range */
 			if (distance(py, px, y, x) <= range) {
 				/* Reveal invisible traps */
-				if (cave_invisible_trap(y, x)) {
-					if (reveal_trap(y, x, 100, FALSE)) {
+				if (square_invisible_trap(cave, y, x)) {
+					if (square_reveal_trap(cave, y, x, 100, FALSE)) {
 						detect = TRUE;
 					}
 				}
 
 				/* Notice existing traps */
-				if (cave_player_trap(y, x))
+				if (square_player_trap(cave, y, x))
 					detect = TRUE;
 
 				/* Mark grid as detected */
@@ -3892,8 +3892,8 @@ bool listen_to_natural_creatures(void)
 		/* Scan all normal grids */
 		for (x = 1; x < DUNGEON_WID - 1; x++) {
 			/* Detect invisible traps */
-			if (cave_invisible_trap(y, x)) {
-				(void) reveal_trap(y, x, 100, FALSE);
+			if (square_invisible_trap(cave, y, x)) {
+				(void) square_reveal_trap(cave, y, x, 100, FALSE);
 			}
 		}
 	}
@@ -4664,7 +4664,7 @@ void destroy_area(int y1, int x1, int r, bool full)
 				delete_object(y, x);
 
 				/* Decrement the trap or rune count. */
-				(void) remove_trap(y, x, FALSE, -1);
+				(void) square_remove_trap(cave, y, x, FALSE, -1);
 
 				/* Wall (or floor) type */
 				t = randint0(200);
@@ -4975,7 +4975,7 @@ void earthquake(int cy, int cx, int r, bool volcano)
 								continue;
 
 							/* Hack -- no safety on glyph of warding */
-							if (cave_trap_specific(y, x, RUNE_PROTECT))
+							if (square_trap_specific(cave, y, x, RUNE_PROTECT))
 								continue;
 
 							/* Important -- Skip "quake" grids */
@@ -5076,7 +5076,7 @@ void earthquake(int cy, int cx, int r, bool volcano)
 				delete_object(yy, xx);
 
 				/* Delete traps */
-				(void) remove_trap(yy, xx, FALSE, -1);
+				(void) square_remove_trap(cave, yy, xx, FALSE, -1);
 
 				/* Wall (or floor) type */
 				t = (floor ? randint0(120) : 200);
@@ -5888,7 +5888,7 @@ bool trap_creation(void)
 		int y = py + ddy_ddd[i], x = px + ddx_ddd[i];
 		feature_type *f_ptr = &f_info[cave->feat[x][y]];
 		if (tf_has(f_ptr->flags, TF_TREE))
-			place_trap(y, x, -1, p_ptr->depth);
+			place_trap(cave, y, x, -1, p_ptr->depth);
 	}
 
 	return (project(-1, 1, py, px, 0, GF_MAKE_TRAP, flg, 0, 0));

@@ -56,9 +56,10 @@ bool is_valid_pf(int y, int x)
 
 	/* Optionally alter known traps/doors on movement */
 	if (OPT(easy_alter) && (tf_has(f_ptr->flags, TF_DOOR_CLOSED)
-							|| cave_visible_trap(y, x))) {
+							|| square_visible_trap(cave, y, x))) {
 		return (TRUE);
-	} else if (cave_visible_trap(y, x) && cave_player_trap(y, x))
+	} else if (square_visible_trap(cave, y, x) && 
+			   square_player_trap(cave, y, x))
 		return (FALSE);
 
 	/* Require moveable space */
@@ -660,7 +661,7 @@ static bool run_test(void)
 
 
 		/* Step if there's a path in the right direction */
-		if (tf_has(f_ptr->flags, TF_RUN1) && !cave_visible_trap(row, col)) {
+		if (tf_has(f_ptr->flags, TF_RUN1) && !square_visible_trap(cave, row, col)) {
 			p_ptr->run_cur_dir = new_dir;
 			return (FALSE);
 		}
@@ -670,7 +671,7 @@ static bool run_test(void)
 		row = py + ddy[left_dir];
 		col = px + ddx[left_dir];
 		f_ptr = &f_info[cave->feat[row][col]];
-		if (tf_has(f_ptr->flags, TF_RUN1) && !cave_visible_trap(row, col))
+		if (tf_has(f_ptr->flags, TF_RUN1) && !square_visible_trap(cave, row, col))
 			option = left_dir;
 
 		/* Check to the right */
@@ -678,7 +679,7 @@ static bool run_test(void)
 		row = py + ddy[right_dir];
 		col = px + ddx[right_dir];
 		f_ptr = &f_info[cave->feat[row][col]];
-		if (tf_has(f_ptr->flags, TF_RUN1) && !cave_visible_trap(row, col))
+		if (tf_has(f_ptr->flags, TF_RUN1) && !square_visible_trap(cave, row, col))
 			option2 = right_dir;
 
 		/* Stop if it's a fork */
@@ -701,7 +702,7 @@ static bool run_test(void)
 
 
 		/* Step if there's grass in the right direction */
-		if (tf_has(f_ptr->flags, TF_RUN2) && !cave_visible_trap(row, col)) {
+		if (tf_has(f_ptr->flags, TF_RUN2) && !square_visible_trap(cave, row, col)) {
 			p_ptr->run_cur_dir = new_dir;
 			return (FALSE);
 		}
@@ -710,7 +711,7 @@ static bool run_test(void)
 		row = py + ddy[left_dir];
 		col = px + ddx[left_dir];
 		f_ptr = &f_info[cave->feat[row][col]];
-		if (tf_has(f_ptr->flags, TF_RUN2) && !cave_visible_trap(row, col))
+		if (tf_has(f_ptr->flags, TF_RUN2) && !square_visible_trap(cave, row, col))
 			option = left_dir;
 
 		/* Check to the right */
@@ -718,7 +719,7 @@ static bool run_test(void)
 		row = py + ddy[right_dir];
 		col = px + ddx[right_dir];
 		f_ptr = &f_info[cave->feat[row][col]];
-		if (tf_has(f_ptr->flags, TF_RUN2) && !cave_visible_trap(row, col))
+		if (tf_has(f_ptr->flags, TF_RUN2) && !square_visible_trap(cave, row, col))
 			option2 = right_dir;
 
 		/* Stop if it's a fork */
@@ -802,7 +803,7 @@ static bool run_test(void)
 
 			/* Boring grids */
 			if (!tf_has(f_ptr->flags, TF_INTERESTING) &&
-				!cave_visible_trap(row, col)) {
+				!square_visible_trap(cave, row, col)) {
 				/* Ignore */
 				notice = FALSE;
 			}

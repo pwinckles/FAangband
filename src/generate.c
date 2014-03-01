@@ -434,7 +434,7 @@ static void clear_cave(void)
 
 	wipe_o_list();
 	wipe_m_list();
-	wipe_trap_list();
+	wipe_trap_list(cave);
 	/* Clear flags and flow information. */
 	for (y = 0; y < DUNGEON_HGT; y++) {
 		for (x = 0; x < DUNGEON_WID; x++) {

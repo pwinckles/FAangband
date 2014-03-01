@@ -1460,55 +1460,6 @@ static bool do_cmd_disarm_chest(int y, int x, s16b o_idx)
 
 
 /**
- * Return the number of terrain features with a given flag around (or under) 
- * the character
- */
-int count_feats(int *y, int *x, int flag, bool under)
-{
-	int d;
-	int xx, yy;
-	int count;
-	feature_type *f_ptr;
-
-	/* Count how many matches */
-	count = 0;
-
-	/* Check around (and under) the character */
-	for (d = 0; d < 9; d++) {
-		/* Not searching under the character */
-		if ((d == 8) && !under)
-			continue;
-
-		/* Extract adjacent (legal) location */
-		yy = p_ptr->py + ddy_ddd[d];
-		xx = p_ptr->px + ddx_ddd[d];
-		f_ptr = &f_info[cave->feat[yy][xx]];
-
-		/* Paranoia */
-		if (!in_bounds_fully(yy, xx))
-			continue;
-
-		/* Must have knowledge */
-		if (!sqinfo_has(cave->info[yy][xx], SQUARE_MARK))
-			continue;
-
-		/* Not looking for this feature */
-		if (!tf_has(f_ptr->flags, flag))
-			continue;
-
-		/* Count it */
-		++count;
-
-		/* Remember the location of the last one found */
-		*y = yy;
-		*x = xx;
-	}
-
-	/* All done */
-	return count;
-}
-
-/**
  * Return the number of visible traps around (or under) the character
  */
 int count_traps(int *y, int *x)
@@ -1535,7 +1486,7 @@ int count_traps(int *y, int *x)
 			continue;
 
 		/* No trap */
-		if (!cave_visible_trap(yy, xx))
+		if (!square_visible_trap(cave, yy, xx))
 			continue;
 
 		/* Count it */
@@ -2219,7 +2170,7 @@ static bool do_cmd_disarm_test(int y, int x)
 	}
 
 	/* Require an actual trap, web or glyph */
-	if (!cave_visible_trap(y, x)) {
+	if (!square_visible_trap(cave, y, x)) {
 		/* Message */
 		msg("You see nothing there to disarm.");
 
@@ -2253,7 +2204,7 @@ extern bool do_cmd_disarm_aux(int y, int x)
 		return (FALSE);
 
 	/* Choose trap */
-	if (!get_trap(y, x, &idx))
+	if (!get_trap(cave, y, x, &idx))
 		return (FALSE);
 	t_ptr = &trap_list[idx];
 
@@ -2284,7 +2235,7 @@ extern bool do_cmd_disarm_aux(int y, int x)
 	/* Success */
 	if ((power == 0) || (randint0(100) < j)) {
 		/* Remove the trap */
-		(void) remove_trap(y, x, TRUE, idx);
+		(void) square_remove_trap(cave, y, x, TRUE, idx);
 
 		/* Reward */
 		gain_exp(power);
@@ -2627,7 +2578,7 @@ void do_cmd_alter_aux(int dir)
 
 	/* Some players can set traps.  Total number is checked in py_set_trap. */
 	else if (player_has(PF_TRAP) && tf_has(f_ptr->flags, TF_MTRAP) &&
-			 !cave_monster_trap(y, x)) {
+			 !square_monster_trap(cave, y, x)) {
 		/* Make sure not to repeat */
 		cmd_set_repeat(0);
 
@@ -2636,13 +2587,13 @@ void do_cmd_alter_aux(int dir)
 	}
 
 	/* Disarm advanced monster traps */
-	else if (cave_advanced_monster_trap(y, x)) {
+	else if (square_advanced_monster_trap(cave, y, x)) {
 		/* Disarm */
 		more = do_cmd_disarm_aux(y, x);
 	}
 
 	/* Disarm advanced monster traps */
-	else if (cave_basic_monster_trap(y, x)) {
+	else if (square_basic_monster_trap(cave, y, x)) {
 		/* Modify */
 		if (!py_modify_trap(y, x))
 			return;
@@ -2863,7 +2814,7 @@ static bool do_cmd_walk_test(int y, int x)
 		return (TRUE);
 
 	/* Check for being stuck in a web */
-	if (cave_web(p_ptr->py, p_ptr->px)) {
+	if (square_web(cave, p_ptr->py, p_ptr->px)) {
 		msg("You are stuck!");
 		return (FALSE);
 	}
@@ -3004,7 +2955,7 @@ void do_cmd_pathfind(cmd_code code, cmd_arg args[])
 	}
 
 	/* Hack -- handle stuck players */
-	if (cave_web(p_ptr->py, p_ptr->px)) {
+	if (square_web(cave, p_ptr->py, p_ptr->px)) {
 		/* Tell the player */
 		msg("You are stuck!");
 

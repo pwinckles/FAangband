@@ -3075,7 +3075,7 @@ static bool project_f(int who, int y, int x, int dist, int dam, int typ)
 	case GF_KILL_TRAP:
 		{
 			/* Destroy traps */
-			if (cave_player_trap(y, x)) {
+			if (square_player_trap(cave, y, x)) {
 				/* 95% chance of success. */
 				if (randint1(20) != 20) {
 					/* Check line of sight */
@@ -3085,7 +3085,7 @@ static bool project_f(int who, int y, int x, int dist, int dam, int typ)
 					}
 
 					/* Destroy the trap(s) */
-					remove_trap(y, x, FALSE, -1);
+					square_remove_trap(cave, y, x, FALSE, -1);
 				}
 				/* 5% chance of setting off the trap. */
 				else {
@@ -3300,7 +3300,7 @@ static bool project_f(int who, int y, int x, int dist, int dam, int typ)
 				break;
 
 			/* Place a trap */
-			place_trap(y, x, -1, p_ptr->depth);
+			place_trap(cave, y, x, -1, p_ptr->depth);
 
 			break;
 		}
@@ -3848,7 +3848,7 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
 	int do_fear = 0;
 
 	/* On a magic defence rune? */
-	bool magdef_rune = cave_trap_specific(y, x, RUNE_MAGDEF);
+	bool magdef_rune = square_trap_specific(cave, y, x, RUNE_MAGDEF);
 
 	/* Hold the monster name */
 	char m_name[80];
@@ -7583,9 +7583,9 @@ static bool project_t(int who, int y, int x, int dam, int typ, int flg)
 			}
 
 			/* Clears webs. */
-			if (cave_web(y, x)) {
+			if (square_web(cave, y, x)) {
 				/* Remove the web */
-				remove_trap_kind(y, x, FALSE, OBST_WEB);
+				square_remove_trap_kind(cave, y, x, FALSE, OBST_WEB);
 			}
 
 			break;
@@ -8089,11 +8089,11 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg,
 		x1 = px;
 
 		/* Add rune of power effect */
-		if (cave_trap_specific(py, px, RUNE_POWER))
+		if (square_trap_specific(cave, py, px, RUNE_POWER))
 			dam += dam / 5;
 
 		/* Add rune of elements effect */
-		if (cave_trap_specific(py, px, RUNE_ELEMENTS)) {
+		if (square_trap_specific(cave, py, px, RUNE_ELEMENTS)) {
 			if ((typ == GF_FIRE) || (typ == GF_COLD) || (typ == GF_ELEC)
 				|| (typ == GF_ACID) || (typ == GF_PLASMA)
 				|| (typ == GF_ICE))
@@ -8110,11 +8110,11 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg,
 		x1 = m_list[who].fx;
 
 		/* Subtract rune of power effect */
-		if (cave_trap_specific(py, px, RUNE_POWER))
+		if (square_trap_specific(cave, py, px, RUNE_POWER))
 			dam -= dam / 5;
 
 		/* Subtract rune of power effect */
-		if (cave_trap_specific(py, px, RUNE_ELEMENTS)) {
+		if (square_trap_specific(cave, py, px, RUNE_ELEMENTS)) {
 			if ((typ == GF_FIRE) || (typ == GF_COLD) || (typ == GF_ELEC)
 				|| (typ == GF_ACID) || (typ == GF_PLASMA)
 				|| (typ == GF_ICE))
@@ -8316,7 +8316,7 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg,
 		 */
 		for (y = y0 - rad; y <= y0 + rad; y++) {
 			for (x = x0 - rad; x <= x0 + rad; x++) {
-				feature_type *f_ptr = &f_info[cave->feat[y][x]];
+				feature_type *f_ptr;
 
 				/* Center grid has already been stored. */
 				if ((y == y0) && (x == x0))
@@ -8329,6 +8329,8 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg,
 				/* Ignore "illegal" locations */
 				if (!in_bounds(y, x))
 					continue;
+
+				f_ptr = &f_info[cave->feat[y][x]];
 
 				/* Some explosions are allowed to affect one layer of walls */
 				/* All exposions can affect one layer of rubble or trees -BR- */

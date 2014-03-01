@@ -3190,7 +3190,7 @@ bool summon_specific(int y1, int x1, bool scattered, int lev, int type)
 				continue;
 
 			/* Hack -- no summon on glyph of warding */
-			if (cave_trap_specific(y, x, RUNE_PROTECT))
+			if (square_trap_specific(cave, y, x, RUNE_PROTECT))
 				continue;
 
 			/* Okay */
@@ -3273,7 +3273,7 @@ bool summon_questor(int y1, int x1)
 			continue;
 
 		/* Hack -- no summon on glyph of warding */
-		if (cave_trap_specific(y, x, RUNE_PROTECT))
+		if (square_trap_specific(cave, y, x, RUNE_PROTECT))
 			continue;
 
 		/* Okay */

@@ -162,13 +162,13 @@ void show_player(void)
 		int xx = p_ptr->px + ddx_ddd[i];
 		f_ptr = &f_info[adj_grid[i]];
 
-		if (cave_visible_trap(yy, xx))
+		if (square_visible_trap(cave, yy, xx))
 			exist_trap = TRUE;
 		if (tf_has(f_ptr->flags, TF_DOOR_CLOSED))
 			exist_door = TRUE;
 		if (tf_has(f_ptr->flags, TF_ROCK))
 			exist_rock = TRUE;
-		if (cave_monster_trap(yy, xx))
+		if (square_monster_trap(cave, yy, xx))
 			exist_mtrap = TRUE;
 		if (adj_grid[i] == FEAT_OPEN)
 			exist_open_door = TRUE;
@@ -180,7 +180,7 @@ void show_player(void)
 	f_ptr = &f_info[adj_grid[8]];
 
 	/* In a web? */
-	if (cave_web(p_ptr->py, p_ptr->px))
+	if (square_web(cave, p_ptr->py, p_ptr->px))
 		exist_trap = TRUE;
 
 	/* Alter a grid */

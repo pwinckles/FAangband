@@ -58,7 +58,6 @@ extern void fall_off_cliff(void);
 extern void move_player(int dir);
 
 /* cmd2.c */
-int count_feats(int *y, int *x, int flag, bool under);
 int count_traps(int *y, int *x);
 int count_chests(int *y, int *x, bool trapped);
 int coords_to_dir(int y, int x);

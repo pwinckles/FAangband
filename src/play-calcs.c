@@ -2603,7 +2603,7 @@ extern void calc_bonuses(object_type inventory[], player_state * state,
 		state->pspeed += 3;
 
 	/* Speed boost for rune of speed */
-	if (cave_trap_specific(p_ptr->py, p_ptr->px, RUNE_SPEED))
+	if (square_trap_specific(cave, p_ptr->py, p_ptr->px, RUNE_SPEED))
 		state->pspeed += 10;
 
 	/* Dwarves are good miners */
@@ -3019,7 +3019,7 @@ extern void calc_bonuses(object_type inventory[], player_state * state,
 	}
 
 	/* Rune of Magical Defence */
-	if (cave_trap_specific(p_ptr->py, p_ptr->px, RUNE_MAGDEF)) {
+	if (square_trap_specific(cave, p_ptr->py, p_ptr->px, RUNE_MAGDEF)) {
 		if (state->skills[SKILL_SAVE] <= 100)
 			state->skills[SKILL_SAVE] +=
 				(100 - state->skills[SKILL_SAVE]) / 2;

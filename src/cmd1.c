@@ -75,11 +75,11 @@ bool search(bool verbose)
 			/* Sometimes, notice things */
 			if (randint0(100) < chance) {
 				/* Invisible trap */
-				if (cave_invisible_trap(y, x)) {
+				if (square_invisible_trap(cave, y, x)) {
 					found = TRUE;
 
 					/* Reveal one or more traps, display a message */
-					if (reveal_trap(y, x, chance, TRUE)) {
+					if (square_reveal_trap(cave, y, x, chance, TRUE)) {
 						/* Disturb */
 						disturb(0, 0);
 					}
@@ -793,8 +793,8 @@ void move_player(int dir)
 
 	/* Option to disarm a visible trap. -TNB- */
 	/* Hack - Rogues can walk over their own trap - BR */
-	if (OPT(easy_alter) && cave_visible_trap(y, x)
-		&& cave_player_trap(y, x)) {
+	if (OPT(easy_alter) && square_visible_trap(cave, y, x)
+		&& square_player_trap(cave, y, x)) {
 		bool more = FALSE;
 		/* Auto-repeat if not already repeating */
 		if (cmd_get_nrepeats() == 0)
@@ -1068,16 +1068,16 @@ void move_player(int dir)
 		/* Flying players have a chance to miss traps */
 		if ((p_ptr->schange == SHAPE_BAT)
 			|| (p_ptr->schange == SHAPE_WYRM)) {
-			if (cave_invisible_trap(y, x) && cave_player_trap(y, x)
+			if (square_invisible_trap(cave, y, x) && square_player_trap(cave, y, x)
 				&& (randint0(3) != 0))
 				trapped = FALSE;
-			else if (cave_visible_trap(y, x) && cave_player_trap(y, x) &&
+			else if (square_visible_trap(cave, y, x) && square_player_trap(cave, y, x) &&
 					 (randint0(10) != 0))
 				trapped = FALSE;
 		}
 
 		/* Discover invisible traps */
-		if (cave_invisible_trap(y, x) && trapped) {
+		if (square_invisible_trap(cave, y, x) && trapped) {
 			/* Disturb */
 			disturb(0, 0);
 
@@ -1086,7 +1086,7 @@ void move_player(int dir)
 		}
 
 		/* Set off a visible trap */
-		else if (cave_visible_trap(y, x) && cave_player_trap(y, x) &&
+		else if (square_visible_trap(cave, y, x) && square_player_trap(cave, y, x) &&
 				 trapped) {
 			/* Disturb */
 			disturb(0, 0);
@@ -1096,7 +1096,7 @@ void move_player(int dir)
 		}
 
 		/* Walk on a monster trap */
-		else if (cave_monster_trap(y, x)) {
+		else if (square_monster_trap(cave, y, x)) {
 			msg("You inspect your cunning trap.");
 		}
 	}
