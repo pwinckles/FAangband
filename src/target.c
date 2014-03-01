@@ -469,7 +469,7 @@ static bool target_set_interactive_accept(int y, int x)
 
 
 	/* Player grids are always interesting */
-	if (cave_m_idx[y][x] < 0)
+	if (cave->m_idx[y][x] < 0)
 		return (TRUE);
 
 
@@ -479,8 +479,8 @@ static bool target_set_interactive_accept(int y, int x)
 
 
 	/* Visible monsters */
-	if (cave_m_idx[y][x] > 0) {
-		monster_type *m_ptr = &m_list[cave_m_idx[y][x]];
+	if (cave->m_idx[y][x] > 0) {
+		monster_type *m_ptr = &m_list[cave->m_idx[y][x]];
 
 		/* Visible monsters */
 		if (m_ptr->ml)
@@ -500,8 +500,8 @@ static bool target_set_interactive_accept(int y, int x)
 	}
 
 	/* Interesting memorized features */
-	if (sqinfo_has(cave_info[y][x], SQUARE_MARK)) {
-		feature_type *f_ptr = &f_info[cave_feat[y][x]];
+	if (sqinfo_has(cave->info[y][x], SQUARE_MARK)) {
+		feature_type *f_ptr = &f_info[cave->feat[y][x]];
 
 		/* Notice interesting things */
 		if (tf_has(f_ptr->flags, TF_INTERESTING))
@@ -534,22 +534,22 @@ static struct point_set *target_set_interactive_prepare(int mode)
 			/* Monster mode */
 			if (mode & (TARGET_KILL)) {
 				/* Must contain a monster */
-				if (!(cave_m_idx[y][x] > 0))
+				if (!(cave->m_idx[y][x] > 0))
 					continue;
 
 				/* Must be a targettable monster */
-				if (!target_able(&m_list[cave_m_idx[y][x]]))
+				if (!target_able(&m_list[cave->m_idx[y][x]]))
 					continue;
 			}
 
 			/* Object mode */
 			if (mode & (TARGET_OBJ)) {
 				/* Must contain an object */
-				if (!(cave_o_idx[y][x] > 0))
+				if (!(cave->o_idx[y][x] > 0))
 					continue;
 
 				/* Must be a targettable object */
-				if (!target_able_obj(cave_o_idx[y][x]))
+				if (!target_able_obj(cave->o_idx[y][x]))
 					continue;
 			}
 
@@ -745,7 +745,7 @@ static ui_event target_set_interactive_aux(int y, int x, int mode)
 
 	char coords[20];
 
-	feature_type *f_ptr = &f_info[cave_feat[y][x]];
+	feature_type *f_ptr = &f_info[cave->feat[y][x]];
 
 	/* Describe the square location */
 	coords_desc(coords, sizeof(coords), y, x);
@@ -765,7 +765,7 @@ static ui_event target_set_interactive_aux(int y, int x, int mode)
 
 
 		/* The player */
-		if (cave_m_idx[y][x] < 0) {
+		if (cave->m_idx[y][x] < 0) {
 			/* Description */
 			s1 = "You are ";
 
@@ -799,8 +799,8 @@ static ui_event target_set_interactive_aux(int y, int x, int mode)
 		}
 
 		/* Actual monsters */
-		if (cave_m_idx[y][x] > 0) {
-			monster_type *m_ptr = &m_list[cave_m_idx[y][x]];
+		if (cave->m_idx[y][x] > 0) {
+			monster_type *m_ptr = &m_list[cave->m_idx[y][x]];
 			monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
 			/* Visible */
@@ -819,7 +819,7 @@ static ui_event target_set_interactive_aux(int y, int x, int mode)
 				monster_race_track(m_ptr->r_idx);
 
 				/* Hack -- health bar for this monster */
-				health_track(cave_m_idx[y][x]);
+				health_track(cave->m_idx[y][x]);
 
 				/* Hack -- handle stuff */
 				handle_stuff(p_ptr);
@@ -846,7 +846,7 @@ static ui_event target_set_interactive_aux(int y, int x, int mode)
 						char buf[80];
 
 						/* Describe the monster */
-						look_mon_desc(buf, sizeof(buf), cave_m_idx[y][x]);
+						look_mon_desc(buf, sizeof(buf), cave->m_idx[y][x]);
 
 						/* Describe, and prompt for recall */
 						if (p_ptr->wizard) {
@@ -960,7 +960,7 @@ static ui_event target_set_interactive_aux(int y, int x, int mode)
 			/* Interact */
 			while (1) {
 				/* Change the intro */
-				if (cave_m_idx[y][x] < 0) {
+				if (cave->m_idx[y][x] < 0) {
 					s1 = "You are ";
 					s2 = "on ";
 				} else {
@@ -1130,10 +1130,10 @@ static ui_event target_set_interactive_aux(int y, int x, int mode)
 
 
 		/* Feature (apply "mimic") */
-		feat = f_info[cave_feat[y][x]].mimic;
+		feat = f_info[cave->feat[y][x]].mimic;
 
 		/* Require knowledge about grid, or ability to see grid */
-		if (!sqinfo_has(cave_info[y][x], SQUARE_MARK) &&
+		if (!sqinfo_has(cave->info[y][x], SQUARE_MARK) &&
 			!player_can_see_bold(y, x)) {
 			/* Forget feature */
 			feat = FEAT_NONE;
@@ -1230,7 +1230,7 @@ bool target_set_closest(int mode)
 	/* Find the first monster in the queue */
 	y = targets->pts[0].y;
 	x = targets->pts[0].x;
-	m_idx = cave_m_idx[y][x];
+	m_idx = cave->m_idx[y][x];
 
 	/* Target the monster, if possible */
 	if ((m_idx <= 0) || !target_able(&m_list[m_idx])) {
@@ -1248,7 +1248,7 @@ bool target_set_closest(int mode)
 
 	/* Set up target information */
 	monster_race_track(m_ptr->r_idx);
-	health_track(cave_m_idx[y][x]);
+	health_track(cave->m_idx[y][x]);
 	target_set_monster(m_ptr);
 
 	/* Visual cue */
@@ -1329,22 +1329,22 @@ static int draw_path(u16b path_n, u16b * path_g, wchar_t * c, int *a,
 		Term_what(Term->scr->cx, Term->scr->cy, a + i, c + i);
 
 		/* Choose a colour. */
-		if (cave_m_idx[y][x] && m_list[cave_m_idx[y][x]].ml) {
+		if (cave->m_idx[y][x] && m_list[cave->m_idx[y][x]].ml) {
 			/* Visible monsters are red. */
 			colour = TERM_L_RED;
 		}
 
-		else if (cave_o_idx[y][x] && o_list[cave_o_idx[y][x]].marked)
+		else if (cave->o_idx[y][x] && o_list[cave->o_idx[y][x]].marked)
 			/* Known objects are yellow. */
 			colour = TERM_YELLOW;
 
 		else if (!cave_project(y, x) &&
-				 (sqinfo_has(cave_info[y][x], SQUARE_MARK) ||
+				 (sqinfo_has(cave->info[y][x], SQUARE_MARK) ||
 				  player_can_see_bold(y, x)))
 			/* Known walls are blue. */
 			colour = TERM_BLUE;
 
-		else if (!sqinfo_has(cave_info[y][x], SQUARE_MARK) &&
+		else if (!sqinfo_has(cave->info[y][x], SQUARE_MARK) &&
 				 !player_can_see_bold(y, x))
 			/* Unknown squares are grey. */
 			colour = TERM_L_DARK;
@@ -1507,11 +1507,11 @@ bool target_set_interactive(int mode, int x, int y)
 			/* Update help */
 			if (help) {
 				bool good_target = FALSE;
-				if ((mode & TARGET_KILL) && (cave_m_idx[y][x] > 0)
-					&& target_able(&m_list[cave_m_idx[y][x]]))
+				if ((mode & TARGET_KILL) && (cave->m_idx[y][x] > 0)
+					&& target_able(&m_list[cave->m_idx[y][x]]))
 					good_target = TRUE;
-				if ((mode & TARGET_OBJ) && (cave_o_idx[y][x] > 0)
-					&& target_able_obj(cave_o_idx[y][x]))
+				if ((mode & TARGET_OBJ) && (cave->o_idx[y][x] > 0)
+					&& target_able_obj(cave->o_idx[y][x]))
 					good_target = TRUE;
 				target_display_help(good_target, !(flag && temp_n));
 			}
@@ -1553,7 +1553,7 @@ bool target_set_interactive(int mode, int x, int y)
 					x = KEY_GRID_X(press);	//.mouse.x;
 					if (press.mouse.mods & KC_MOD_CONTROL) {
 						/* same as keyboard target selection command below */
-						int m_idx = cave_m_idx[y][x];
+						int m_idx = cave->m_idx[y][x];
 
 						if ((m_idx > 0) && target_able(&m_list[m_idx])) {
 							monster_type *m_ptr = &m_list[m_idx];
@@ -1578,7 +1578,7 @@ bool target_set_interactive(int mode, int x, int y)
 				} else {
 					y = KEY_GRID_Y(press);	//.mouse.y;
 					x = KEY_GRID_X(press);	//.mouse.x;
-					if (cave_m_idx[y][x] || cave_o_idx[y][x]) {
+					if (cave->m_idx[y][x] || cave->o_idx[y][x]) {
 						/* reset the flag, to make sure we stay in this mode if
 						 * something is actually there */
 						flag = FALSE;
@@ -1652,7 +1652,7 @@ bool target_set_interactive(int mode, int x, int y)
 				case '.':
 					{
 						if (mode & TARGET_KILL) {
-							int m_idx = cave_m_idx[y][x];
+							int m_idx = cave->m_idx[y][x];
 							struct monster *m = &m_list[m_idx];
 
 							if ((m_idx > 0) && target_able(m)) {
@@ -1663,7 +1663,7 @@ bool target_set_interactive(int mode, int x, int y)
 								bell("Illegal target!");
 							}
 						} else if (mode & TARGET_OBJ) {
-							int o_idx = cave_o_idx[y][x];
+							int o_idx = cave->o_idx[y][x];
 
 							if ((o_idx > 0) && target_able_obj(o_idx)) {
 								target_set_object(o_idx);
@@ -1764,10 +1764,10 @@ bool target_set_interactive(int mode, int x, int y)
 		else {
 			/* Update help */
 			if (help) {
-				bool good_target = ((cave_m_idx[y][x] > 0)
+				bool good_target = ((cave->m_idx[y][x] > 0)
 									&&
 									target_able(&m_list
-												[cave_m_idx[y][x]]));
+												[cave->m_idx[y][x]]));
 				target_display_help(good_target,
 									!(flag && point_set_size(targets)));
 			}
@@ -1879,7 +1879,7 @@ bool target_set_interactive(int mode, int x, int y)
 						targets = target_set_interactive_prepare(mode);
 					}
 
-					if (cave_m_idx[y][x] || cave_o_idx[y][x]) {
+					if (cave->m_idx[y][x] || cave->o_idx[y][x]) {
 						/* scan the interesting list and see if there's 
 						 * anything here */
 						for (i = 0; i < point_set_size(targets); i++) {
@@ -2014,9 +2014,9 @@ bool target_set_interactive(int mode, int x, int y)
 
 				/* Hack to stop looking outside town walls */
 				if (!p_ptr->depth) {
-					if (cave_feat[y + dy][x] == FEAT_PERM_SOLID)
+					if (cave->feat[y + dy][x] == FEAT_PERM_SOLID)
 						dy = 0;
-					if (cave_feat[y][x + dx] == FEAT_PERM_SOLID)
+					if (cave->feat[y][x + dx] == FEAT_PERM_SOLID)
 						dx = 0;
 				}
 

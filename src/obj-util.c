@@ -789,7 +789,7 @@ int scan_floor(int *items, int max_size, int y, int x, int mode)
 		return 0;
 
 	/* Scan all objects in the grid */
-	for (this_o_idx = cave_o_idx[y][x]; this_o_idx;
+	for (this_o_idx = cave->o_idx[y][x]; this_o_idx;
 		 this_o_idx = next_o_idx) {
 		object_type *o_ptr;
 
@@ -895,7 +895,7 @@ void excise_object_idx(int o_idx)
 		int x = j_ptr->ix;
 
 		/* Scan all objects in the grid */
-		for (this_o_idx = cave_o_idx[y][x]; this_o_idx;
+		for (this_o_idx = cave->o_idx[y][x]; this_o_idx;
 			 this_o_idx = next_o_idx) {
 			object_type *o_ptr;
 
@@ -910,7 +910,7 @@ void excise_object_idx(int o_idx)
 				/* No previous */
 				if (prev_o_idx == 0) {
 					/* Remove from list */
-					cave_o_idx[y][x] = next_o_idx;
+					cave->o_idx[y][x] = next_o_idx;
 				}
 
 				/* Real previous */
@@ -987,7 +987,7 @@ void delete_object(int y, int x)
 
 
 	/* Scan all objects in the grid */
-	for (this_o_idx = cave_o_idx[y][x]; this_o_idx;
+	for (this_o_idx = cave->o_idx[y][x]; this_o_idx;
 		 this_o_idx = next_o_idx) {
 		object_type *o_ptr;
 
@@ -1003,7 +1003,7 @@ void delete_object(int y, int x)
 		/* Count objects */
 		o_cnt--;
 	}
-	/* Objects are gone */ cave_o_idx[y][x] = 0;
+	/* Objects are gone */ cave->o_idx[y][x] = 0;
 
 	/* Visual update */
 	light_spot(y, x);
@@ -1067,9 +1067,9 @@ static void compact_objects_aux(int i1, int i2)
 		x = o_ptr->ix;
 
 		/* Repair grid */
-		if (cave_o_idx[y][x] == i1) {
+		if (cave->o_idx[y][x] == i1) {
 			/* Repair */
-			cave_o_idx[y][x] = i2;
+			cave->o_idx[y][x] = i2;
 		}
 	}
 
@@ -1221,7 +1221,7 @@ void compact_objects(int size)
  *
  * Note -- we do NOT visually reflect these (irrelevant) changes
  *
- * Hack -- we clear the "cave_o_idx[y][x]" field for every grid,
+ * Hack -- we clear the "cave->o_idx[y][x]" field for every grid,
  * and the "m_ptr->next_o_idx" field for every monster, since
  * we know we are clearing every object.  Technically, we only
  * clear those fields for grids/monsters containing objects,
@@ -1263,7 +1263,7 @@ void wipe_o_list(void)
 			int x = o_ptr->ix;
 
 			/* Hack -- see above */
-			cave_o_idx[y][x] = 0;
+			cave->o_idx[y][x] = 0;
 		}
 
 		/* Wipe the object */
@@ -1339,7 +1339,7 @@ s16b o_pop(void)
  */
 object_type *get_first_object(int y, int x)
 {
-	s16b o_idx = cave_o_idx[y][x];
+	s16b o_idx = cave->o_idx[y][x];
 
 	if (o_idx)
 		return (&o_list[o_idx]);
@@ -2399,7 +2399,7 @@ static s16b floor_get_idx_oldest_squelched(int y, int x)
 
 	object_type *o_ptr = NULL;
 
-	for (this_o_idx = cave_o_idx[y][x]; this_o_idx;
+	for (this_o_idx = cave->o_idx[y][x]; this_o_idx;
 		 this_o_idx = o_ptr->next_o_idx) {
 		o_ptr = &o_list[this_o_idx];
 
@@ -2424,7 +2424,7 @@ s16b floor_carry(int y, int x, object_type * j_ptr)
 
 
 	/* Scan objects in that grid for combination */
-	for (this_o_idx = cave_o_idx[y][x]; this_o_idx;
+	for (this_o_idx = cave->o_idx[y][x]; this_o_idx;
 		 this_o_idx = next_o_idx) {
 		object_type *o_ptr = &o_list[this_o_idx];
 
@@ -2477,10 +2477,10 @@ s16b floor_carry(int y, int x, object_type * j_ptr)
 		o_ptr->held_m_idx = 0;
 
 		/* Link the object to the pile */
-		o_ptr->next_o_idx = cave_o_idx[y][x];
+		o_ptr->next_o_idx = cave->o_idx[y][x];
 
 		/* Link the floor to the object */
-		cave_o_idx[y][x] = o_idx;
+		cave->o_idx[y][x] = o_idx;
 
 		/* Notice */
 		note_spot(y, x);
@@ -2573,7 +2573,7 @@ void drop_near(object_type * j_ptr, int chance, int y, int x, bool verbose)
 			/* Location */
 			ty = y + dy;
 			tx = x + dx;
-			f_ptr = &f_info[cave_feat[ty][tx]];
+			f_ptr = &f_info[cave->feat[ty][tx]];
 
 			/* Skip illegal grids */
 			if (!in_bounds_fully(ty, tx))
@@ -2617,7 +2617,7 @@ void drop_near(object_type * j_ptr, int chance, int y, int x, bool verbose)
 			/* Calculate goodness of location, given distance from source of
 			 * drop and number of objects.  Hack - If the player is dropping
 			 * the item, encourage it to pile with up to 19 other items. */
-			if (cave_m_idx[y][x] < 0) {
+			if (cave->m_idx[y][x] < 0) {
 				s = 1000 - (d + (k > 20 ? k * 5 : 0));
 			} else {
 				s = 1000 - (d + k * 5);
@@ -2675,7 +2675,7 @@ void drop_near(object_type * j_ptr, int chance, int y, int x, bool verbose)
 			ty = randint0(level_hgt);
 			tx = randint0(level_wid);
 		}
-		f_ptr = &f_info[cave_feat[ty][tx]];
+		f_ptr = &f_info[cave->feat[ty][tx]];
 
 		/* Require floor space */
 		if (!tf_has(f_ptr->flags, TF_OBJECT))
@@ -2684,7 +2684,7 @@ void drop_near(object_type * j_ptr, int chance, int y, int x, bool verbose)
 		/* Bounce to that location */
 		by = ty;
 		bx = tx;
-		f_ptr = &f_info[cave_feat[by][bx]];
+		f_ptr = &f_info[cave->feat[by][bx]];
 
 		/* Okay */
 		flag = TRUE;
@@ -2714,10 +2714,10 @@ void drop_near(object_type * j_ptr, int chance, int y, int x, bool verbose)
 	sound(MSG_DROP);
 
 	/* Confirm location */
-	f_ptr = &f_info[cave_feat[by][bx]];
+	f_ptr = &f_info[cave->feat[by][bx]];
 
 	/* Message when an object falls under the player */
-	if (verbose && (cave_m_idx[by][bx] < 0) && !squelch_item_ok(j_ptr)) {
+	if (verbose && (cave->m_idx[by][bx] < 0) && !squelch_item_ok(j_ptr)) {
 		msg("You feel something roll beneath your feet.");
 	}
 

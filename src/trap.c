@@ -35,7 +35,7 @@ bool cave_trap_specific(int y, int x, int t_idx)
 	int i;
 
 	/* First, check the trap marker */
-	if (!sqinfo_has(cave_info[y][x], SQUARE_TRAP))
+	if (!sqinfo_has(cave->info[y][x], SQUARE_TRAP))
 		return (FALSE);
 
 	/* Scan the current trap list */
@@ -63,7 +63,7 @@ bool cave_trap_flag(int y, int x, int flag)
 	int i;
 
 	/* First, check the trap marker */
-	if (!sqinfo_has(cave_info[y][x], SQUARE_TRAP))
+	if (!sqinfo_has(cave->info[y][x], SQUARE_TRAP))
 		return (FALSE);
 
 	/* Scan the current trap list */
@@ -179,10 +179,10 @@ static bool verify_trap(int y, int x, int vis)
 	/* No traps in this location. */
 	if (!trap) {
 		/* No traps */
-		sqinfo_off(cave_info[y][x], SQUARE_TRAP);
+		sqinfo_off(cave->info[y][x], SQUARE_TRAP);
 
 		/* No reason to mark this grid, ... */
-		sqinfo_off(cave_info[y][x], SQUARE_MARK);
+		sqinfo_off(cave->info[y][x], SQUARE_MARK);
 
 		/* ... unless certain conditions apply */
 		note_spot(y, x);
@@ -207,7 +207,7 @@ bool cave_visible_trap(int y, int x)
 bool cave_invisible_trap(int y, int x)
 {
 	/* First, check the trap marker */
-	if (!sqinfo_has(cave_info[y][x], SQUARE_TRAP))
+	if (!sqinfo_has(cave->info[y][x], SQUARE_TRAP))
 		return (FALSE);
 
 	/* Verify trap, require that it be invisible */
@@ -294,7 +294,7 @@ bool reveal_trap(int y, int x, int chance, bool domsg)
 	int found_trap = 0;
 
 	/* Check the trap marker */
-	if (!sqinfo_has(cave_info[y][x], SQUARE_TRAP))
+	if (!sqinfo_has(cave->info[y][x], SQUARE_TRAP))
 		return (FALSE);
 
 	/* Scan the current trap list */
@@ -308,7 +308,7 @@ bool reveal_trap(int y, int x, int chance, bool domsg)
 			if (!trf_has(t_ptr->flags, TRF_VISIBLE)) {
 				/* See the trap */
 				trf_on(t_ptr->flags, TRF_VISIBLE);
-				sqinfo_on(cave_info[y][x], SQUARE_MARK);
+				sqinfo_on(cave->info[y][x], SQUARE_MARK);
 
 				/* We found a trap */
 				found_trap++;
@@ -331,7 +331,7 @@ bool reveal_trap(int y, int x, int chance, bool domsg)
 		}
 
 		/* Memorize */
-		sqinfo_on(cave_info[y][x], SQUARE_MARK);
+		sqinfo_on(cave->info[y][x], SQUARE_MARK);
 
 		/* Redraw */
 		light_spot(y, x);
@@ -510,11 +510,11 @@ bool cave_trap_allowed(int y, int x)
 	 * We currently forbid multiple traps in a grid under normal conditions.
 	 * If this changes, various bits of code elsewhere will have to change too.
 	 */
-	if (sqinfo_has(cave_info[y][x], SQUARE_TRAP))
+	if (sqinfo_has(cave->info[y][x], SQUARE_TRAP))
 		return (FALSE);
 
 	/* Check the feature trap flag */
-	return (tf_has(f_info[cave_feat[y][x]].flags, TF_TRAP));
+	return (tf_has(f_info[cave->feat[y][x]].flags, TF_TRAP));
 }
 
 /**
@@ -541,7 +541,7 @@ bool place_trap(int y, int x, int t_idx, int trap_level)
 
 	/* We've been called with an illegal index; choose a random trap */
 	if ((t_idx <= 0) || (t_idx >= z_info->trap_max)) {
-		t_idx = pick_trap(cave_feat[y][x], trap_level);
+		t_idx = pick_trap(cave->feat[y][x], trap_level);
 	}
 
 	/* Note failure */
@@ -579,7 +579,7 @@ bool place_trap(int y, int x, int t_idx, int trap_level)
 				num_trap_on_level++;
 
 			/* Toggle on the trap marker */
-			sqinfo_on(cave_info[y][x], SQUARE_TRAP);
+			sqinfo_on(cave->info[y][x], SQUARE_TRAP);
 
 			/* Redraw the grid */
 			light_spot(y, x);
@@ -669,7 +669,7 @@ void hit_trap_aux(int y, int x, int trap)
 			if (((stage_map[p_ptr->stage][STAGE_TYPE] == CAVE)
 				 || (stage_map[p_ptr->stage][STAGE_TYPE] == VALLEY))
 				&& (!stage_map[p_ptr->stage][DOWN])) {
-				sqinfo_off(cave_info[y][x], SQUARE_MARK);
+				sqinfo_off(cave->info[y][x], SQUARE_MARK);
 				remove_trap(y, x, FALSE, trap);
 				msg("The trap fails!");
 				break;
@@ -1349,7 +1349,7 @@ void hit_trap_aux(int y, int x, int trap)
 						scatter(&y, &x, y, x, d, 0);
 
 						/* Require passable terrain */
-						f_ptr = &f_info[cave_feat[y][x]];
+						f_ptr = &f_info[cave->feat[y][x]];
 						if (!tf_has(f_ptr->flags, TF_PASSABLE))
 							continue;
 
@@ -1567,7 +1567,7 @@ extern void hit_trap(int y, int x)
 
 			/* Trap becomes visible (always XXX) */
 			trf_on(t_ptr->flags, TRF_VISIBLE);
-			sqinfo_on(cave_info[y][x], SQUARE_MARK);
+			sqinfo_on(cave->info[y][x], SQUARE_MARK);
 		}
 	}
 
@@ -1616,7 +1616,7 @@ extern void py_steal(int y, int x)
 {
 	const char *act = NULL;
 
-	monster_type *m_ptr = &m_list[cave_m_idx[y][x]];
+	monster_type *m_ptr = &m_list[cave->m_idx[y][x]];
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
 	char m_name[80];
@@ -1844,7 +1844,7 @@ extern bool py_set_trap(int y, int x)
 	}
 #if 0
 	/* Scan all objects in the grid */
-	for (this_o_idx = cave_o_idx[y][x]; this_o_idx;
+	for (this_o_idx = cave->o_idx[y][x]; this_o_idx;
 		 this_o_idx = next_o_idx) {
 		/* Acquire object */
 		o_ptr = &o_list[this_o_idx];
@@ -1864,12 +1864,12 @@ extern bool py_set_trap(int y, int x)
 	}
 
 	/* Verify */
-	if (cave_o_idx[y][x]) {
+	if (cave->o_idx[y][x]) {
 		if (destroy_message)
 			if (!get_check("Destroy all items and set a trap?"))
 				return FALSE;
 
-		for (this_o_idx = cave_o_idx[y][x]; this_o_idx;
+		for (this_o_idx = cave->o_idx[y][x]; this_o_idx;
 			 this_o_idx = next_o_idx) {
 			/* Acquire object */
 			o_ptr = &o_list[this_o_idx];
@@ -2110,7 +2110,7 @@ static void remove_trap_aux(trap_type * t_ptr, int y, int x, bool domsg)
 		num_trap_on_level--;
 
 	/* Wipe the trap */
-	sqinfo_off(cave_info[y][x], SQUARE_TRAP);
+	sqinfo_off(cave->info[y][x], SQUARE_TRAP);
 	(void) WIPE(t_ptr, trap_type);
 }
 
@@ -2325,7 +2325,7 @@ bool get_trap(int y, int x, int *idx)
 		return (FALSE);
 
 	/* Look for the trap marker */
-	if (!sqinfo_has(cave_info[y][x], SQUARE_TRAP))
+	if (!sqinfo_has(cave->info[y][x], SQUARE_TRAP))
 		return (FALSE);
 
 	/* Get a trap */
@@ -2351,7 +2351,7 @@ bool has_disarmable_trap(int y, int x)
 	int i;
 
 	/* First, check the trap marker */
-	if (!sqinfo_has(cave_info[y][x], SQUARE_TRAP))
+	if (!sqinfo_has(cave->info[y][x], SQUARE_TRAP))
 		return (FALSE);
 
 	/* Scan the current trap list */

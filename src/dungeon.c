@@ -715,7 +715,7 @@ static void process_world(void)
 		if (!(player_has(PF_WOODEN)
 			  &&
 			  (tf_has
-			   (f_info[cave_feat[p_ptr->py][p_ptr->px]].flags,
+			   (f_info[cave->feat[p_ptr->py][p_ptr->px]].flags,
 				TF_TREE)))) {
 			(void) dec_timed(TMD_SSTEALTH, 1, FALSE);
 
@@ -1933,7 +1933,7 @@ static void dungeon(void)
 			cave_set_feat(py, px, p_ptr->create_stair);
 
 			/* Mark the stairs as known */
-			sqinfo_on(cave_info[py][px], SQUARE_MARK);
+			sqinfo_on(cave->info[py][px], SQUARE_MARK);
 		}
 
 		/* Cancel the stair request */

@@ -890,7 +890,7 @@ void wr_dungeon(void)
 
 	/*** Simple "Run-Length-Encoding" of cave ***/
 
-	/* Loop across bytes of cave_info */
+	/* Loop across bytes of cave->info */
 	for (i = 0; i < SQUARE_SIZE; i++) {
 		/* Note that this will induce two wasted bytes */
 		count = 0;
@@ -899,8 +899,8 @@ void wr_dungeon(void)
 		/* Dump the cave */
 		for (y = 0; y < DUNGEON_HGT; y++) {
 			for (x = 0; x < DUNGEON_WID; x++) {
-				/* Extract the important cave_info flags */
-				tmp8u = cave_info[y][x][i];
+				/* Extract the important cave->info flags */
+				tmp8u = cave->info[y][x][i];
 
 				/* If the run is broken, or too full, flush it */
 				if ((tmp8u != prev_char) || (count == MAX_UCHAR)) {
@@ -934,7 +934,7 @@ void wr_dungeon(void)
 	for (y = 0; y < DUNGEON_HGT; y++) {
 		for (x = 0; x < DUNGEON_WID; x++) {
 			/* Extract a byte */
-			tmp8u = cave_feat[y][x];
+			tmp8u = cave->feat[y][x];
 
 			/* If the run is broken, or too full, flush it */
 			if ((tmp8u != prev_char) || (count == MAX_UCHAR)) {

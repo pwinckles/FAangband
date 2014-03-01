@@ -331,7 +331,7 @@ static void make_request(int m_idx)
  */
 bool make_attack_normal(monster_type * m_ptr, int y, int x)
 {
-	int m_idx = cave_m_idx[m_ptr->fy][m_ptr->fx];
+	int m_idx = cave->m_idx[m_ptr->fy][m_ptr->fx];
 
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
@@ -347,7 +347,7 @@ bool make_attack_normal(monster_type * m_ptr, int y, int x)
 	s32b gold;
 
 	object_type *o_ptr;
-	feature_type *f_ptr = &f_info[cave_feat[y][x]];
+	feature_type *f_ptr = &f_info[cave->feat[y][x]];
 
 	char o_name[120];
 
@@ -401,7 +401,7 @@ bool make_attack_normal(monster_type * m_ptr, int y, int x)
 	/* 
 	 * Hack -- darkness protects those who serve it.
 	 */
-	if (!sqinfo_has(cave_info[p_ptr->py][p_ptr->px], SQUARE_GLOW)
+	if (!sqinfo_has(cave->info[p_ptr->py][p_ptr->px], SQUARE_GLOW)
 		&& (p_ptr->cur_light <= 0) && (!is_daylight)
 		&& player_has(PF_UNLIGHT))
 		terrain_bonus += ac / 8 + 10;
@@ -1937,7 +1937,7 @@ bool make_attack_ranged(monster_type * m_ptr, int attack)
 
 	int k, rlev, spower, rad, manacost, temp;
 
-	int m_idx = cave_m_idx[m_ptr->fy][m_ptr->fx];
+	int m_idx = cave->m_idx[m_ptr->fy][m_ptr->fx];
 
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
 	monster_lore *l_ptr = &l_list[m_ptr->r_idx];

@@ -130,7 +130,7 @@ static void spread_traps(int num, int y0, int x0, int dy, int dx)
 		}
 
 		/* Require "naked" floor grids */
-		f_ptr = &f_info[cave_feat[y][x]];
+		f_ptr = &f_info[cave->feat[y][x]];
 		if (!(cave_naked_bold(y, x) && tf_has(f_ptr->flags, TF_TRAP)))
 			continue;
 
@@ -160,9 +160,9 @@ static bool generate_room(int y1, int x1, int y2, int x2, int light)
 
 	for (y = y1; y <= y2; y++) {
 		for (x = x1; x <= x2; x++) {
-			sqinfo_on(cave_info[y][x], SQUARE_ROOM);
+			sqinfo_on(cave->info[y][x], SQUARE_ROOM);
 			if (light)
-				sqinfo_on(cave_info[y][x], SQUARE_GLOW);
+				sqinfo_on(cave->info[y][x], SQUARE_GLOW);
 		}
 	}
 
@@ -187,7 +187,7 @@ static void generate_fill(int y1, int x1, int y2, int x2, int feat)
 
 
 /**
- * Generate helper -- mark a rectangle with a set of cave_info flags
+ * Generate helper -- mark a rectangle with a set of cave->info flags
  */
 extern void generate_mark(int y1, int x1, int y2, int x2, int flg)
 {
@@ -195,7 +195,7 @@ extern void generate_mark(int y1, int x1, int y2, int x2, int flg)
 
 	for (y = y1; y <= y2; y++) {
 		for (x = x1; x <= x2; x++) {
-			sqinfo_on(cave_info[y][x], flg);
+			sqinfo_on(cave->info[y][x], flg);
 		}
 	}
 }
@@ -713,13 +713,13 @@ extern bool generate_starburst_room(int y1, int x1, int y2, int x2,
 	for (y = y1 + 1; y < y2; y++) {
 		for (x = x1 + 1; x < x2; x++) {
 			/* Do not touch "icky" grids. */
-			if (sqinfo_has(cave_info[y][x], SQUARE_ICKY))
+			if (sqinfo_has(cave->info[y][x], SQUARE_ICKY))
 				continue;
 
 			/* Do not touch occupied grids. */
-			if (cave_m_idx[y][x] != 0)
+			if (cave->m_idx[y][x] != 0)
 				continue;
-			if (cave_o_idx[y][x] != 0)
+			if (cave->o_idx[y][x] != 0)
 				continue;
 
 
@@ -753,17 +753,17 @@ extern bool generate_starburst_room(int y1, int x1, int y2, int x2,
 								cave_set_feat(y, x, feat);
 
 								if (tf_has(f_ptr->flags, TF_FLOOR))
-									sqinfo_on(cave_info[y][x],
+									sqinfo_on(cave->info[y][x],
 											  SQUARE_ROOM);
 								else
-									sqinfo_off(cave_info[y][x],
+									sqinfo_off(cave->info[y][x],
 											   SQUARE_ROOM);
 
 								if (light)
-									sqinfo_on(cave_info[y][x],
+									sqinfo_on(cave->info[y][x],
 											  SQUARE_GLOW);
 								else
-									sqinfo_off(cave_info[y][x],
+									sqinfo_off(cave->info[y][x],
 											   SQUARE_GLOW);
 							}
 
@@ -776,7 +776,7 @@ extern bool generate_starburst_room(int y1, int x1, int y2, int x2,
 									|| (feat == FEAT_RUBBLE)) {
 									/* Make denser in the middle. */
 									if ((tf_has
-										 (f_info[cave_feat[y][x]].flags,
+										 (f_info[cave->feat[y][x]].flags,
 										  TF_FLOOR))
 										&& (randint1(max_dist + 5) >=
 											dist + 5))
@@ -785,14 +785,14 @@ extern bool generate_starburst_room(int y1, int x1, int y2, int x2,
 								if ((feat == FEAT_WATER)
 									|| (feat == FEAT_LAVA)) {
 									if (tf_has
-										(f_info[cave_feat[y][x]].flags,
+										(f_info[cave->feat[y][x]].flags,
 										 TF_FLOOR))
 										cave_set_feat(y, x, feat);
 								}
 
 								/* Light grid. */
 								if (light)
-									sqinfo_on(cave_info[y][x],
+									sqinfo_on(cave->info[y][x],
 											  SQUARE_GLOW);
 							}
 						}
@@ -813,7 +813,7 @@ extern bool generate_starburst_room(int y1, int x1, int y2, int x2,
 		for (y = y1 + 1; y < y2; y++) {
 			for (x = x1 + 1; x < x2; x++) {
 				/* Floor grids only */
-				if (tf_has(f_info[cave_feat[y][x]].flags, TF_FLOOR)) {
+				if (tf_has(f_info[cave->feat[y][x]].flags, TF_FLOOR)) {
 					/* Look in all directions. */
 					for (d = 0; d < 8; d++) {
 						/* Extract adjacent location */
@@ -821,14 +821,14 @@ extern bool generate_starburst_room(int y1, int x1, int y2, int x2,
 						int xx = x + ddx_ddd[d];
 
 						/* Join to room */
-						sqinfo_on(cave_info[yy][xx], SQUARE_ROOM);
+						sqinfo_on(cave->info[yy][xx], SQUARE_ROOM);
 
 						/* Illuminate if requested. */
 						if (light)
-							sqinfo_on(cave_info[yy][xx], SQUARE_GLOW);
+							sqinfo_on(cave->info[yy][xx], SQUARE_GLOW);
 
 						/* Look for dungeon granite. */
-						if (cave_feat[yy][xx] == FEAT_WALL_EXTRA) {
+						if (cave->feat[yy][xx] == FEAT_WALL_EXTRA) {
 							/* Turn into outer wall. */
 							cave_set_feat(yy, xx, FEAT_WALL_OUTER);
 						}
@@ -1119,7 +1119,7 @@ static bool build_type1(void)
 				if (!light) {
 					for (y = y1 - 1; y <= y2 + 1; y++) {
 						for (x = x1 - 1; x <= x2 + 1; x++) {
-							sqinfo_on(cave_info[y][x], SQUARE_GLOW);
+							sqinfo_on(cave->info[y][x], SQUARE_GLOW);
 						}
 					}
 				}
@@ -1907,8 +1907,8 @@ static void make_chamber(int c_y1, int c_x1, int c_y2, int c_x2)
 		/* left wall */
 		x = c_x1;
 
-		if ((cave_feat[y][x] == FEAT_WALL_EXTRA)
-			|| (cave_feat[y][x] == FEAT_MAGMA))
+		if ((cave->feat[y][x] == FEAT_WALL_EXTRA)
+			|| (cave->feat[y][x] == FEAT_MAGMA))
 			cave_set_feat(y, x, FEAT_WALL_INNER);
 	}
 
@@ -1916,8 +1916,8 @@ static void make_chamber(int c_y1, int c_x1, int c_y2, int c_x2)
 		/* right wall */
 		x = c_x2;
 
-		if ((cave_feat[y][x] == FEAT_WALL_EXTRA)
-			|| (cave_feat[y][x] == FEAT_MAGMA))
+		if ((cave->feat[y][x] == FEAT_WALL_EXTRA)
+			|| (cave->feat[y][x] == FEAT_MAGMA))
 			cave_set_feat(y, x, FEAT_WALL_INNER);
 	}
 
@@ -1925,8 +1925,8 @@ static void make_chamber(int c_y1, int c_x1, int c_y2, int c_x2)
 		/* top wall */
 		y = c_y1;
 
-		if ((cave_feat[y][x] == FEAT_WALL_EXTRA)
-			|| (cave_feat[y][x] == FEAT_MAGMA))
+		if ((cave->feat[y][x] == FEAT_WALL_EXTRA)
+			|| (cave->feat[y][x] == FEAT_MAGMA))
 			cave_set_feat(y, x, FEAT_WALL_INNER);
 	}
 
@@ -1934,8 +1934,8 @@ static void make_chamber(int c_y1, int c_x1, int c_y2, int c_x2)
 		/* bottom wall */
 		y = c_y2;
 
-		if ((cave_feat[y][x] == FEAT_WALL_EXTRA)
-			|| (cave_feat[y][x] == FEAT_MAGMA))
+		if ((cave->feat[y][x] == FEAT_WALL_EXTRA)
+			|| (cave->feat[y][x] == FEAT_MAGMA))
 			cave_set_feat(y, x, FEAT_WALL_INNER);
 	}
 
@@ -1959,7 +1959,7 @@ static void make_chamber(int c_y1, int c_x1, int c_y2, int c_x2)
 		}
 
 		/* If not an inner wall square, try again. */
-		if (cave_feat[y][x] != FEAT_WALL_INNER)
+		if (cave->feat[y][x] != FEAT_WALL_INNER)
 			continue;
 
 		/* Paranoia */
@@ -1977,11 +1977,11 @@ static void make_chamber(int c_y1, int c_x1, int c_y2, int c_x2)
 			int xx = x + ddx_ddd[d];
 
 			/* No doors beside doors. */
-			if (cave_feat[yy][xx] == FEAT_OPEN)
+			if (cave->feat[yy][xx] == FEAT_OPEN)
 				break;
 
 			/* Count the inner walls. */
-			if (cave_feat[yy][xx] == FEAT_WALL_INNER)
+			if (cave->feat[yy][xx] == FEAT_WALL_INNER)
 				count++;
 
 			/* No more than two walls adjacent (plus the one we're on). */
@@ -2016,14 +2016,14 @@ static void hollow_out_room(int y, int x)
 		xx = x + ddx_ddd[d];
 
 		/* Change magma to floor. */
-		if (cave_feat[yy][xx] == FEAT_MAGMA) {
+		if (cave->feat[yy][xx] == FEAT_MAGMA) {
 			cave_set_feat(yy, xx, FEAT_FLOOR);
 
 			/* Hollow out the room. */
 			hollow_out_room(yy, xx);
 		}
 		/* Change open door to broken door. */
-		else if (cave_feat[yy][xx] == FEAT_OPEN) {
+		else if (cave->feat[yy][xx] == FEAT_OPEN) {
 			cave_set_feat(yy, xx, FEAT_BROKEN);
 
 			/* Hollow out the (new) room. */
@@ -2148,13 +2148,13 @@ static bool build_type6(void)
 				xx = x + ddx_ddd[d];
 
 				/* Count the walls and dungeon granite. */
-				if ((cave_feat[yy][xx] == FEAT_WALL_INNER)
-					|| (cave_feat[yy][xx] == FEAT_WALL_EXTRA))
+				if ((cave->feat[yy][xx] == FEAT_WALL_INNER)
+					|| (cave->feat[yy][xx] == FEAT_WALL_EXTRA))
 					count++;
 			}
 
 			/* Five adjacent walls: Change non-chamber to wall. */
-			if ((count == 5) && (cave_feat[y][x] != FEAT_MAGMA))
+			if ((count == 5) && (cave->feat[y][x] != FEAT_MAGMA))
 				cave_set_feat(y, x, FEAT_WALL_INNER);
 
 			/* More than five adjacent walls: Change anything to wall. */
@@ -2167,7 +2167,7 @@ static bool build_type6(void)
 	for (i = 0; i < 50; i++) {
 		y = y1 + ABS(y2 - y1) / 4 + randint0(ABS(y2 - y1) / 2);
 		x = x1 + ABS(x2 - x1) / 4 + randint0(ABS(x2 - x1) / 2);
-		if (cave_feat[y][x] == FEAT_MAGMA)
+		if (cave->feat[y][x] == FEAT_MAGMA)
 			break;
 	}
 
@@ -2186,7 +2186,7 @@ static bool build_type6(void)
 		for (y = y1; y < y2; y++) {
 			for (x = x1; x < x2; x++) {
 				/* Current grid must be magma. */
-				if (cave_feat[y][x] != FEAT_MAGMA)
+				if (cave->feat[y][x] != FEAT_MAGMA)
 					continue;
 
 				/* Stay legal. */
@@ -2200,14 +2200,14 @@ static bool build_type6(void)
 					xx1 = x + ddx_ddd[d];
 
 					/* Find inner wall. */
-					if (cave_feat[yy1][xx1] == FEAT_WALL_INNER) {
+					if (cave->feat[yy1][xx1] == FEAT_WALL_INNER) {
 						/* Keep going in the same direction. */
 						yy2 = yy1 + ddy_ddd[d];
 						xx2 = xx1 + ddx_ddd[d];
 
 						/* If we find open floor, place a door. */
 						if ((in_bounds(yy2, xx2))
-							&& (cave_feat[yy2][xx2] == FEAT_FLOOR)) {
+							&& (cave->feat[yy2][xx2] == FEAT_FLOOR)) {
 							joy = TRUE;
 
 							/* Make a broken door in the wall grid. */
@@ -2222,14 +2222,14 @@ static bool build_type6(void)
 
 						/* If we find more inner wall... */
 						if ((in_bounds(yy2, xx2))
-							&& (cave_feat[yy2][xx2] == FEAT_WALL_INNER)) {
+							&& (cave->feat[yy2][xx2] == FEAT_WALL_INNER)) {
 							/* ...Keep going in the same direction. */
 							yy3 = yy2 + ddy_ddd[d];
 							xx3 = xx2 + ddx_ddd[d];
 
 							/* If we /now/ find floor, make a tunnel. */
 							if ((in_bounds(yy3, xx3))
-								&& (cave_feat[yy3][xx3] == FEAT_FLOOR)) {
+								&& (cave->feat[yy3][xx3] == FEAT_FLOOR)) {
 								joy = TRUE;
 
 								/* Turn both wall grids into floor. */
@@ -2257,9 +2257,9 @@ static bool build_type6(void)
 	/* Turn broken doors into a random kind of door, remove open doors. */
 	for (y = y1; y <= y2; y++) {
 		for (x = x1; x <= x2; x++) {
-			if (cave_feat[y][x] == FEAT_OPEN)
+			if (cave->feat[y][x] == FEAT_OPEN)
 				cave_set_feat(y, x, FEAT_WALL_INNER);
-			else if (cave_feat[y][x] == FEAT_BROKEN)
+			else if (cave->feat[y][x] == FEAT_BROKEN)
 				place_random_door(y, x);
 		}
 	}
@@ -2271,8 +2271,8 @@ static bool build_type6(void)
 		 y < (y2 + 2 < DUNGEON_HGT ? y2 + 2 : DUNGEON_HGT); y++) {
 		for (x = (x1 - 1 > 0 ? x1 - 1 : 0);
 			 x < (x2 + 2 < DUNGEON_WID ? x2 + 2 : DUNGEON_WID); x++) {
-			if ((cave_feat[y][x] == FEAT_WALL_INNER)
-				|| (cave_feat[y][x] == FEAT_MAGMA)) {
+			if ((cave->feat[y][x] == FEAT_WALL_INNER)
+				|| (cave->feat[y][x] == FEAT_MAGMA)) {
 				for (d = 0; d < 9; d++) {
 					/* Extract adjacent location */
 					int yy = y + ddy_ddd[d];
@@ -2283,7 +2283,7 @@ static bool build_type6(void)
 						continue;
 
 					/* No floors allowed */
-					if (cave_feat[yy][xx] == FEAT_FLOOR)
+					if (cave->feat[yy][xx] == FEAT_FLOOR)
 						break;
 
 					/* Turn me into dungeon granite. */
@@ -2292,7 +2292,7 @@ static bool build_type6(void)
 					}
 				}
 			}
-			if (tf_has(f_info[cave_feat[y][x]].flags, TF_FLOOR)) {
+			if (tf_has(f_info[cave->feat[y][x]].flags, TF_FLOOR)) {
 				for (d = 0; d < 9; d++) {
 					/* Extract adjacent location */
 					int yy = y + ddy_ddd[d];
@@ -2303,11 +2303,11 @@ static bool build_type6(void)
 						continue;
 
 					/* Turn into room. */
-					sqinfo_on(cave_info[yy][xx], SQUARE_ROOM);
+					sqinfo_on(cave->info[yy][xx], SQUARE_ROOM);
 
 					/* Illuminate if requested. */
 					if (light)
-						sqinfo_on(cave_info[yy][xx], SQUARE_GLOW);
+						sqinfo_on(cave->info[yy][xx], SQUARE_GLOW);
 				}
 			}
 		}
@@ -2323,14 +2323,14 @@ static bool build_type6(void)
 			if (!in_bounds_fully(y, x))
 				continue;
 
-			if (cave_feat[y][x] == FEAT_WALL_INNER) {
+			if (cave->feat[y][x] == FEAT_WALL_INNER) {
 				for (d = 0; d < 9; d++) {
 					/* Extract adjacent location */
 					int yy = y + ddy_ddd[d];
 					int xx = x + ddx_ddd[d];
 
 					/* Look for dungeon granite */
-					if (cave_feat[yy][xx] == FEAT_WALL_EXTRA) {
+					if (cave->feat[yy][xx] == FEAT_WALL_EXTRA) {
 						/* Turn me into outer wall. */
 						cave_set_feat(y, x, FEAT_WALL_OUTER);
 
@@ -2426,12 +2426,12 @@ extern bool build_vault(int y0, int x0, int ymax, int xmax,
 
 			/* Part of a vault.  Can be lit.  May be "icky". */
 			if (icky) {
-				sqinfo_on(cave_info[y][x], SQUARE_ICKY);
-				sqinfo_on(cave_info[y][x], SQUARE_ROOM);
+				sqinfo_on(cave->info[y][x], SQUARE_ICKY);
+				sqinfo_on(cave->info[y][x], SQUARE_ROOM);
 			} else if (stage_map[p_ptr->stage][STAGE_TYPE] == CAVE)
-				sqinfo_on(cave_info[y][x], SQUARE_ROOM);
+				sqinfo_on(cave->info[y][x], SQUARE_ROOM);
 			if (light)
-				sqinfo_on(cave_info[y][x], SQUARE_GLOW);
+				sqinfo_on(cave->info[y][x], SQUARE_GLOW);
 
 			/* Analyze the grid */
 			switch (*t) {

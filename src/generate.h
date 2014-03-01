@@ -96,7 +96,7 @@ struct vault {
  * ie forbid player/monsters/objects
  */
 #define cave_naked_bold(Y,X) \
-	((cave_o_idx[Y][X] == 0) && (cave_m_idx[Y][X] == 0))
+	((cave->o_idx[Y][X] == 0) && (cave->m_idx[Y][X] == 0))
 
 /*
  * Dungeon generation values

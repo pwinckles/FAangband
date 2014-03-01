@@ -2586,7 +2586,7 @@ extern void calc_bonuses(object_type inventory[], player_state * state,
 	/* Unlight stealth boost */
 	if (player_has(PF_UNLIGHT)) {
 		if ((p_ptr->cur_light <= 0) && (!is_daylight)
-			&& !sqinfo_has(cave_info[p_ptr->py][p_ptr->px], SQUARE_GLOW))
+			&& !sqinfo_has(cave->info[p_ptr->py][p_ptr->px], SQUARE_GLOW))
 			state->skills[SKILL_STEALTH] += 6;
 		else
 			state->skills[SKILL_STEALTH] += 3;
@@ -2599,7 +2599,7 @@ extern void calc_bonuses(object_type inventory[], player_state * state,
 
 	/* Speed boost in trees for elven druids and rangers */
 	if ((player_has(PF_WOODSMAN)) && (player_has(PF_ELVEN))
-		&& tf_has(f_info[cave_feat[p_ptr->py][p_ptr->px]].flags, TF_TREE))
+		&& tf_has(f_info[cave->feat[p_ptr->py][p_ptr->px]].flags, TF_TREE))
 		state->pspeed += 3;
 
 	/* Speed boost for rune of speed */
@@ -2877,7 +2877,7 @@ extern void calc_bonuses(object_type inventory[], player_state * state,
 
 	/* Apply "encumbrance" from weight - more in water, except Maiar, flyers */
 	if (j > i / 2) {
-		feature_type *f_ptr = &f_info[cave_feat[p_ptr->py][p_ptr->px]];
+		feature_type *f_ptr = &f_info[cave->feat[p_ptr->py][p_ptr->px]];
 		if (tf_has(f_ptr->flags, TF_WATERY)
 			&& (!player_has(PF_DIVINE)) && !(p_ptr->schange == SHAPE_BAT)
 			&& !(p_ptr->schange == SHAPE_WYRM))

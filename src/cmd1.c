@@ -86,7 +86,7 @@ bool search(bool verbose)
 				}
 
 				/* Secret door */
-				if (cave_feat[y][x] == FEAT_SECRET) {
+				if (cave->feat[y][x] == FEAT_SECRET) {
 					found = TRUE;
 
 					/* Message */
@@ -167,7 +167,7 @@ static void py_pickup_gold(void)
 
 
 	/* Pick up all the ordinary gold objects */
-	for (this_o_idx = cave_o_idx[py][px]; this_o_idx;
+	for (this_o_idx = cave->o_idx[py][px]; this_o_idx;
 		 this_o_idx = next_o_idx) {
 		/* Get the object */
 		o_ptr = &o_list[this_o_idx];
@@ -458,11 +458,11 @@ byte py_pickup(int pickup, int y, int x)
 		py_pickup_gold();
 
 	/* Nothing to pick up -- return */
-	if (!cave_o_idx[y][x])
+	if (!cave->o_idx[y][x])
 		return (objs_picked_up);
 
 	/* Scan the pile of objects */
-	for (this_o_idx = cave_o_idx[y][x]; this_o_idx;
+	for (this_o_idx = cave->o_idx[y][x]; this_o_idx;
 		 this_o_idx = next_o_idx) {
 
 		/* Access the object */
@@ -762,18 +762,18 @@ void move_player(int dir)
 	/* Find the result of moving */
 	y = py + ddy[dir];
 	x = px + ddx[dir];
-	f_ptr = &f_info[cave_feat[y][x]];
+	f_ptr = &f_info[cave->feat[y][x]];
 
 
 	/* Hack -- attack monsters */
-	if (cave_m_idx[y][x] > 0) {
+	if (cave->m_idx[y][x] > 0) {
 		/* Attack */
 		if (py_attack(y, x, TRUE))
 			return;
 	}
 
 	/* It takes some dexterity, or failing that strength, to get out of pits */
-	if (cave_feat[py][px] == FEAT_PIT) {
+	if (cave->feat[py][px] == FEAT_PIT) {
 		str_escape = adj_dex_dis[p_ptr->state.stat_ind[A_STR]];
 		dex_escape = adj_dex_dis[p_ptr->state.stat_ind[A_DEX]];
 
@@ -814,18 +814,18 @@ void move_player(int dir)
 		disturb(0, 0);
 
 		/* Notice unknown obstacles */
-		if (!sqinfo_has(cave_info[y][x], SQUARE_MARK)) {
+		if (!sqinfo_has(cave->info[y][x], SQUARE_MARK)) {
 			/* Closed door */
 			if (tf_has(f_ptr->flags, TF_DOOR_CLOSED)) {
 				msgt(MSG_HITWALL, "You feel a door blocking your way.");
-				sqinfo_on(cave_info[y][x], SQUARE_MARK);
+				sqinfo_on(cave->info[y][x], SQUARE_MARK);
 				light_spot(y, x);
 			}
 
 			/* Wall (or secret door) */
 			else {
 				msgt(MSG_HITWALL, "You feel a wall blocking your way.");
-				sqinfo_on(cave_info[y][x], SQUARE_MARK);
+				sqinfo_on(cave->info[y][x], SQUARE_MARK);
 				light_spot(y, x);
 			}
 		}
@@ -1001,7 +1001,7 @@ void move_player(int dir)
 		monster_swap(py, px, y, x);
 
 		/* Update speed if stepping out of water */
-		if (tf_has(f_info[cave_feat[py][px]].flags, TF_WATERY))
+		if (tf_has(f_info[cave->feat[py][px]].flags, TF_WATERY))
 			p_ptr->update |= PU_BONUS;
 
 		/* Update stealth for Unlight */
@@ -1015,14 +1015,14 @@ void move_player(int dir)
 		/* Superstealth for ents in trees SJGU */
 		if ((player_has(PF_WOODEN)) &&
 			(tf_has
-			 (f_info[cave_feat[p_ptr->py][p_ptr->px]].flags, TF_TREE))) {
-			if (!(tf_has(f_info[cave_feat[py][px]].flags, TF_TREE))
+			 (f_info[cave->feat[p_ptr->py][p_ptr->px]].flags, TF_TREE))) {
+			if (!(tf_has(f_info[cave->feat[py][px]].flags, TF_TREE))
 				|| !(p_ptr->timed[TMD_SSTEALTH])) {
 				(void) inc_timed(TMD_SSTEALTH, 1, FALSE);
 				p_ptr->update |= (PU_BONUS);
 			}
 		} else if ((player_has(PF_WOODEN))
-				   && (tf_has(f_info[cave_feat[py][px]].flags, TF_TREE))) {
+				   && (tf_has(f_info[cave->feat[py][px]].flags, TF_TREE))) {
 			if (p_ptr->timed[TMD_SSTEALTH]) {
 				(void) dec_timed(TMD_SSTEALTH, 1, FALSE);
 				p_ptr->update |= (PU_BONUS);
@@ -1032,7 +1032,7 @@ void move_player(int dir)
 		/* New location */
 		y = py = p_ptr->py;
 		x = px = p_ptr->px;
-		f_ptr = &f_info[cave_feat[y][x]];
+		f_ptr = &f_info[cave->feat[y][x]];
 
 		/* Fall off a cliff */
 		if (falling)

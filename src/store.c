@@ -2908,7 +2908,7 @@ void do_cmd_store(cmd_code code, cmd_arg args[])
 
 	ui_event ke;
 
-	feature_type *f_ptr = &f_info[cave_feat[py][px]];
+	feature_type *f_ptr = &f_info[cave->feat[py][px]];
 
 	/* Verify a store */
 	if (!tf_has(f_ptr->flags, TF_SHOP)) {

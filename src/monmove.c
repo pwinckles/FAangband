@@ -78,7 +78,7 @@ static void find_range(monster_type * m_ptr)
 
 		/* Examine monster power (level plus morale) */
 		m_lev =
-			r_ptr->level + (cave_m_idx[m_ptr->fy][m_ptr->fx] & 0x08) + 25;
+			r_ptr->level + (cave->m_idx[m_ptr->fy][m_ptr->fx] & 0x08) + 25;
 
 		/* Optimize extreme cases below */
 		if (m_lev + 3 < p_lev)
@@ -193,8 +193,8 @@ int get_scent(int y, int x)
 	if (!(in_bounds(y, x)))
 		return (-1);
 
-	/* Sent trace? */
-	scent = cave_when[y][x];
+	/* Scent trace? */
+	scent = cave->when[y][x];
 
 	/* No scent at all */
 	if (!scent)
@@ -1198,11 +1198,11 @@ bool cave_exist_mon(monster_race * r_ptr, int y, int x, bool occupied_ok)
 		return (FALSE);
 
 	/* Check location */
-	feat = cave_feat[y][x];
+	feat = cave->feat[y][x];
 	f_ptr = &f_info[feat];
 
 	/* The grid is already occupied. */
-	if (cave_m_idx[y][x] != 0) {
+	if (cave->m_idx[y][x] != 0) {
 		if (!occupied_ok)
 			return (FALSE);
 	}
@@ -1321,11 +1321,11 @@ static int cave_passable_mon(monster_type * m_ptr, int y, int x,
 		return (FALSE);
 
 	/* Check location */
-	feat = cave_feat[y][x];
+	feat = cave->feat[y][x];
 	f_ptr = &f_info[feat];
 
 	/* The grid is occupied by the player. */
-	if (cave_m_idx[y][x] < 0) {
+	if (cave->m_idx[y][x] < 0) {
 		/* Monster has no melee blows - character's grid is off-limits. */
 		if (rf_has(r_ptr->flags, RF_NEVER_BLOW))
 			return (0);
@@ -1336,8 +1336,8 @@ static int cave_passable_mon(monster_type * m_ptr, int y, int x,
 	}
 
 	/* The grid is occupied by a monster. */
-	else if (cave_m_idx[y][x] > 0) {
-		monster_type *n_ptr = &m_list[cave_m_idx[y][x]];
+	else if (cave->m_idx[y][x] > 0) {
+		monster_type *n_ptr = &m_list[cave->m_idx[y][x]];
 		monster_race *nr_ptr = &r_info[n_ptr->r_idx];
 
 		/* Kill weaker monsters */
@@ -1651,7 +1651,7 @@ static void get_move_advance(monster_type * m_ptr, int *ty, int *tx)
 	}
 
 	/* If we can hear noises, advance towards them */
-	if (cave_cost[y1][x1]) {
+	if (cave->cost[y1][x1]) {
 		use_psound = TRUE;
 	}
 
@@ -1699,7 +1699,7 @@ static void get_move_advance(monster_type * m_ptr, int *ty, int *tx)
 
 		/* We're using sound */
 		else {
-			int cost = cave_cost[y][x];
+			int cost = cave->cost[y][x];
 
 			/* Accept louder sounds */
 			if ((cost == 0) || (lowest_cost < cost))
@@ -2064,8 +2064,8 @@ static bool get_move_retreat(monster_type * m_ptr, int *ty, int *tx)
 		if (!((rf_has(r_ptr->flags, RF_PASS_WALL))
 			  || (rf_has(r_ptr->flags, RF_KILL_WALL)))) {
 			/* Run away from noise */
-			if (cave_cost[m_ptr->fy][m_ptr->fx]) {
-				int start_cost = cave_cost[m_ptr->fy][m_ptr->fx];
+			if (cave->cost[m_ptr->fy][m_ptr->fx]) {
+				int start_cost = cave->cost[m_ptr->fy][m_ptr->fx];
 
 				/* Look at adjacent grids, diagonals first */
 				for (i = 7; i >= 0; i--) {
@@ -2077,7 +2077,7 @@ static bool get_move_retreat(monster_type * m_ptr, int *ty, int *tx)
 						continue;
 
 					/* Accept the first non-visible grid with a higher cost */
-					if (cave_cost[y][x] > start_cost) {
+					if (cave->cost[y][x] > start_cost) {
 						if (!player_has_los_bold(y, x)) {
 							*ty = y;
 							*tx = x;
@@ -2098,7 +2098,7 @@ static bool get_move_retreat(monster_type * m_ptr, int *ty, int *tx)
 
 	/* The monster is in line of sight. */
 	else {
-		int prev_cost = cave_cost[m_ptr->fy][m_ptr->fx];
+		int prev_cost = cave->cost[m_ptr->fy][m_ptr->fx];
 		int start = randint0(8);
 
 		/* Look for adjacent hiding places */
@@ -2119,10 +2119,10 @@ static bool get_move_retreat(monster_type * m_ptr, int *ty, int *tx)
 				continue;
 
 			/* Accept any grid that doesn't have a lower flow (noise) cost. */
-			if (cave_cost[y][x] >= prev_cost) {
+			if (cave->cost[y][x] >= prev_cost) {
 				*ty = y;
 				*tx = x;
-				prev_cost = cave_cost[y][x];
+				prev_cost = cave->cost[y][x];
 
 				/* Success */
 				return (TRUE);
@@ -2370,7 +2370,7 @@ static bool get_move(monster_type * m_ptr, int *ty, int *tx, bool * fear,
 						continue;
 
 					/* Count passable grids */
-					f_ptr = &f_info[cave_feat[y][x]];
+					f_ptr = &f_info[cave->feat[y][x]];
 					if (tf_has(f_ptr->flags, TF_PASSABLE))
 						p_ptr->vulnerability++;
 				}
@@ -2394,7 +2394,7 @@ static bool get_move(monster_type * m_ptr, int *ty, int *tx, bool * fear,
 			if (p_ptr->vulnerability <= 4) {
 				/* If we're in sight, find a hiding place */
 				if (sqinfo_has
-					(cave_info[m_ptr->fy][m_ptr->fx], SQUARE_SEEN)) {
+					(cave->info[m_ptr->fy][m_ptr->fx], SQUARE_SEEN)) {
 					/* Find a safe spot to lurk in */
 					if (get_move_retreat(m_ptr, ty, tx)) {
 						*fear = TRUE;
@@ -2436,7 +2436,7 @@ static bool get_move(monster_type * m_ptr, int *ty, int *tx, bool * fear,
 				continue;
 
 			/* Ignore occupied grids */
-			if (cave_m_idx[y][x] != 0)
+			if (cave->m_idx[y][x] != 0)
 				continue;
 
 			/* Ignore grids that monster can't enter immediately */
@@ -2718,11 +2718,11 @@ static void make_confused_move(monster_type * m_ptr, int y, int x)
 		return;
 
 	/* Check location */
-	feat = cave_feat[y][x];
+	feat = cave->feat[y][x];
 	f_ptr = &f_info[feat];
 
 	/* Check visibility */
-	if ((m_ptr->ml) && sqinfo_has(cave_info[y][x], SQUARE_SEEN))
+	if ((m_ptr->ml) && sqinfo_has(cave->info[y][x], SQUARE_SEEN))
 		seen = TRUE;
 
 
@@ -2764,7 +2764,7 @@ static void make_confused_move(monster_type * m_ptr, int y, int x)
 		const char *note_dies = " is burnt to death in lava!";
 
 		if (mon_take_hit
-			(cave_m_idx[m_ptr->fy][m_ptr->fx], 50 + m_ptr->maxhp / 50,
+			(cave->m_idx[m_ptr->fy][m_ptr->fx], 50 + m_ptr->maxhp / 50,
 			 &fear, note_dies)) {
 			death = TRUE;
 		} else {
@@ -2778,7 +2778,7 @@ static void make_confused_move(monster_type * m_ptr, int y, int x)
 		/* Assume death */
 		const char *note_dies = " is drowned!";
 
-		if (mon_take_hit(cave_m_idx[m_ptr->fy][m_ptr->fx],
+		if (mon_take_hit(cave->m_idx[m_ptr->fy][m_ptr->fx],
 						 5 + m_ptr->maxhp / 20, &fear, note_dies)) {
 			death = TRUE;
 		} else {
@@ -3069,9 +3069,9 @@ static bool make_move(monster_type * m_ptr, int *ty, int *tx, bool fear,
 
 				/* Monster can't be seen, and is not in a "seen" grid. */
 				if ((!m_ptr->ml)
-					&& (!sqinfo_has(cave_info[oy][ox], SQUARE_SEEN))) {
+					&& (!sqinfo_has(cave->info[oy][ox], SQUARE_SEEN))) {
 					/* Do not enter a "seen" grid */
-					if (sqinfo_has(cave_info[ny][nx], SQUARE_SEEN)) {
+					if (sqinfo_has(cave->info[ny][nx], SQUARE_SEEN)) {
 						moves_data[i].move_chance = 0;
 						continue;
 					}
@@ -3080,7 +3080,7 @@ static bool make_move(monster_type * m_ptr, int *ty, int *tx, bool fear,
 
 			/* XXX XXX -- Sometimes attempt to break glyphs. */
 			if (cave_trap_specific(ny, nx, RUNE_PROTECT) && (!fear)
-				&& ((randint0(5) == 0) || (cave_m_idx[ny][nx] < 0))) {
+				&& ((randint0(5) == 0) || (cave->m_idx[ny][nx] < 0))) {
 				break;
 			}
 
@@ -3194,7 +3194,7 @@ static bool make_move(monster_type * m_ptr, int *ty, int *tx, bool fear,
 
 
 	/* Monster is frightened, and is obliged to fight. */
-	if ((fear) && (cave_m_idx[*ty][*tx] < 0)) {
+	if ((fear) && (cave->m_idx[*ty][*tx] < 0)) {
 		/* Turn and fight */
 		m_ptr->monfear = 0;
 		fear = FALSE;
@@ -3468,7 +3468,7 @@ static void apply_monster_trap(monster_type * m_ptr, int y, int x,
 		/* The basic trap does full damage */
 		if (t_ptr->t_idx == MTRAP_BASE) {
 			if (mon_take_hit
-				(cave_m_idx[y][x], trap_power, &fear, note_dies))
+				(cave->m_idx[y][x], trap_power, &fear, note_dies))
 				mon_dies = TRUE;
 		}
 
@@ -3525,7 +3525,7 @@ static void apply_monster_trap(monster_type * m_ptr, int y, int x,
 		else if (t_ptr->t_idx == MTRAP_PORTAL) {
 			if (m_ptr->ml)
 				msg("%s is teleported.", m_name);
-			teleport_away(cave_m_idx[y][x], 5 + (trap_power / 10));
+			teleport_away(cave->m_idx[y][x], 5 + (trap_power / 10));
 		}
 
 		else if (t_ptr->t_idx == MTRAP_STASIS) {
@@ -3585,7 +3585,7 @@ static void apply_monster_trap(monster_type * m_ptr, int y, int x,
 
 				/* Ignore monsters in icky squares */
 				if (sqinfo_has
-					(cave_info[n_ptr->fy][n_ptr->fx], SQUARE_ICKY))
+					(cave->info[n_ptr->fy][n_ptr->fx], SQUARE_ICKY))
 					continue;
 
 				/* Ignore monsters too far away */
@@ -3601,7 +3601,7 @@ static void apply_monster_trap(monster_type * m_ptr, int y, int x,
 		/* Other traps (sturdy, net, spirit) default to 75% of normal damage */
 		else {
 			if (mon_take_hit
-				(cave_m_idx[y][x], (3 * trap_power) / 4, &fear, note_dies))
+				(cave->m_idx[y][x], (3 * trap_power) / 4, &fear, note_dies))
 				mon_dies = TRUE;
 		}
 
@@ -3684,7 +3684,7 @@ static void process_move(monster_type * m_ptr, int ty, int tx, bool bash)
 		return;
 
 	/* The grid is occupied by the player. */
-	if ((cave_m_idx[ny][nx] < 0) && (m_ptr->hostile < 0)) {
+	if ((cave->m_idx[ny][nx] < 0) && (m_ptr->hostile < 0)) {
 		/* SJGU Reset the monster's target (to deal with players hidden by
 		 * superstealth) */
 		int px = p_ptr->px;
@@ -3744,19 +3744,19 @@ static void process_move(monster_type * m_ptr, int ty, int tx, bool bash)
 	/* Glyphs */
 	if (cave_trap_specific(ny, nx, RUNE_PROTECT)) {
 		/* Describe observable breakage */
-		if (sqinfo_has(cave_info[ny][nx], SQUARE_MARK)) {
+		if (sqinfo_has(cave->info[ny][nx], SQUARE_MARK)) {
 			msg("The rune of protection is broken!");
 		}
 
 		/* Forget the rune */
-		sqinfo_off(cave_info[ny][nx], SQUARE_MARK);
+		sqinfo_off(cave->info[ny][nx], SQUARE_MARK);
 
 		/* Break the rune */
 		remove_trap_kind(ny, nx, FALSE, RUNE_PROTECT);
 	}
 
 	/* Get the feature in the grid that the monster is trying to enter. */
-	feat = cave_feat[ny][nx];
+	feat = cave->feat[ny][nx];
 	f_ptr = &f_info[feat];
 
 
@@ -3775,7 +3775,7 @@ static void process_move(monster_type * m_ptr, int ty, int tx, bool bash)
 			did_kill_wall = TRUE;
 
 			/* Forget the wall */
-			sqinfo_off(cave_info[ny][nx], SQUARE_MARK);
+			sqinfo_off(cave->info[ny][nx], SQUARE_MARK);
 
 			/* Notice */
 			if (outside)
@@ -3784,7 +3784,7 @@ static void process_move(monster_type * m_ptr, int ty, int tx, bool bash)
 				cave_set_feat(ny, nx, FEAT_FLOOR);
 
 			/* Note changes to grid - but only if actually seen */
-			if (sqinfo_has(cave_info[ny][nx], SQUARE_SEEN))
+			if (sqinfo_has(cave->info[ny][nx], SQUARE_SEEN))
 				do_view = TRUE;
 		}
 
@@ -3811,7 +3811,7 @@ static void process_move(monster_type * m_ptr, int ty, int tx, bool bash)
 					cave_set_feat(ny, nx, FEAT_OPEN);
 
 				/* Handle viewable doors */
-				if (sqinfo_has(cave_info[ny][nx], SQUARE_SEEN))
+				if (sqinfo_has(cave->info[ny][nx], SQUARE_SEEN))
 					do_view = TRUE;
 
 				/* Disturb */
@@ -3852,8 +3852,8 @@ static void process_move(monster_type * m_ptr, int ty, int tx, bool bash)
 	/* Monster is allowed to move */
 	if (do_move) {
 		/* The grid is occupied by a monster. */
-		if (cave_m_idx[ny][nx] > 0) {
-			monster_type *n_ptr = &m_list[cave_m_idx[ny][nx]];
+		if (cave->m_idx[ny][nx] > 0) {
+			monster_type *n_ptr = &m_list[cave->m_idx[ny][nx]];
 			monster_race *nr_ptr = &r_info[n_ptr->r_idx];
 
 			/* XXX - Kill weaker monsters */
@@ -3912,7 +3912,7 @@ static void process_move(monster_type * m_ptr, int ty, int tx, bool bash)
 					continue;
 
 				/* Get the feature */
-				f_ptr = &f_info[cave_feat[yy][xx]];
+				f_ptr = &f_info[cave->feat[yy][xx]];
 
 				/* Kill it */
 				if (!tf_has(f_ptr->flags, TF_LOS) ||
@@ -3921,7 +3921,7 @@ static void process_move(monster_type * m_ptr, int ty, int tx, bool bash)
 					did_kill_wall = TRUE;
 
 					/* Forget the wall */
-					sqinfo_off(cave_info[yy][xx], SQUARE_MARK);
+					sqinfo_off(cave->info[yy][xx], SQUARE_MARK);
 
 					/* Notice */
 					if (outside)
@@ -3930,7 +3930,7 @@ static void process_move(monster_type * m_ptr, int ty, int tx, bool bash)
 						cave_set_feat(yy, xx, FEAT_FLOOR);
 
 					/* Note changes to grid - but only if actually seen */
-					if (sqinfo_has(cave_info[yy][xx], SQUARE_SEEN))
+					if (sqinfo_has(cave->info[yy][xx], SQUARE_SEEN))
 						do_view = TRUE;
 				}
 
@@ -4063,7 +4063,7 @@ static void process_move(monster_type * m_ptr, int ty, int tx, bool bash)
 
 
 		/* Scan all objects in the grid */
-		for (this_o_idx = cave_o_idx[ny][nx]; this_o_idx;
+		for (this_o_idx = cave->o_idx[ny][nx]; this_o_idx;
 			 this_o_idx = next_o_idx) {
 			object_type *o_ptr;
 
@@ -4156,7 +4156,7 @@ static void process_move(monster_type * m_ptr, int ty, int tx, bool bash)
 					delete_object_idx(this_o_idx);
 
 					/* Carry the object */
-					(void) monster_carry(cave_m_idx[m_ptr->fy][m_ptr->fx],
+					(void) monster_carry(cave->m_idx[m_ptr->fy][m_ptr->fx],
 										 i_ptr);
 				}
 
@@ -4296,7 +4296,7 @@ static void process_monster(monster_type * m_ptr)
 		if ((m_ptr->cdis >= FLEE_RANGE) && (m_ptr->cdis > scan_range)
 			&& (!m_ptr->ty) && (!m_ptr->tx)) {
 			/* Monster cannot smell the character */
-			if (!cave_when[m_ptr->fy][m_ptr->fx])
+			if (!cave->when[m_ptr->fy][m_ptr->fx])
 				m_ptr->mflag &= ~(MFLAG_ACTV);
 			else if (!monster_can_smell(m_ptr))
 				m_ptr->mflag &= ~(MFLAG_ACTV);
@@ -4314,7 +4314,7 @@ static void process_monster(monster_type * m_ptr)
 			m_ptr->mflag |= (MFLAG_ACTV);
 
 		/* The monster is catching too much of a whiff to ignore */
-		else if (cave_when[m_ptr->fy][m_ptr->fx]) {
+		else if (cave->when[m_ptr->fy][m_ptr->fx]) {
 			if (monster_can_smell(m_ptr))
 				m_ptr->mflag |= (MFLAG_ACTV);
 		}
@@ -4327,7 +4327,7 @@ static void process_monster(monster_type * m_ptr)
 
 
 	/* Hack -- Always redraw the current target monster health bar */
-	if (p_ptr->health_who == cave_m_idx[m_ptr->fy][m_ptr->fx])
+	if (p_ptr->health_who == cave->m_idx[m_ptr->fy][m_ptr->fx])
 		p_ptr->redraw |= (PR_HEALTH | PR_MON_MANA);
 
 
@@ -4341,7 +4341,7 @@ static void process_monster(monster_type * m_ptr)
 					continue;
 
 				/* Count monsters */
-				if (cave_m_idx[y][x] > 0)
+				if (cave->m_idx[y][x] > 0)
 					k++;
 			}
 		}
@@ -4349,7 +4349,7 @@ static void process_monster(monster_type * m_ptr)
 		/* Hack -- multiply slower in crowded areas */
 		if ((k < 4) && (!k || !randint0(k * MON_MULT_ADJ))) {
 			/* Try to multiply */
-			if (multiply_monster(cave_m_idx[m_ptr->fy][m_ptr->fx])) {
+			if (multiply_monster(cave->m_idx[m_ptr->fy][m_ptr->fx])) {
 				/* Take note if visible */
 				if (m_ptr->ml) {
 					rf_on(l_ptr->flags, RF_MULTIPLY);
@@ -4429,7 +4429,7 @@ static void process_monster(monster_type * m_ptr)
 	/* Are we an unchanged shapeshifter? */
 	if ((rsf_has(r_ptr->spell_flags, RSF_SHAPECHANGE)) && (!m_ptr->schange))
 		shape_rate =
-			assess_shapechange(cave_m_idx[m_ptr->fy][m_ptr->fx], m_ptr);
+			assess_shapechange(cave->m_idx[m_ptr->fy][m_ptr->fx], m_ptr);
 
 	/* Cannot use ranged attacks beyond maximum range. */
 	if ((chance) && (m_ptr->cdis > MAX_RANGE))
@@ -4447,7 +4447,7 @@ static void process_monster(monster_type * m_ptr)
 	if ((chance != 0) && (randint0(100) < chance)) {
 		/* Pick a ranged attack */
 		choice =
-			choose_ranged_attack(cave_m_idx[m_ptr->fy][m_ptr->fx], FALSE,
+			choose_ranged_attack(cave->m_idx[m_ptr->fy][m_ptr->fx], FALSE,
 								 shape_rate);
 	}
 
@@ -4458,7 +4458,7 @@ static void process_monster(monster_type * m_ptr)
 		/* Pick an archery attack (usually) */
 		if ((randint0(8) != 0) && (m_ptr->cdis > 1))
 			choice =
-				choose_ranged_attack(cave_m_idx[m_ptr->fy][m_ptr->fx],
+				choose_ranged_attack(cave->m_idx[m_ptr->fy][m_ptr->fx],
 									 TRUE, 0);
 	}
 
@@ -5042,7 +5042,7 @@ static void recover_monster(monster_type * m_ptr, bool regen)
 
 
 	/* Hack -- Update the health bar (always) */
-	if (p_ptr->health_who == cave_m_idx[m_ptr->fy][m_ptr->fx])
+	if (p_ptr->health_who == cave->m_idx[m_ptr->fy][m_ptr->fx])
 		p_ptr->redraw |= (PR_HEALTH | PR_MON_MANA);
 }
 

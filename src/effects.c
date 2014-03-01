@@ -3161,11 +3161,11 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 							continue;
 
 						/* Skip grids with no monster (including player) */
-						if (!cave_m_idx[y][x])
+						if (!cave->m_idx[y][x])
 							continue;
 
 						/* Record the monster */
-						avail_mon[avail_mon_num++] = cave_m_idx[y][x];
+						avail_mon[avail_mon_num++] = cave->m_idx[y][x];
 					}
 
 				/* Maybe we're at a dead end */
@@ -3183,7 +3183,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 				}
 
 				/* Paranoia */
-				if (!cave_m_idx[targ_y][targ_x])
+				if (!cave->m_idx[targ_y][targ_x])
 					return TRUE;
 
 				/* ...and hit it */
@@ -3209,7 +3209,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 			for (y = py - 7; y <= py + 7; y++)
 				for (x = px - 7; x <= px + 7; x++) {
 					int dist = distance(py, px, y, x);
-					feature_type *f_ptr = &f_info[cave_feat[y][x]];
+					feature_type *f_ptr = &f_info[cave->feat[y][x]];
 
 					/* Skip distant grids */
 					if (dist > 7)
@@ -3224,7 +3224,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 						continue;
 
 					/* Skip grids in vaults */
-					if (sqinfo_has(cave_info[y][x], SQUARE_ICKY))
+					if (sqinfo_has(cave->info[y][x], SQUARE_ICKY))
 						continue;
 
 					/* Lava now */
@@ -3330,7 +3330,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 						continue;
 
 					/* Skip grids with no monster */
-					if (cave_m_idx[y][x] <= 0)
+					if (cave->m_idx[y][x] <= 0)
 						continue;
 
 					/* Skip grids without LOS */
@@ -3338,7 +3338,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 						continue;
 
 					/* Get the monster */
-					m_ptr = &m_list[cave_m_idx[y][x]];
+					m_ptr = &m_list[cave->m_idx[y][x]];
 
 					/* Take the energy */
 					p_ptr->energy += m_ptr->energy;
@@ -3370,7 +3370,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 						continue;
 
 					/* Skip grids with no monster */
-					if (cave_m_idx[y][x] <= 0)
+					if (cave->m_idx[y][x] <= 0)
 						continue;
 
 					/* Hit it */
@@ -3423,7 +3423,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 				if ((distance(targ_y, targ_x, m_ptr->fy, m_ptr->fx) < 7)
 					&& (r_ptr->d_char = 'g')
 					&& (!(rf_has(r_ptr->flags, RF_DRAGON))))
-					m_ptr->hostile = cave_m_idx[targ_y][targ_x];
+					m_ptr->hostile = cave->m_idx[targ_y][targ_x];
 			}
 
 			return TRUE;

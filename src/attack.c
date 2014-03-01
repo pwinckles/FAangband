@@ -820,7 +820,7 @@ static void apply_deadliness(long *die_average, int deadliness)
 bool attempt_shield_bash(int y, int x, bool * fear, int *blows,
 						 char *m_name)
 {
-	monster_type *m_ptr = &m_list[cave_m_idx[y][x]];
+	monster_type *m_ptr = &m_list[cave->m_idx[y][x]];
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
 	monster_lore *l_ptr = &l_list[m_ptr->r_idx];
 
@@ -895,7 +895,7 @@ bool attempt_shield_bash(int y, int x, bool * fear, int *blows,
 		}
 
 		/* Damage, check for fear and death. */
-		if (mon_take_hit(cave_m_idx[y][x], bash_dam, fear, NULL)) {
+		if (mon_take_hit(cave->m_idx[y][x], bash_dam, fear, NULL)) {
 			/* 
 			 * Hack -- High-level warriors can spread their attacks out 
 			 * among weaker foes.
@@ -1025,7 +1025,7 @@ bool py_attack(int y, int x, bool can_push)
 
 	object_type *o_ptr;
 
-	feature_type *f_ptr = &f_info[cave_feat[y][x]];
+	feature_type *f_ptr = &f_info[cave->feat[y][x]];
 
 	char m_name[80];
 
@@ -1038,7 +1038,7 @@ bool py_attack(int y, int x, bool can_push)
 	bool chaotic = FALSE;
 
 	/* Get the monster */
-	m_ptr = &m_list[cave_m_idx[y][x]];
+	m_ptr = &m_list[cave->m_idx[y][x]];
 	r_ptr = &r_info[m_ptr->r_idx];
 	l_ptr = &l_list[m_ptr->r_idx];
 
@@ -1078,7 +1078,7 @@ bool py_attack(int y, int x, bool can_push)
 
 	/* Track a new monster */
 	if (m_ptr->ml)
-		health_track(cave_m_idx[y][x]);
+		health_track(cave->m_idx[y][x]);
 
 	/* Extract monster name (or "it") */
 	monster_desc(m_name, sizeof(m_name), m_ptr, 0);
@@ -1304,7 +1304,7 @@ bool py_attack(int y, int x, bool can_push)
 			/* The verbose wizard message has been moved to mon_take_hit. */
 
 			/* Damage, check for fear and death. */
-			if (mon_take_hit(cave_m_idx[y][x], (s16b) damage, &fear, NULL)) {
+			if (mon_take_hit(cave->m_idx[y][x], (s16b) damage, &fear, NULL)) {
 				/* 
 				 * Hack -- High-level warriors can spread their attacks out 
 				 * among weaker foes.
@@ -1742,7 +1742,7 @@ void do_cmd_fire(cmd_code code, cmd_arg args[])
 	for (i = 0; i < path_n; ++i) {
 		int ny = GRID_Y(path_g[i]);
 		int nx = GRID_X(path_g[i]);
-		feature_type *f_ptr = &f_info[cave_feat[ny][nx]];
+		feature_type *f_ptr = &f_info[cave->feat[ny][nx]];
 
 		/* Hack -- Stop before hitting walls */
 		if (!tf_has(f_ptr->flags, TF_PASSABLE))
@@ -1774,10 +1774,10 @@ void do_cmd_fire(cmd_code code, cmd_arg args[])
 		}
 
 		/* Handle monster */
-		if (cave_m_idx[y][x] > 0) {
-			monster_type *m_ptr = &m_list[cave_m_idx[y][x]];
+		if (cave->m_idx[y][x] > 0) {
+			monster_type *m_ptr = &m_list[cave->m_idx[y][x]];
 			monster_race *r_ptr = &r_info[m_ptr->r_idx];
-			feature_type *f_ptr = &f_info[cave_feat[y][x]];
+			feature_type *f_ptr = &f_info[cave->feat[y][x]];
 
 			bool fear = FALSE;
 
@@ -1878,7 +1878,7 @@ void do_cmd_fire(cmd_code code, cmd_arg args[])
 
 			/* Hack -- Track this monster, if visible */
 			if (m_ptr->ml)
-				health_track(cave_m_idx[y][x]);
+				health_track(cave->m_idx[y][x]);
 
 
 			/* 
@@ -1970,7 +1970,7 @@ void do_cmd_fire(cmd_code code, cmd_arg args[])
 				damage = 0;
 
 			/* Hit the monster, check for death. */
-			if (mon_take_hit(cave_m_idx[y][x], damage, &fear, note_dies)) {
+			if (mon_take_hit(cave->m_idx[y][x], damage, &fear, note_dies)) {
 				/* Dead monster */
 			}
 
@@ -1980,7 +1980,7 @@ void do_cmd_fire(cmd_code code, cmd_arg args[])
 				m_ptr->hostile = -1;
 
 				/* Message */
-				message_pain(cave_m_idx[y][x], damage);
+				message_pain(cave->m_idx[y][x], damage);
 
 				/* Take note */
 				if (fear && m_ptr->ml) {
@@ -2288,7 +2288,7 @@ void do_cmd_throw(cmd_code code, cmd_arg args[])
 	for (i = 0; i < path_n; ++i) {
 		int ny = GRID_Y(path_g[i]);
 		int nx = GRID_X(path_g[i]);
-		feature_type *f_ptr = &f_info[cave_feat[ny][nx]];
+		feature_type *f_ptr = &f_info[cave->feat[ny][nx]];
 
 		/* Hack -- Stop before hitting walls */
 		if (!tf_has(f_ptr->flags, TF_PASSABLE))
@@ -2320,10 +2320,10 @@ void do_cmd_throw(cmd_code code, cmd_arg args[])
 		}
 
 		/* Handle monster */
-		if (cave_m_idx[y][x] > 0) {
-			monster_type *m_ptr = &m_list[cave_m_idx[y][x]];
+		if (cave->m_idx[y][x] > 0) {
+			monster_type *m_ptr = &m_list[cave->m_idx[y][x]];
 			monster_race *r_ptr = &r_info[m_ptr->r_idx];
-			feature_type *f_ptr = &f_info[cave_feat[y][x]];
+			feature_type *f_ptr = &f_info[cave->feat[y][x]];
 
 			bool fear = FALSE;
 
@@ -2415,7 +2415,7 @@ void do_cmd_throw(cmd_code code, cmd_arg args[])
 
 			/* Hack -- Track this monster, if visible */
 			if (m_ptr->ml)
-				health_track(cave_m_idx[y][x]);
+				health_track(cave->m_idx[y][x]);
 
 
 			/* 
@@ -2493,7 +2493,7 @@ void do_cmd_throw(cmd_code code, cmd_arg args[])
 				damage = 0;
 
 			/* Hit the monster, check for death */
-			if (mon_take_hit(cave_m_idx[y][x], damage, &fear, note_dies)) {
+			if (mon_take_hit(cave->m_idx[y][x], damage, &fear, note_dies)) {
 				/* Dead monster */
 			}
 
@@ -2503,7 +2503,7 @@ void do_cmd_throw(cmd_code code, cmd_arg args[])
 				m_ptr->hostile = -1;
 
 				/* Message */
-				message_pain(cave_m_idx[y][x], damage);
+				message_pain(cave->m_idx[y][x], damage);
 
 				/* Take note */
 				if (fear && m_ptr->ml) {

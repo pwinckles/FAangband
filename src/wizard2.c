@@ -126,7 +126,7 @@ static void do_cmd_wiz_hack_ben(void)
 					 y++) {
 					for (x = Term->offset_x;
 						 x <= Term->offset_x + SCREEN_WID; x++) {
-						int lowest_cost = cave_cost[y][x];
+						int lowest_cost = cave->cost[y][x];
 						int dir = -1;
 						int cost;
 
@@ -138,7 +138,7 @@ static void do_cmd_wiz_hack_ben(void)
 							y2 = y + ddy_ddd[i];
 							x2 = x + ddx_ddd[i];
 
-							cost = cave_cost[y2][x2];
+							cost = cave->cost[y2][x2];
 							if (!cost)
 								continue;
 
@@ -201,10 +201,10 @@ static void do_cmd_wiz_hack_ben(void)
 						for (x = Term->offset_x;
 							 x <= Term->offset_x + SCREEN_WID; x++) {
 							byte a = TERM_YELLOW;
-							feature_type *f_ptr = &f_info[cave_feat[y][x]];
+							feature_type *f_ptr = &f_info[cave->feat[y][x]];
 
 							/* Display proper cost */
-							if (cave_cost[y][x] != j)
+							if (cave->cost[y][x] != j)
 								continue;
 
 							/* Display player/floors/walls */
@@ -294,7 +294,7 @@ static void do_cmd_wiz_bamf(void)
 	target_get(&nx, &ny);
 
 	/* Test for passable terrain. */
-	f_ptr = &f_info[cave_feat[ny][nx]];
+	f_ptr = &f_info[cave->feat[ny][nx]];
 	if (!tf_has(f_ptr->flags, TF_PASSABLE)) {
 		msg("The square you are aiming for is impassable.");
 	}
@@ -1806,14 +1806,14 @@ static void do_cmd_wiz_query(void)
 	for (y = Term->offset_y; y <= Term->offset_y + SCREEN_HGT; y++) {
 		for (x = Term->offset_x; x <= Term->offset_x + SCREEN_WID; x++) {
 			byte a = TERM_RED;
-			feature_type *f_ptr = &f_info[cave_feat[y][x]];
+			feature_type *f_ptr = &f_info[cave->feat[y][x]];
 
 			/* Given mask, show only those grids */
-			if (mask && !(cave_info[y][x][0] & mask))
+			if (mask && !(cave->info[y][x][0] & mask))
 				continue;
 
 			/* Given no mask, show unknown grids */
-			if (!mask && (cave_info[y][x][0] & (SQUARE_MARK)))
+			if (!mask && (cave->info[y][x][0] & (SQUARE_MARK)))
 				continue;
 
 			/* Color */

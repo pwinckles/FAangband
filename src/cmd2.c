@@ -135,7 +135,7 @@ void do_cmd_go_up(cmd_code code, cmd_arg args[])
 	int px = p_ptr->px;
 	size_t i;
 
-	byte pstair = cave_feat[py][px];
+	byte pstair = cave->feat[py][px];
 	feature_type *f_ptr = &f_info[pstair];
 
 	/* Get the path data */
@@ -304,7 +304,7 @@ void do_cmd_go_down(cmd_code code, cmd_arg args[])
 	int px = p_ptr->px;
 	size_t i;
 
-	byte pstair = cave_feat[py][px];
+	byte pstair = cave->feat[py][px];
 	feature_type *f_ptr = &f_info[pstair];
 
 	/* Get the path data */
@@ -560,7 +560,7 @@ static s16b chest_check(int y, int x)
 
 
 	/* Scan all objects in the grid */
-	for (this_o_idx = cave_o_idx[y][x]; this_o_idx;
+	for (this_o_idx = cave->o_idx[y][x]; this_o_idx;
 		 this_o_idx = next_o_idx) {
 		object_type *o_ptr;
 
@@ -1482,14 +1482,14 @@ int count_feats(int *y, int *x, int flag, bool under)
 		/* Extract adjacent (legal) location */
 		yy = p_ptr->py + ddy_ddd[d];
 		xx = p_ptr->px + ddx_ddd[d];
-		f_ptr = &f_info[cave_feat[yy][xx]];
+		f_ptr = &f_info[cave->feat[yy][xx]];
 
 		/* Paranoia */
 		if (!in_bounds_fully(yy, xx))
 			continue;
 
 		/* Must have knowledge */
-		if (!sqinfo_has(cave_info[yy][xx], SQUARE_MARK))
+		if (!sqinfo_has(cave->info[yy][xx], SQUARE_MARK))
 			continue;
 
 		/* Not looking for this feature */
@@ -1531,7 +1531,7 @@ int count_traps(int *y, int *x)
 			continue;
 
 		/* Must have knowledge */
-		if (!sqinfo_has(cave_info[yy][xx], SQUARE_MARK))
+		if (!sqinfo_has(cave->info[yy][xx], SQUARE_MARK))
 			continue;
 
 		/* No trap */
@@ -1611,10 +1611,10 @@ int coords_to_dir(int y, int x)
  */
 static bool do_cmd_open_test(int y, int x)
 {
-	feature_type *f_ptr = &f_info[cave_feat[y][x]];
+	feature_type *f_ptr = &f_info[cave->feat[y][x]];
 
 	/* Must have knowledge */
-	if (!sqinfo_has(cave_info[y][x], SQUARE_MARK)) {
+	if (!sqinfo_has(cave->info[y][x], SQUARE_MARK)) {
 		/* Message */
 		msg("You see nothing there.");
 
@@ -1648,7 +1648,7 @@ extern bool do_cmd_open_aux(int y, int x)
 	int i, j;
 
 	bool more = FALSE;
-	feature_type *f_ptr = &f_info[cave_feat[y][x]];
+	feature_type *f_ptr = &f_info[cave->feat[y][x]];
 
 
 	/* Verify legality */
@@ -1776,7 +1776,7 @@ void do_cmd_open(cmd_code code, cmd_arg args[])
 
 
 	/* Monster */
-	if (cave_m_idx[y][x] > 0) {
+	if (cave->m_idx[y][x] > 0) {
 		/* Message */
 		msg("There is a monster in the way!");
 
@@ -1808,10 +1808,10 @@ void do_cmd_open(cmd_code code, cmd_arg args[])
  */
 static bool do_cmd_close_test(int y, int x)
 {
-	feature_type *f_ptr = &f_info[cave_feat[y][x]];
+	feature_type *f_ptr = &f_info[cave->feat[y][x]];
 
 	/* Must have knowledge */
-	if (!sqinfo_has(cave_info[y][x], SQUARE_MARK)) {
+	if (!sqinfo_has(cave->info[y][x], SQUARE_MARK)) {
 		/* Message */
 		msg("You see nothing there.");
 
@@ -1829,7 +1829,7 @@ static bool do_cmd_close_test(int y, int x)
 	}
 
 	/* Monster */
-	if (cave_m_idx[y][x] > 0) {
+	if (cave->m_idx[y][x] > 0) {
 		/* Message */
 		msg("There is a monster in the way!");
 
@@ -1860,7 +1860,7 @@ static bool do_cmd_close_aux(int y, int x)
 
 
 	/* Broken door */
-	if (cave_feat[y][x] == FEAT_BROKEN) {
+	if (cave->feat[y][x] == FEAT_BROKEN) {
 		/* Message */
 		msg("The door appears to be broken.");
 	}
@@ -1929,10 +1929,10 @@ void do_cmd_close(cmd_code code, cmd_arg args[])
  */
 static bool do_cmd_tunnel_test(int y, int x)
 {
-	feature_type *f_ptr = &f_info[cave_feat[y][x]];
+	feature_type *f_ptr = &f_info[cave->feat[y][x]];
 
 	/* Must have knowledge */
-	if (!sqinfo_has(cave_info[y][x], SQUARE_MARK)) {
+	if (!sqinfo_has(cave->info[y][x], SQUARE_MARK)) {
 		/* Message */
 		msg("You see nothing there.");
 
@@ -1971,7 +1971,7 @@ static bool twall(int y, int x)
 	sound(MSG_DIG);
 
 	/* Forget the wall */
-	sqinfo_off(cave_info[y][x], SQUARE_MARK);
+	sqinfo_off(cave->info[y][x], SQUARE_MARK);
 
 	/* Remove the feature */
 	if (outside)
@@ -1999,7 +1999,7 @@ static bool twall(int y, int x)
 static bool do_cmd_tunnel_aux(int y, int x)
 {
 	bool more = FALSE;
-	feature_type *f_ptr = &f_info[cave_feat[y][x]];
+	feature_type *f_ptr = &f_info[cave->feat[y][x]];
 
 	/* Verify legality */
 	if (!do_cmd_tunnel_test(y, x))
@@ -2084,7 +2084,7 @@ static bool do_cmd_tunnel_aux(int y, int x)
 		}
 
 		/* Rubble */
-		else if (cave_feat[y][x] == FEAT_RUBBLE) {
+		else if (cave->feat[y][x] == FEAT_RUBBLE) {
 			/* Remove the rubble */
 			if ((p_ptr->state.skills[SKILL_DIGGING] > randint0(200))
 				&& twall(y, x)) {
@@ -2097,7 +2097,7 @@ static bool do_cmd_tunnel_aux(int y, int x)
 					place_object(y, x, FALSE, FALSE, FALSE, ORIGIN_RUBBLE);
 
 					/* Observe new object */
-					if (!squelch_hide_item(&o_list[cave_o_idx[y][x]])
+					if (!squelch_hide_item(&o_list[cave->o_idx[y][x]])
 						&& player_can_see_bold(y, x)) {
 						msg("You have found something!");
 					}
@@ -2112,7 +2112,7 @@ static bool do_cmd_tunnel_aux(int y, int x)
 		}
 
 		/* Secret doors */
-		else if (cave_feat[y][x] == FEAT_SECRET) {
+		else if (cave->feat[y][x] == FEAT_SECRET) {
 			/* Tunnel */
 			if ((p_ptr->state.skills[SKILL_DIGGING] > 30 + randint0(1200))
 				&& twall(y, x)) {
@@ -2186,7 +2186,7 @@ void do_cmd_tunnel(cmd_code code, cmd_arg args[])
 	}
 
 	/* Monster */
-	if (cave_m_idx[y][x] > 0) {
+	if (cave->m_idx[y][x] > 0) {
 		/* Message */
 		msg("There is a monster in the way!");
 
@@ -2210,7 +2210,7 @@ void do_cmd_tunnel(cmd_code code, cmd_arg args[])
 static bool do_cmd_disarm_test(int y, int x)
 {
 	/* Must have knowledge */
-	if (!sqinfo_has(cave_info[y][x], SQUARE_MARK)) {
+	if (!sqinfo_has(cave->info[y][x], SQUARE_MARK)) {
 		/* Message */
 		msg("You see nothing there.");
 
@@ -2358,7 +2358,7 @@ void do_cmd_disarm(cmd_code code, cmd_arg args[])
 	}
 
 	/* Monster */
-	if (cave_m_idx[y][x] > 0) {
+	if (cave->m_idx[y][x] > 0) {
 		/* Message */
 		msg("There is a monster in the way!");
 
@@ -2390,10 +2390,10 @@ void do_cmd_disarm(cmd_code code, cmd_arg args[])
  */
 static bool do_cmd_bash_test(int y, int x)
 {
-	feature_type *f_ptr = &f_info[cave_feat[y][x]];
+	feature_type *f_ptr = &f_info[cave->feat[y][x]];
 
 	/* Must have knowledge */
-	if (!sqinfo_has(cave_info[y][x], SQUARE_MARK)) {
+	if (!sqinfo_has(cave->info[y][x], SQUARE_MARK)) {
 		/* Message */
 		msg("You see nothing there.");
 
@@ -2427,7 +2427,7 @@ static bool do_cmd_bash_aux(int y, int x)
 	int bash, temp;
 
 	bool more = FALSE;
-	feature_type *f_ptr = &f_info[cave_feat[y][x]];
+	feature_type *f_ptr = &f_info[cave->feat[y][x]];
 
 	/* Verify legality */
 	if (!do_cmd_bash_test(y, x))
@@ -2546,7 +2546,7 @@ void do_cmd_bash(cmd_code code, cmd_arg args[])
 
 
 	/* Monster */
-	if (cave_m_idx[y][x] > 0) {
+	if (cave->m_idx[y][x] > 0) {
 		/* Message */
 		msg("There is a monster in the way!");
 
@@ -2597,11 +2597,11 @@ void do_cmd_alter_aux(int dir)
 
 
 	/* Original feature */
-	feat = cave_feat[y][x];
+	feat = cave->feat[y][x];
 	f_ptr = &f_info[feat];
 
 	/* Must have knowledge to know feature XXX XXX */
-	if (!sqinfo_has(cave_info[y][x], SQUARE_MARK))
+	if (!sqinfo_has(cave->info[y][x], SQUARE_MARK))
 		feat = FEAT_NONE;
 
 
@@ -2614,9 +2614,9 @@ void do_cmd_alter_aux(int dir)
 
 	/* If a monster is present, and visible, Rogues may steal from it.
 	 * Otherwise, the player will simply attack. -LM- */
-	if (cave_m_idx[y][x] > 0) {
+	if (cave->m_idx[y][x] > 0) {
 		if ((player_has(PF_STEAL)) && (!SCHANGE)) {
-			m_ptr = &m_list[cave_m_idx[y][x]];
+			m_ptr = &m_list[cave->m_idx[y][x]];
 			if (m_ptr->ml)
 				py_steal(y, x);
 			else
@@ -2667,7 +2667,7 @@ void do_cmd_alter_aux(int dir)
 	}
 
 	/* Disarm traps */
-	else if (sqinfo_has(cave_info[y][x], SQUARE_TRAP)) {
+	else if (sqinfo_has(cave->info[y][x], SQUARE_TRAP)) {
 		/* Disarm */
 		more = do_cmd_disarm_aux(y, x);
 	}
@@ -2729,10 +2729,10 @@ static bool get_spike(int *ip)
  */
 bool do_cmd_spike_test(int y, int x)
 {
-	feature_type *f_ptr = &f_info[cave_feat[y][x]];
+	feature_type *f_ptr = &f_info[cave->feat[y][x]];
 
 	/* Must have knowledge */
-	if (!sqinfo_has(cave_info[y][x], SQUARE_MARK)) {
+	if (!sqinfo_has(cave->info[y][x], SQUARE_MARK)) {
 		/* Message */
 		msg("You see nothing there.");
 
@@ -2779,7 +2779,7 @@ void do_cmd_spike(cmd_code code, cmd_arg args[])
 	/* Get location */
 	y = p_ptr->py + ddy[dir];
 	x = p_ptr->px + ddx[dir];
-	f_ptr = &f_info[cave_feat[y][x]];
+	f_ptr = &f_info[cave->feat[y][x]];
 
 	/* Verify legality */
 	if (!do_cmd_spike_test(y, x))
@@ -2794,12 +2794,12 @@ void do_cmd_spike(cmd_code code, cmd_arg args[])
 		/* Get location */
 		y = p_ptr->py + ddy[dir];
 		x = p_ptr->px + ddx[dir];
-		f_ptr = &f_info[cave_feat[y][x]];
+		f_ptr = &f_info[cave->feat[y][x]];
 	}
 
 
 	/* Monster.  Make the action now take a full turn */
-	if (cave_m_idx[y][x] > 0) {
+	if (cave->m_idx[y][x] > 0) {
 		/* Message */
 		msg("There is a monster in the way!");
 
@@ -2821,12 +2821,12 @@ void do_cmd_spike(cmd_code code, cmd_arg args[])
 
 		/* Convert "locked" to "stuck" XXX XXX XXX */
 		if (!tf_has(f_ptr->flags, TF_DOOR_JAMMED)) {
-			cave_feat[y][x] += 0x08;
+			cave->feat[y][x] += 0x08;
 		}
 
 		/* Add one spike to the door */
-		if (cave_feat[y][x] != FEAT_DOOR_TAIL) {
-			cave_feat[y][x] += 0x01;
+		if (cave->feat[y][x] != FEAT_DOOR_TAIL) {
+			cave->feat[y][x] += 0x01;
 		}
 
 		/* Use up, and describe, a single spike, from the bottom */
@@ -2843,14 +2843,14 @@ void do_cmd_spike(cmd_code code, cmd_arg args[])
  */
 static bool do_cmd_walk_test(int y, int x)
 {
-	feature_type *f_ptr = &f_info[cave_feat[y][x]];
+	feature_type *f_ptr = &f_info[cave->feat[y][x]];
 
 	/* Assume no monster. */
 	monster_type *m_ptr = 0;
 
 	/* Access the monster, if any is present. */
-	if (cave_m_idx[y][x] != 0)
-		m_ptr = &m_list[cave_m_idx[y][x]];
+	if (cave->m_idx[y][x] != 0)
+		m_ptr = &m_list[cave->m_idx[y][x]];
 
 	/* If a monster can be seen, it can be attacked normally.  Code in cmd1.c
 	 * controls whether a player can actually move to the destination grid. */
@@ -2859,7 +2859,7 @@ static bool do_cmd_walk_test(int y, int x)
 
 
 	/* Hack -- walking obtains knowledge XXX XXX */
-	if (!sqinfo_has(cave_info[y][x], SQUARE_MARK))
+	if (!sqinfo_has(cave->info[y][x], SQUARE_MARK))
 		return (TRUE);
 
 	/* Check for being stuck in a web */
@@ -3027,7 +3027,7 @@ void do_cmd_pathfind(cmd_code code, cmd_arg args[])
  */
 static void do_cmd_hold_or_stay(int pickup)
 {
-	feature_type *f_ptr = &f_info[cave_feat[p_ptr->py][p_ptr->px]];
+	feature_type *f_ptr = &f_info[cave->feat[p_ptr->py][p_ptr->px]];
 
 	/* Take a turn */
 	p_ptr->energy_use = 100;

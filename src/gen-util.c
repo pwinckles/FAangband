@@ -46,7 +46,7 @@ int next_to_walls(int y, int x)
 	/* Count the adjacent wall grids */
 	for (i = 0; i < 4; i++) {
 		/* Extract the terrain info */
-		f_ptr = &f_info[cave_feat[y + ddy_ddd[i]][x + ddx_ddd[i]]];
+		f_ptr = &f_info[cave->feat[y + ddy_ddd[i]][x + ddx_ddd[i]]];
 
 		if (tf_has(f_ptr->flags, TF_WALL) &&
 			!tf_has(f_ptr->flags, TF_DOOR_ANY))
@@ -88,11 +88,11 @@ void new_player_spot(void)
 				/* Accept stairs going the right way or floors. */
 				if (p_ptr->create_stair) {
 					/* Accept correct stairs */
-					if (cave_feat[y][x] == p_ptr->create_stair)
+					if (cave->feat[y][x] == p_ptr->create_stair)
 						break;
 
 					/* Accept floors, build correct stairs. */
-					f_ptr = &f_info[cave_feat[y][x]];
+					f_ptr = &f_info[cave->feat[y][x]];
 					if (cave_naked_bold(y, x)
 						&& tf_has(f_ptr->flags, TF_FLOOR)) {
 						cave_set_feat(y, x, p_ptr->create_stair);
@@ -104,7 +104,7 @@ void new_player_spot(void)
 			/* If character doesn't start on stairs, ... */
 			else {
 				/* Accept only "naked" floor grids */
-				f_ptr = &f_info[cave_feat[y][x]];
+				f_ptr = &f_info[cave->feat[y][x]];
 				if (cave_naked_bold(y, x)
 					&& tf_has(f_ptr->flags, TF_FLOOR))
 					break;
@@ -118,11 +118,11 @@ void new_player_spot(void)
 			x = randint0(DUNGEON_WID);
 
 			/* Refuse to start on anti-teleport (vault) grids */
-			if (sqinfo_has(cave_info[y][x], SQUARE_ICKY))
+			if (sqinfo_has(cave->info[y][x], SQUARE_ICKY))
 				continue;
 
 			/* Must be a "naked" floor grid */
-			f_ptr = &f_info[cave_feat[y][x]];
+			f_ptr = &f_info[cave->feat[y][x]];
 			if (!(cave_naked_bold(y, x) && tf_has(f_ptr->flags, TF_FLOOR)))
 				continue;
 
@@ -331,7 +331,7 @@ void alloc_stairs(int feat, int num, int walls)
 			}
 
 			/* Require "naked" floor grid */
-			f_ptr = &f_info[cave_feat[y][x]];
+			f_ptr = &f_info[cave->feat[y][x]];
 			if (!(cave_naked_bold(y, x) && tf_has(f_ptr->flags, TF_FLOOR)))
 				continue;
 
@@ -390,19 +390,19 @@ void alloc_object(int set, int typ, int num)
 			/* Location */
 			y = randint0(DUNGEON_HGT);
 			x = randint0(DUNGEON_WID);
-			f_ptr = &f_info[cave_feat[y][x]];
+			f_ptr = &f_info[cave->feat[y][x]];
 
 			/* Paranoia - keep objects out of the outer walls */
 			if (!in_bounds_fully(y, x))
 				continue;
 
 			/* Require "naked" floor grid */
-			f_ptr = &f_info[cave_feat[y][x]];
+			f_ptr = &f_info[cave->feat[y][x]];
 			if (!(cave_naked_bold(y, x) && tf_has(f_ptr->flags, TF_FLOOR)))
 				continue;
 
 			/* Check for "room" */
-			room = sqinfo_has(cave_info[y][x], SQUARE_ROOM) ? TRUE : FALSE;
+			room = sqinfo_has(cave->info[y][x], SQUARE_ROOM) ? TRUE : FALSE;
 
 			/* Require corridor? */
 			if ((set == ALLOC_SET_CORR) && room)

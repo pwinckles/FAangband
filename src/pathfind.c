@@ -45,10 +45,10 @@ static int ox, oy, ex, ey;
 bool is_valid_pf(int y, int x)
 {
 	feature_type *f_ptr = NULL;
-	int feat = cave_feat[y][x];
+	int feat = cave->feat[y][x];
 
 	/* Hack -- assume unvisited is permitted */
-	if (!sqinfo_has(cave_info[y][x], SQUARE_MARK))
+	if (!sqinfo_has(cave->info[y][x], SQUARE_MARK))
 		return (TRUE);
 
 	/* Get mimiced feat */
@@ -109,7 +109,7 @@ bool findpath(int y, int x)
 	terrain[p_ptr->py - oy][p_ptr->px - ox] = 1;
 
 	if ((x >= ox) && (x < ex) && (y >= oy) && (y < ey)) {
-		if ((cave_m_idx[y][x] > 0) && (m_list[cave_m_idx[y][x]].ml)) {
+		if ((cave->m_idx[y][x] > 0) && (m_list[cave->m_idx[y][x]].ml)) {
 			terrain[y - oy][x - ox] = MAX_PF_LENGTH;
 		}
 		/* else if (terrain[y - oy][x - ox] != MAX_PF_LENGTH) { bell("Target
@@ -236,14 +236,14 @@ static int see_wall(int dir, int y, int x)
 	if (!in_bounds(y, x))
 		return (FALSE);
 
-	f_ptr = &f_info[cave_feat[y][x]];
+	f_ptr = &f_info[cave->feat[y][x]];
 
 	/* Non-wall grids are not known walls */
 	if (!tf_has(f_ptr->flags, TF_WALL))
 		return (FALSE);
 
 	/* Unknown walls are not known walls */
-	if (!sqinfo_has(cave_info[y][x], SQUARE_MARK))
+	if (!sqinfo_has(cave->info[y][x], SQUARE_MARK))
 		return (FALSE);
 
 	/* Default */
@@ -627,8 +627,8 @@ static bool run_test(void)
 
 
 			/* Visible monsters abort running */
-			if (cave_m_idx[row][col] > 0) {
-				monster_type *m_ptr = &m_list[cave_m_idx[row][col]];
+			if (cave->m_idx[row][col] > 0) {
+				monster_type *m_ptr = &m_list[cave->m_idx[row][col]];
 
 				/* Visible monster */
 				if (m_ptr->ml)
@@ -636,7 +636,7 @@ static bool run_test(void)
 			}
 
 			/* Visible objects abort running */
-			for (this_o_idx = cave_o_idx[row][col]; this_o_idx;
+			for (this_o_idx = cave->o_idx[row][col]; this_o_idx;
 				 this_o_idx = next_o_idx) {
 				object_type *o_ptr;
 
@@ -656,7 +656,7 @@ static bool run_test(void)
 		new_dir = p_ptr->run_old_dir;
 		row = py + ddy[new_dir];
 		col = px + ddx[new_dir];
-		f_ptr = &f_info[cave_feat[row][col]];
+		f_ptr = &f_info[cave->feat[row][col]];
 
 
 		/* Step if there's a path in the right direction */
@@ -669,7 +669,7 @@ static bool run_test(void)
 		left_dir = cycle[chome[prev_dir] - 1];
 		row = py + ddy[left_dir];
 		col = px + ddx[left_dir];
-		f_ptr = &f_info[cave_feat[row][col]];
+		f_ptr = &f_info[cave->feat[row][col]];
 		if (tf_has(f_ptr->flags, TF_RUN1) && !cave_visible_trap(row, col))
 			option = left_dir;
 
@@ -677,7 +677,7 @@ static bool run_test(void)
 		right_dir = cycle[chome[prev_dir] + 1];
 		row = py + ddy[right_dir];
 		col = px + ddx[right_dir];
-		f_ptr = &f_info[cave_feat[row][col]];
+		f_ptr = &f_info[cave->feat[row][col]];
 		if (tf_has(f_ptr->flags, TF_RUN1) && !cave_visible_trap(row, col))
 			option2 = right_dir;
 
@@ -697,7 +697,7 @@ static bool run_test(void)
 		/* No paths, so try grass */
 		row = py + ddy[new_dir];
 		col = px + ddx[new_dir];
-		f_ptr = &f_info[cave_feat[row][col]];
+		f_ptr = &f_info[cave->feat[row][col]];
 
 
 		/* Step if there's grass in the right direction */
@@ -709,7 +709,7 @@ static bool run_test(void)
 		/* Check to the left */
 		row = py + ddy[left_dir];
 		col = px + ddx[left_dir];
-		f_ptr = &f_info[cave_feat[row][col]];
+		f_ptr = &f_info[cave->feat[row][col]];
 		if (tf_has(f_ptr->flags, TF_RUN2) && !cave_visible_trap(row, col))
 			option = left_dir;
 
@@ -717,7 +717,7 @@ static bool run_test(void)
 		right_dir = cycle[chome[prev_dir] + 1];
 		row = py + ddy[right_dir];
 		col = px + ddx[right_dir];
-		f_ptr = &f_info[cave_feat[row][col]];
+		f_ptr = &f_info[cave->feat[row][col]];
 		if (tf_has(f_ptr->flags, TF_RUN2) && !cave_visible_trap(row, col))
 			option2 = right_dir;
 
@@ -750,8 +750,8 @@ static bool run_test(void)
 
 
 		/* Visible monsters abort running */
-		if (cave_m_idx[row][col] > 0) {
-			monster_type *m_ptr = &m_list[cave_m_idx[row][col]];
+		if (cave->m_idx[row][col] > 0) {
+			monster_type *m_ptr = &m_list[cave->m_idx[row][col]];
 
 			/* Visible monster */
 			if (m_ptr->ml)
@@ -759,7 +759,7 @@ static bool run_test(void)
 		}
 
 		/* Visible objects abort running */
-		for (this_o_idx = cave_o_idx[row][col]; this_o_idx;
+		for (this_o_idx = cave->o_idx[row][col]; this_o_idx;
 			 this_o_idx = next_o_idx) {
 			object_type *o_ptr;
 
@@ -779,11 +779,11 @@ static bool run_test(void)
 		inv = TRUE;
 
 		/* Check memorized grids */
-		if (sqinfo_has(cave_info[row][col], SQUARE_MARK)) {
+		if (sqinfo_has(cave->info[row][col], SQUARE_MARK)) {
 			bool notice = TRUE;
 
 			/* Examine the terrain */
-			f_ptr = &f_info[cave_feat[row][col]];
+			f_ptr = &f_info[cave->feat[row][col]];
 
 			/* Open doors */
 			if (tf_has(f_ptr->flags, TF_DOOR_ANY) &&
@@ -816,7 +816,7 @@ static bool run_test(void)
 		}
 
 		/* Analyze unknown grids and floors */
-		f_ptr = &f_info[cave_feat[row][col]];
+		f_ptr = &f_info[cave->feat[row][col]];
 		if (inv || tf_has(f_ptr->flags, TF_FLOOR)) {
 			/* Looking for open area */
 			if (p_ptr->run_open_area) {
@@ -884,8 +884,8 @@ static bool run_test(void)
 			continue;
 
 		/* Visible monsters abort running */
-		if (cave_m_idx[row][col] > 0) {
-			monster_type *m_ptr = &m_list[cave_m_idx[row][col]];
+		if (cave->m_idx[row][col] > 0) {
+			monster_type *m_ptr = &m_list[cave->m_idx[row][col]];
 
 			/* Visible monster */
 			if (m_ptr->ml)
@@ -893,8 +893,8 @@ static bool run_test(void)
 		}
 
 		/* Visible monsters abort running */
-		if (cave_m_idx[row][col] > 0) {
-			monster_type *m_ptr = &m_list[cave_m_idx[row][col]];
+		if (cave->m_idx[row][col] > 0) {
+			monster_type *m_ptr = &m_list[cave->m_idx[row][col]];
 
 			/* Visible monster */
 			if (m_ptr->ml)
@@ -910,11 +910,11 @@ static bool run_test(void)
 
 			row = py + ddy[new_dir];
 			col = px + ddx[new_dir];
-			f_ptr = &f_info[cave_feat[row][col]];
+			f_ptr = &f_info[cave->feat[row][col]];
 
 			/* Unknown grid or non-wall */
 			/* Was: cave_floor_bold(row, col) */
-			if (!sqinfo_has(cave_info[row][col], SQUARE_MARK)
+			if (!sqinfo_has(cave->info[row][col], SQUARE_MARK)
 				|| !tf_has(f_ptr->flags, TF_ROCK)) {
 				/* Looking to break right */
 				if (p_ptr->run_break_right)
@@ -935,11 +935,11 @@ static bool run_test(void)
 
 			row = py + ddy[new_dir];
 			col = px + ddx[new_dir];
-			f_ptr = &f_info[cave_feat[row][col]];
+			f_ptr = &f_info[cave->feat[row][col]];
 
 			/* Unknown grid or non-wall */
 			/* Was: cave_floor_bold(row, col) */
-			if (!sqinfo_has(cave_info[row][col], SQUARE_MARK)
+			if (!sqinfo_has(cave->info[row][col], SQUARE_MARK)
 				|| !tf_has(f_ptr->flags, TF_ROCK)) {
 				/* Looking to break left */
 				if (p_ptr->run_break_left)
@@ -1045,7 +1045,7 @@ void run_step(int dir)
 				x = p_ptr->px + ddx[pf_result[pf_result_index] - '0'];
 
 				/* Known wall */
-				if (sqinfo_has(cave_info[y][x], SQUARE_MARK)
+				if (sqinfo_has(cave->info[y][x], SQUARE_MARK)
 					&& !is_valid_pf(y, x)) {
 					disturb(0, 0);
 					p_ptr->running_withpathfind = FALSE;
@@ -1066,7 +1066,7 @@ void run_step(int dir)
 				x = p_ptr->px + ddx[pf_result[pf_result_index] - '0'];
 
 				/* Known wall */
-				if (sqinfo_has(cave_info[y][x], SQUARE_MARK)
+				if (sqinfo_has(cave->info[y][x], SQUARE_MARK)
 					&& !is_valid_pf(y, x)) {
 					disturb(0, 0);
 					p_ptr->running_withpathfind = FALSE;
@@ -1078,7 +1078,7 @@ void run_step(int dir)
 				x = x + ddx[pf_result[pf_result_index - 1] - '0'];
 
 				/* Known wall */
-				if (sqinfo_has(cave_info[y][x], SQUARE_MARK)
+				if (sqinfo_has(cave->info[y][x], SQUARE_MARK)
 					&& !is_valid_pf(y, x)) {
 					p_ptr->running_withpathfind = FALSE;
 

@@ -113,7 +113,7 @@ enum
  * This is a pretty feeble hack -NRM-
  */
 #define cave_project(Y,X) \
-    (tf_has(f_info[cave_feat[Y][X]].flags, TF_PROJECT)) 
+    (tf_has(f_info[cave->feat[Y][X]].flags, TF_PROJECT)) 
 
 
 /**
@@ -124,8 +124,8 @@ enum
  * Line 2 -- forbid normal objects
  */
 #define cave_clean_bold(Y,X)		     \
-    (tf_has(f_info[cave_feat[Y][X]].flags, TF_OBJECT) && \
-     (cave_o_idx[Y][X] == 0))
+    (tf_has(f_info[cave->feat[Y][X]].flags, TF_OBJECT) && \
+     (cave->o_idx[Y][X] == 0))
 
 /**
  * Determine if a legal grid is an empty floor grid
@@ -135,8 +135,8 @@ enum
  * Line 2 -- forbid player/monsters
  */
 #define cave_empty_bold(Y,X) \
-    (tf_has(f_info[cave_feat[Y][X]].flags, TF_EASY) && \
-     (cave_m_idx[Y][X] == 0))
+    (tf_has(f_info[cave->feat[Y][X]].flags, TF_EASY) && \
+     (cave->m_idx[Y][X] == 0))
 
 /*
  * Cave flags
@@ -176,7 +176,7 @@ enum
  * Note the use of comparison to zero to force a "boolean" result
  */
 #define player_has_los_bold(Y,X) \
-    (sqinfo_has(cave_info[Y][X], SQUARE_VIEW))
+    (sqinfo_has(cave->info[Y][X], SQUARE_VIEW))
 
 
 /**
@@ -185,7 +185,7 @@ enum
  * Note the use of comparison to zero to force a "boolean" result
  */
 #define player_can_see_bold(Y,X) \
-    (sqinfo_has(cave_info[Y][X], SQUARE_SEEN))
+    (sqinfo_has(cave->info[Y][X], SQUARE_SEEN))
 
 
 /**
@@ -270,24 +270,6 @@ struct cave {
 	int trap_cnt;
 };
 
-/**** Available Types ****/
-
-
-/**
- * An array of 256 cave bitflag arrays
- */
-typedef bitflag grid_256[256][SQUARE_SIZE];
-
-/**
- * An array of DUNGEON_WID byte's
- */
-typedef byte byte_wid[DUNGEON_WID];
-
-/**
- * An array of DUNGEON_WID s16b's
- */
-typedef s16b s16b_wid[DUNGEON_WID];
-
 
 extern int distance(int y1, int x1, int y2, int x2);
 extern bool los(int y1, int x1, int y2, int x2);
@@ -336,9 +318,5 @@ extern void square_light_spot(struct cave *c, int y, int x);
 extern void cave_update_flow(struct cave *c);
 extern void cave_forget_flow(struct cave *c);
 extern void cave_illuminate(struct cave *c, bool daytime);
-
-#define CAVE_INFO_Y	DUNGEON_HGT
-#define CAVE_INFO_X	256
-
 
 #endif /* !CAVE_H */

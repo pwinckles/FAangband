@@ -1926,7 +1926,7 @@ int rd_dungeon(void)
 	rd_u16b(&cave_size);
 	rd_u16b(&tmp16u);
 
-	/* Always at least two bytes of cave_info */
+	/* Always at least two bytes of cave->info */
 	cave_size = MAX(2, cave_size);
 
 	/* Ignore illegal dungeons */
@@ -1952,7 +1952,7 @@ int rd_dungeon(void)
 
 	/*** Run length decoding ***/
 
-	/* Loop across bytes of cave_info */
+	/* Loop across bytes of cave->info */
 	for (n = 0; n < cave_size; n++) {
 		/* Load the dungeon data */
 		for (x = y = 0; y < DUNGEON_HGT;) {
@@ -1963,7 +1963,7 @@ int rd_dungeon(void)
 			/* Apply the RLE info */
 			for (i = count; i > 0; i--) {
 				/* Extract "info" */
-				cave_info[y][x][n] = tmp8u;
+				cave->info[y][x][n] = tmp8u;
 
 				/* Advance/Wrap */
 				if (++x >= DUNGEON_WID) {
@@ -2102,10 +2102,10 @@ int rd_objects(void)
 			/* ToDo: Verify coordinates */
 
 			/* Link the object to the pile */
-			o_ptr->next_o_idx = cave_o_idx[y][x];
+			o_ptr->next_o_idx = cave->o_idx[y][x];
 
 			/* Link the floor to the object */
-			cave_o_idx[y][x] = o_idx;
+			cave->o_idx[y][x] = o_idx;
 		}
 	}
 

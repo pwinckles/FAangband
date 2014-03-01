@@ -258,7 +258,7 @@ static void town_gen_hack(void)
 			x = 1 + rand_range(3, DUNGEON_WID / 3 - 4);
 			
 			/* Require a floor grid */
-			f_ptr = &f_info[cave_feat[y][x]];
+			f_ptr = &f_info[cave->feat[y][x]];
 			if (tf_has(f_ptr->flags, TF_FLOOR))
 				break;
 		}
@@ -439,17 +439,17 @@ static void clear_cave(void)
 	for (y = 0; y < DUNGEON_HGT; y++) {
 		for (x = 0; x < DUNGEON_WID; x++) {
 			/* No features */
-			cave_feat[y][x] = 0;
+			cave->feat[y][x] = 0;
 
 			/* No flags */
-			sqinfo_wipe(cave_info[y][x]);
+			sqinfo_wipe(cave->info[y][x]);
 
 			/* No flow */
-			cave_cost[y][x] = 0;
-			cave_when[y][x] = 0;
+			cave->cost[y][x] = 0;
+			cave->when[y][x] = 0;
 
 			/* Clear any left-over monsters (should be none) and the player. */
-			cave_m_idx[y][x] = 0;
+			cave->m_idx[y][x] = 0;
 		}
 	}
 
@@ -511,18 +511,18 @@ void generate_cave(void)
 		for (y = 0; y < DUNGEON_HGT; y++) {
 			for (x = 0; x < DUNGEON_WID; x++) {
 				/* No flags */
-				sqinfo_wipe(cave_info[y][x]);
+				sqinfo_wipe(cave->info[y][x]);
 
 				/* No flow */
-				cave_cost[y][x] = 0;
-				cave_when[y][x] = 0;
+				cave->cost[y][x] = 0;
+				cave->when[y][x] = 0;
 
 			}
 		}
 
 
 		/* Mega-Hack -- no player in dungeon yet */
-		cave_m_idx[p_ptr->py][p_ptr->px] = 0;
+		cave->m_idx[p_ptr->py][p_ptr->px] = 0;
 		p_ptr->px = p_ptr->py = 0;
 
 		/* Reset the monster generation level */

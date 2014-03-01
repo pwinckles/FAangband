@@ -46,11 +46,11 @@ void get_feats(int *surroundings)
 			continue;
 
 		/* Must have knowledge */
-		if (!sqinfo_has(cave_info[yy][xx], SQUARE_MARK))
+		if (!sqinfo_has(cave->info[yy][xx], SQUARE_MARK))
 			continue;
 
 		/* Record the feature */
-		surroundings[d] = cave_feat[yy][xx];
+		surroundings[d] = cave->feat[yy][xx];
 	}
 
 	/* All done */
@@ -174,7 +174,7 @@ void show_player(void)
 			exist_open_door = TRUE;
 		if (tf_has(f_ptr->flags, TF_MTRAP))
 			exist_floor = TRUE;
-		if (cave_m_idx[yy][xx] > 0)
+		if (cave->m_idx[yy][xx] > 0)
 			exist_monster = TRUE;
 	}
 	f_ptr = &f_info[adj_grid[8]];
@@ -216,7 +216,7 @@ void show_player(void)
 	}
 
 	/* Pick up objects. */
-	if (cave_o_idx[p_ptr->py][p_ptr->px]) {
+	if (cave->o_idx[p_ptr->py][p_ptr->px]) {
 		comm[poss] = 'g';
 		comm_code[poss] = CMD_PICKUP;
 		comm_descr[poss++] = "Pick up";

@@ -119,7 +119,7 @@ void shapechange(s16b shape)
 
 	if (landing) {
 		int y = p_ptr->py, x = p_ptr->px;
-		feature_type *f_ptr = &f_info[cave_feat[y][x]];
+		feature_type *f_ptr = &f_info[cave->feat[y][x]];
 
 		if (tf_has(f_ptr->flags, TF_FALL))
 			fall_off_cliff();
@@ -485,7 +485,7 @@ void dimen_door(void)
 	/* Test for empty floor, forbid vaults or too large a distance, and insure
 	 * that this spell is never certain. */
 	if (!cave_empty_bold(ny, nx)
-		|| sqinfo_has(cave_info[ny][nx], SQUARE_ICKY)
+		|| sqinfo_has(cave->info[ny][nx], SQUARE_ICKY)
 		|| (distance(ny, nx, p_ptr->py, p_ptr->px) > 25)
 		|| (randint0(p_ptr->lev) == 0)) {
 		msg("You fail to exit the astral plane correctly!");
@@ -631,14 +631,14 @@ void magic_spiking(void)
 	/* Get location */
 	y = py + ddy[dir];
 	x = px + ddx[dir];
-	f_ptr = &f_info[cave_feat[y][x]];
+	f_ptr = &f_info[cave->feat[y][x]];
 
 	/* Verify legality */
 	if (!do_cmd_spike_test(y, x))
 		return;
 
 	/* Monster */
-	if (cave_m_idx[y][x] > 0) {
+	if (cave->m_idx[y][x] > 0) {
 		/* Message */
 		msg("There is a monster in the way!");
 
@@ -661,13 +661,13 @@ void magic_spiking(void)
 
 		/* Convert "locked" to "stuck" XXX XXX XXX */
 		if (!tf_has(f_ptr->flags, TF_DOOR_JAMMED)) {
-			cave_feat[y][x] += 0x08;
+			cave->feat[y][x] += 0x08;
 		}
 
 		/* Add three magical spikes to the door. */
 		for (i = 0; i < 3; i++) {
-			if (cave_feat[y][x] != FEAT_DOOR_TAIL) {
-				cave_feat[y][x] += 0x01;
+			if (cave->feat[y][x] != FEAT_DOOR_TAIL) {
+				cave->feat[y][x] += 0x01;
 			}
 		}
 	}
@@ -682,7 +682,7 @@ bool lay_rune(int type)
 	int px = p_ptr->px;
 
 	trap_kind *trap_ptr = &trap_info[type];
-	bool takes_rune = tf_has(f_info[cave_feat[py][px]].flags, TF_RUNE);
+	bool takes_rune = tf_has(f_info[cave->feat[py][px]].flags, TF_RUNE);
 
 	/* If we're standing on a rune of mana, we can add mana to it */
 	if ((type == RUNE_MANA) && (cave_trap_specific(py, px, RUNE_MANA))) {
@@ -707,13 +707,13 @@ bool lay_rune(int type)
 	}
 
 	/* Need appropriate terrain and no monster */
-	if (!takes_rune || cave_m_idx[py][px] > 0) {
+	if (!takes_rune || cave->m_idx[py][px] > 0) {
 		msg("You cannot lay a rune here.");
 		return (FALSE);
 	}
 #if 0
 	/* Scan all objects in the grid */
-	for (this_o_idx = cave_o_idx[py][px]; this_o_idx;
+	for (this_o_idx = cave->o_idx[py][px]; this_o_idx;
 		 this_o_idx = next_o_idx) {
 		/* Acquire object */
 		o_ptr = &o_list[this_o_idx];
@@ -729,11 +729,11 @@ bool lay_rune(int type)
 	}
 
 	/* Verify */
-	if (cave_o_idx[py][px]) {
+	if (cave->o_idx[py][px]) {
 		if (!get_check("Destroy all items and lay a rune?"))
 			return (FALSE);
 		else {
-			for (this_o_idx = cave_o_idx[py][px]; this_o_idx;
+			for (this_o_idx = cave->o_idx[py][px]; this_o_idx;
 				 this_o_idx = next_o_idx) {
 				/* Acquire object */
 				o_ptr = &o_list[this_o_idx];
@@ -1575,7 +1575,7 @@ bool detect_traps(int range, bool show)
 					detect = TRUE;
 
 				/* Mark grid as detected */
-				sqinfo_on(cave_info[y][x], SQUARE_DTRAP);
+				sqinfo_on(cave->info[y][x], SQUARE_DTRAP);
 			}
 		}
 	}
@@ -1589,9 +1589,9 @@ bool detect_traps(int range, bool show)
 
 				/* see if this grid is on the edge */
 				if (dtrap_edge(y, x)) {
-					sqinfo_on(cave_info[y][x], SQUARE_DEDGE);
+					sqinfo_on(cave->info[y][x], SQUARE_DEDGE);
 				} else {
-					sqinfo_off(cave_info[y][x], SQUARE_DEDGE);
+					sqinfo_off(cave->info[y][x], SQUARE_DEDGE);
 				}
 				
 				/* Redraw */
@@ -1642,18 +1642,18 @@ bool detect_doors(int range, bool show)
 			/* check range */
 			if (distance(py, px, y, x) <= range) {
 				/* Detect secret doors */
-				if (cave_feat[y][x] == FEAT_SECRET) {
+				if (cave->feat[y][x] == FEAT_SECRET) {
 					/* Pick a door */
 					place_closed_door(y, x);
 				}
 
 				/* Set the feature */
-				f_ptr = &f_info[cave_feat[y][x]];
+				f_ptr = &f_info[cave->feat[y][x]];
 
 				/* Detect doors */
 				if (tf_has(f_ptr->flags, TF_DOOR_ANY)) {
 					/* Hack -- Memorize */
-					sqinfo_on(cave_info[y][x], SQUARE_MARK);
+					sqinfo_on(cave->info[y][x], SQUARE_MARK);
 
 					/* Redraw */
 					light_spot(y, x);
@@ -1705,13 +1705,13 @@ bool detect_stairs(int range, bool show)
 
 			/* check range */
 			if (distance(py, px, y, x) <= range) {
-				feature_type *f_ptr = &f_info[cave_feat[y][x]];
+				feature_type *f_ptr = &f_info[cave->feat[y][x]];
 				/* Detect stairs */
 
 				if (tf_has(f_ptr->flags, TF_STAIR) ||
 					tf_has(f_ptr->flags, TF_PATH)) {
 					/* Hack -- Memorize */
-					sqinfo_on(cave_info[y][x], SQUARE_MARK);
+					sqinfo_on(cave->info[y][x], SQUARE_MARK);
 
 					/* Redraw */
 					light_spot(y, x);
@@ -1763,22 +1763,22 @@ bool detect_treasure(int range, bool show)
 			/* check range */
 			if (distance(py, px, y, x) <= range) {
 				/* Notice embedded gold */
-				if (cave_feat[y][x] == FEAT_MAGMA_H) {
+				if (cave->feat[y][x] == FEAT_MAGMA_H) {
 					/* Expose the gold */
-					cave_feat[y][x] = FEAT_MAGMA_K;
+					cave->feat[y][x] = FEAT_MAGMA_K;
 				}
 
 				/* Notice embedded gold */
-				if (cave_feat[y][x] == FEAT_QUARTZ_H) {
+				if (cave->feat[y][x] == FEAT_QUARTZ_H) {
 					/* Expose the gold */
-					cave_feat[y][x] = FEAT_QUARTZ_K;
+					cave->feat[y][x] = FEAT_QUARTZ_K;
 				}
 
 				/* Magma/Quartz + Known Gold */
-				if ((cave_feat[y][x] == FEAT_MAGMA_K)
-					|| (cave_feat[y][x] == FEAT_QUARTZ_K)) {
+				if ((cave->feat[y][x] == FEAT_MAGMA_K)
+					|| (cave->feat[y][x] == FEAT_QUARTZ_K)) {
 					/* Hack -- Memorize */
-					sqinfo_on(cave_info[y][x], SQUARE_MARK);
+					sqinfo_on(cave->info[y][x], SQUARE_MARK);
 
 					/* Redraw */
 					light_spot(y, x);
@@ -2351,7 +2351,7 @@ bool detect_monsters_living(int range, bool show)
 	/* Scan the maximal area of mapping */
 	for (y = py - range; y <= py + range; y++) {
 		for (x = px - range; x <= px + range; x++) {
-			feature_type *f_ptr = &f_info[cave_feat[y][x]];
+			feature_type *f_ptr = &f_info[cave->feat[y][x]];
 
 			/* Ignore "illegal" locations */
 			if (!in_bounds(y, x))
@@ -2364,7 +2364,7 @@ bool detect_monsters_living(int range, bool show)
 			/* Notice trees */
 			if (tf_has(f_ptr->flags, TF_TREE)) {
 				/* Mark it */
-				sqinfo_on(cave_info[y][x], SQUARE_MARK);
+				sqinfo_on(cave->info[y][x], SQUARE_MARK);
 
 				/* Count it */
 				num++;
@@ -3793,7 +3793,7 @@ void do_starlight(int burst_number, int dam, bool strong)
 
 	/* Is the player in a square already magically lit? */
 	bool player_lit =
-		sqinfo_has(cave_info[p_ptr->py][p_ptr->px], SQUARE_GLOW);
+		sqinfo_has(cave->info[p_ptr->py][p_ptr->px], SQUARE_GLOW);
 
 	for (i = 0; i < burst_number; i++) {
 		/* First, we find the spot. */
@@ -3812,11 +3812,11 @@ void do_starlight(int burst_number, int dam, bool strong)
 			scatter(&y, &x, p_ptr->py, p_ptr->px, d, 0);
 
 			/* Not on top of the player. */
-			if (cave_m_idx[y][x] < 0)
+			if (cave->m_idx[y][x] < 0)
 				continue;
 
 			/* Require passable terrain */
-			f_ptr = &f_info[cave_feat[y][x]];
+			f_ptr = &f_info[cave->feat[y][x]];
 			if (!tf_has(f_ptr->flags, TF_PASSABLE))
 				continue;
 
@@ -3827,7 +3827,7 @@ void do_starlight(int burst_number, int dam, bool strong)
 		/* Then we hit the spot. */
 
 		/* Confusing to be suddenly lit up. */
-		if (!sqinfo_has(cave_info[y][x], SQUARE_GLOW))
+		if (!sqinfo_has(cave->info[y][x], SQUARE_GLOW))
 			fire_meteor(-1, GF_CONFU, y, x, dam, strong ? 1 : 0, FALSE);
 
 		/* The actual burst of light. */
@@ -3924,16 +3924,16 @@ void grow_trees_and_grass(bool powerful)
 				continue;
 
 			/* Skip grids with objects */
-			if ((cave_o_idx[y][x] > 0) && (!powerful))
+			if ((cave->o_idx[y][x] > 0) && (!powerful))
 				continue;
 
 			/* Skip grids that aren't floor or road */
-			if ((cave_feat[y][x] != FEAT_FLOOR) &&
-				(cave_feat[y][x] != FEAT_ROAD))
+			if ((cave->feat[y][x] != FEAT_FLOOR) &&
+				(cave->feat[y][x] != FEAT_ROAD))
 				continue;
 
 			/* Skip grids that have monsters */
-			if ((cave_m_idx[y][x] > 0) && (!powerful))
+			if ((cave->m_idx[y][x] > 0) && (!powerful))
 				continue;
 
 			/* Maybe grow something */
@@ -4061,16 +4061,16 @@ void ele_air_smite(void)
 			scatter(&y, &x, p_ptr->py, p_ptr->px, d, 0);
 
 			/* Not on top of the player. */
-			if (cave_m_idx[y][x] < 0)
+			if (cave->m_idx[y][x] < 0)
 				continue;
 
 			/* Require passable terrain */
-			f_ptr = &f_info[cave_feat[y][x]];
+			f_ptr = &f_info[cave->feat[y][x]];
 			if (!tf_has(f_ptr->flags, TF_PASSABLE))
 				continue;
 
 			/* Slight preference for actual monsters. */
-			if (cave_m_idx[y][x] > 0)
+			if (cave->m_idx[y][x] > 0)
 				break;
 
 			/* Will accept any passable grid after a few tries. */
@@ -4477,7 +4477,7 @@ bool genocide(void)
 			continue;
 
 		/* Ignore monsters in icky squares */
-		if (sqinfo_has(cave_info[m_ptr->fy][m_ptr->fx], SQUARE_ICKY))
+		if (sqinfo_has(cave->info[m_ptr->fy][m_ptr->fx], SQUARE_ICKY))
 			continue;
 
 		/* Delete the monster */
@@ -4519,7 +4519,7 @@ bool mass_genocide(void)
 			continue;
 
 		/* Ignore monsters in icky squares */
-		if (sqinfo_has(cave_info[m_ptr->fy][m_ptr->fx], SQUARE_ICKY))
+		if (sqinfo_has(cave->info[m_ptr->fy][m_ptr->fx], SQUARE_ICKY))
 			continue;
 
 		/* Delete the monster */
@@ -4630,18 +4630,18 @@ void destroy_area(int y1, int x1, int r, bool full)
 				continue;
 
 			/* Ignore icky squares */
-			if (sqinfo_has(cave_info[y][x], SQUARE_ICKY))
+			if (sqinfo_has(cave->info[y][x], SQUARE_ICKY))
 				continue;
 
 			/* Lose room */
-			sqinfo_off(cave_info[y][x], SQUARE_ROOM);
+			sqinfo_off(cave->info[y][x], SQUARE_ROOM);
 
 			/* Lose light and knowledge */
-			sqinfo_off(cave_info[y][x], SQUARE_MARK);
-			sqinfo_off(cave_info[y][x], SQUARE_GLOW);
+			sqinfo_off(cave->info[y][x], SQUARE_MARK);
+			sqinfo_off(cave->info[y][x], SQUARE_GLOW);
 
 			/* Hack -- Notice player affect */
-			if (cave_m_idx[y][x] < 0) {
+			if (cave->m_idx[y][x] < 0) {
 				/* Hurt the player later */
 				flag = TRUE;
 
@@ -4784,23 +4784,23 @@ void earthquake(int cy, int cx, int r, bool volcano)
 				continue;
 
 			/* Lose room */
-			sqinfo_off(cave_info[yy][xx], SQUARE_ROOM);
+			sqinfo_off(cave->info[yy][xx], SQUARE_ROOM);
 
 			/* Lose light and knowledge */
-			sqinfo_off(cave_info[yy][xx], SQUARE_MARK);
-			sqinfo_off(cave_info[yy][xx], SQUARE_GLOW);
+			sqinfo_off(cave->info[yy][xx], SQUARE_MARK);
+			sqinfo_off(cave->info[yy][xx], SQUARE_GLOW);
 
 			/* Count total, water, lava and void grids */
 			total++;
-			if (cave_feat[yy][xx] == FEAT_WATER) {
+			if (cave->feat[yy][xx] == FEAT_WATER) {
 				water++;
 				unstable++;
 			}
-			if (cave_feat[yy][xx] == FEAT_LAVA) {
+			if (cave->feat[yy][xx] == FEAT_LAVA) {
 				lava++;
 				unstable++;
 			}
-			if (cave_feat[yy][xx] == FEAT_VOID) {
+			if (cave->feat[yy][xx] == FEAT_VOID) {
 				abyss++;
 				unstable++;
 			}
@@ -4950,8 +4950,8 @@ void earthquake(int cy, int cx, int r, bool volcano)
 				continue;
 
 			/* Process monsters */
-			if (cave_m_idx[yy][xx] > 0) {
-				monster_type *m_ptr = &m_list[cave_m_idx[yy][xx]];
+			if (cave->m_idx[yy][xx] > 0) {
+				monster_type *m_ptr = &m_list[cave->m_idx[yy][xx]];
 				monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
 				/* Most monsters cannot co-exist with rock */
@@ -5062,9 +5062,9 @@ void earthquake(int cy, int cx, int r, bool volcano)
 			if (cave_valid_bold(yy, xx)) {
 				int feat = outside ? FEAT_ROAD : FEAT_FLOOR;
 
-				monster_type *m_ptr = &m_list[cave_m_idx[yy][xx]];
+				monster_type *m_ptr = &m_list[cave->m_idx[yy][xx]];
 				monster_race *r_ptr = &r_info[m_ptr->r_idx];
-				feature_type *f_ptr = &f_info[cave_feat[yy][xx]];
+				feature_type *f_ptr = &f_info[cave->feat[yy][xx]];
 
 				bool floor = tf_has(f_ptr->flags, TF_FLOOR);
 
@@ -5085,7 +5085,7 @@ void earthquake(int cy, int cx, int r, bool volcano)
 				/* Granite (rubble if monster is present) */
 				if (t < 20) {
 					/* Dump rubble on top of monsters. */
-					if (cave_m_idx[yy][xx] > 0)
+					if (cave->m_idx[yy][xx] > 0)
 						feat = FEAT_RUBBLE;
 
 					/* Otherwise, create granite wall */
@@ -5096,7 +5096,7 @@ void earthquake(int cy, int cx, int r, bool volcano)
 				/* Quartz */
 				else if (t < 55) {
 					/* Dump rubble on top of monsters. */
-					if (cave_m_idx[yy][xx] > 0)
+					if (cave->m_idx[yy][xx] > 0)
 						feat = FEAT_RUBBLE;
 
 					/* If this was a volcanic eruption, create lava near
@@ -5112,7 +5112,7 @@ void earthquake(int cy, int cx, int r, bool volcano)
 				/* Magma */
 				else if (t < 90) {
 					/* Dump rubble on top of monsters. */
-					if (cave_m_idx[yy][xx] > 0)
+					if (cave->m_idx[yy][xx] > 0)
 						feat = FEAT_RUBBLE;
 
 					/* If this was a volcanic eruption, create lava near
@@ -5160,7 +5160,7 @@ void earthquake(int cy, int cx, int r, bool volcano)
 						feat = FEAT_LAVA;
 				} else if (t < abyss * 150) {
 					/* Check for monsters */
-					if (cave_m_idx[yy][xx] > 0) {
+					if (cave->m_idx[yy][xx] > 0) {
 						/* Flying monsters survive */
 						if (!(rf_has(r_ptr->flags, RF_FLYING))) {
 							/* What was that again ? */
@@ -5224,7 +5224,7 @@ bool tremor(void)
 
 		/* Test for empty floor and line of sight, forbid vaults */
 		if (cave_empty_bold(ny, nx)
-			&& !sqinfo_has(cave_info[ny][nx], SQUARE_ICKY)
+			&& !sqinfo_has(cave->info[ny][nx], SQUARE_ICKY)
 			&& (player_has_los_bold(ny, nx)))
 			valid_grid = TRUE;
 	}
@@ -5261,10 +5261,10 @@ static void cave_temp_room_light(void)
 		int x = temp_x[i];
 
 		/* No longer in the array */
-		sqinfo_off(cave_info[y][x], SQUARE_TEMP);
+		sqinfo_off(cave->info[y][x], SQUARE_TEMP);
 
 		/* Perma-Light */
-		sqinfo_on(cave_info[y][x], SQUARE_GLOW);
+		sqinfo_on(cave->info[y][x], SQUARE_GLOW);
 	}
 
 	/* Fully update the visuals */
@@ -5282,10 +5282,10 @@ static void cave_temp_room_light(void)
 		light_spot(y, x);
 
 		/* Process affected monsters */
-		if (cave_m_idx[y][x] > 0) {
+		if (cave->m_idx[y][x] > 0) {
 			int chance = 25;
 
-			monster_type *m_ptr = &m_list[cave_m_idx[y][x]];
+			monster_type *m_ptr = &m_list[cave->m_idx[y][x]];
 			monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
 			/* Stupid monsters rarely wake up */
@@ -5341,19 +5341,19 @@ static void cave_temp_room_unlight(void)
 	for (i = 0; i < temp_n; i++) {
 		int y = temp_y[i];
 		int x = temp_x[i];
-		feature_type *f_ptr = &f_info[cave_feat[y][x]];
+		feature_type *f_ptr = &f_info[cave->feat[y][x]];
 
 		/* No longer in the array */
-		sqinfo_off(cave_info[y][x], SQUARE_TEMP);
+		sqinfo_off(cave->info[y][x], SQUARE_TEMP);
 
 		/* Darken the grid */
-		sqinfo_off(cave_info[y][x], SQUARE_GLOW);
+		sqinfo_off(cave->info[y][x], SQUARE_GLOW);
 
 		/* Hack -- Forget "boring" grids */
 		if (tf_has(f_ptr->flags, TF_FLOOR) &&
-			!sqinfo_has(cave_info[y][x], SQUARE_TRAP)) {
+			!sqinfo_has(cave->info[y][x], SQUARE_TRAP)) {
 			/* Forget the grid */
-			sqinfo_off(cave_info[y][x], SQUARE_MARK);
+			sqinfo_off(cave->info[y][x], SQUARE_MARK);
 		}
 	}
 
@@ -5389,11 +5389,11 @@ static void cave_temp_room_aux(int y, int x)
 		return;
 
 	/* Avoid infinite recursion */
-	if (sqinfo_has(cave_info[y][x], SQUARE_TEMP))
+	if (sqinfo_has(cave->info[y][x], SQUARE_TEMP))
 		return;
 
 	/* Do not "leave" the current room */
-	if (!sqinfo_has(cave_info[y][x], SQUARE_ROOM))
+	if (!sqinfo_has(cave->info[y][x], SQUARE_ROOM))
 		return;
 
 	/* Paranoia -- verify space */
@@ -5401,7 +5401,7 @@ static void cave_temp_room_aux(int y, int x)
 		return;
 
 	/* Mark the grid as "seen" */
-	sqinfo_on(cave_info[y][x], SQUARE_TEMP);
+	sqinfo_on(cave->info[y][x], SQUARE_TEMP);
 
 	/* Add it to the "seen" set */
 	temp_y[temp_n] = y;
@@ -5428,7 +5428,7 @@ void light_room(int y1, int x1)
 		x = temp_x[i], y = temp_y[i];
 
 		/* Walls (but not trees) get lit, but stop light */
-		f_ptr = &f_info[cave_feat[y][x]];
+		f_ptr = &f_info[cave->feat[y][x]];
 		if (!cave_project(y, x) && tf_has(f_ptr->flags, TF_TREE))
 			continue;
 
@@ -5934,7 +5934,7 @@ bool trap_creation(void)
 	int i;
 	for (i = 0; i < 8; i++) {
 		int y = py + ddy_ddd[i], x = px + ddx_ddd[i];
-		feature_type *f_ptr = &f_info[cave_feat[x][y]];
+		feature_type *f_ptr = &f_info[cave->feat[x][y]];
 		if (tf_has(f_ptr->flags, TF_TREE))
 			place_trap(y, x, -1, p_ptr->depth);
 	}

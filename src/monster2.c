@@ -73,7 +73,7 @@ void delete_monster_idx(int i)
 
 
 	/* Monster is gone */
-	cave_m_idx[y][x] = 0;
+	cave->m_idx[y][x] = 0;
 
 	/* Total Hack -- If the monster was a player ghost, remove it from the
 	 * monster memory, ensure that it never appears again, clear its bones
@@ -129,8 +129,8 @@ void delete_monster(int y, int x)
 		return;
 
 	/* Delete the monster (if any) */
-	if (cave_m_idx[y][x] > 0)
-		delete_monster_idx(cave_m_idx[y][x]);
+	if (cave->m_idx[y][x] > 0)
+		delete_monster_idx(cave->m_idx[y][x]);
 }
 
 
@@ -159,7 +159,7 @@ static void compact_monsters_aux(int i1, int i2)
 	x = m_ptr->fx;
 
 	/* Update the cave */
-	cave_m_idx[y][x] = i2;
+	cave->m_idx[y][x] = i2;
 
 	/* Repair objects being carried by monster */
 	for (this_o_idx = m_ptr->hold_o_idx; this_o_idx;
@@ -327,14 +327,14 @@ void wipe_m_list(void)
 		r_ptr->cur_num--;
 
 		/* Monster is gone */
-		cave_m_idx[m_ptr->fy][m_ptr->fx] = 0;
+		cave->m_idx[m_ptr->fy][m_ptr->fx] = 0;
 
 		/* Wipe the Monster */
 		(void) WIPE(m_ptr, monster_type);
 	}
 
 	/* Hack - wipe the player */
-	cave_m_idx[p_ptr->py][p_ptr->px] = 0;
+	cave->m_idx[p_ptr->py][p_ptr->px] = 0;
 
 	/* Reset "m_max" */
 	m_max = 1;
@@ -2006,12 +2006,12 @@ bool is_detected(int y, int x)
 			continue;
 
 		/* Only check trappable grids */
-		f_ptr = &f_info[cave_feat[yy][xx]];
+		f_ptr = &f_info[cave->feat[yy][xx]];
 		if (!tf_has(f_ptr->flags, TF_TRAP))
 			continue;
 
 		/* Return false if undetected */
-		if (!sqinfo_has(cave_info[yy][xx], SQUARE_DTRAP))
+		if (!sqinfo_has(cave->info[yy][xx], SQUARE_DTRAP))
 			return (FALSE);
 	}
 
@@ -2034,13 +2034,13 @@ void monster_swap(int y1, int x1, int y2, int x2)
 
 
 	/* Monsters */
-	m1 = cave_m_idx[y1][x1];
-	m2 = cave_m_idx[y2][x2];
+	m1 = cave->m_idx[y1][x1];
+	m2 = cave->m_idx[y2][x2];
 
 
 	/* Update grids */
-	cave_m_idx[y1][x1] = m2;
-	cave_m_idx[y2][x2] = m1;
+	cave->m_idx[y1][x1] = m2;
+	cave->m_idx[y2][x2] = m1;
 
 
 	/* Monster 1 */
@@ -2094,7 +2094,7 @@ void monster_swap(int y1, int x1, int y2, int x2)
 		bool old_dtrap, new_dtrap;
 
 		/* Calculate changes in dtrap status */
-		old_dtrap = sqinfo_has(cave_info[y1][x1], SQUARE_DTRAP);
+		old_dtrap = sqinfo_has(cave->info[y1][x1], SQUARE_DTRAP);
 		new_dtrap = is_detected(y2, x2);
 
 		/* Note the change in the detect status */
@@ -2131,7 +2131,7 @@ void monster_swap(int y1, int x1, int y2, int x2)
 s16b player_place(int y, int x)
 {
 	/* Paranoia XXX XXX */
-	if (cave_m_idx[y][x] != 0)
+	if (cave->m_idx[y][x] != 0)
 		return (0);
 
 	/* No stairs if we don't do that */
@@ -2148,7 +2148,7 @@ s16b player_place(int y, int x)
 	p_ptr->px = x;
 
 	/* Mark cave grid */
-	cave_m_idx[y][x] = -1;
+	cave->m_idx[y][x] = -1;
 
 	/* Success */
 	return (-1);
@@ -2167,7 +2167,7 @@ s16b monster_place(int y, int x, monster_type * n_ptr)
 
 
 	/* Paranoia XXX XXX */
-	if (cave_m_idx[y][x] != 0)
+	if (cave->m_idx[y][x] != 0)
 		return (0);
 
 
@@ -2177,7 +2177,7 @@ s16b monster_place(int y, int x, monster_type * n_ptr)
 	/* Oops */
 	if (m_idx) {
 		/* Make a new monster */
-		cave_m_idx[y][x] = m_idx;
+		cave->m_idx[y][x] = m_idx;
 
 		/* Acquire new monster */
 		m_ptr = &m_list[m_idx];
@@ -2267,7 +2267,7 @@ static bool place_monster_one(int y, int x, int r_idx, bool slp)
 
 	monster_type *n_ptr;
 	monster_type monster_type_body;
-	feature_type *f_ptr = &f_info[cave_feat[y][x]];
+	feature_type *f_ptr = &f_info[cave->feat[y][x]];
 
 	const char *name;
 
@@ -2496,7 +2496,7 @@ static bool place_monster_one(int y, int x, int r_idx, bool slp)
 		k = randint0(chance + 20);
 		if ((k > 20) || (stage_map[p_ptr->stage][STAGE_TYPE] == CAVE)
 			|| (p_ptr->themed_level == THEME_WARLORDS)
-			|| sqinfo_has(cave_info[y][x], SQUARE_ICKY))
+			|| sqinfo_has(cave->info[y][x], SQUARE_ICKY))
 			n_ptr->hostile = -1;
 		else
 			n_ptr->hostile = 0;
@@ -2740,7 +2740,7 @@ static void place_monster_escort(int y, int x, int leader_idx, bool slp)
 				continue;
 
 			/* Flow past occupied grids. */
-			if (cave_m_idx[my][mx] != 0) {
+			if (cave->m_idx[my][mx] != 0) {
 				/* Add grid to the "hack" set */
 				hack_y[hack_n] = my;
 				hack_x[hack_n] = mx;
@@ -2821,7 +2821,7 @@ bool place_monster_aux(int y, int x, int r_idx, bool slp, bool grp)
 	}
 
 	/* The original monster is the group leader */
-	group_leader = cave_m_idx[y][x];
+	group_leader = cave->m_idx[y][x];
 
 	/* Friends for certain monsters */
 	if (rf_has(r_ptr->flags, RF_FRIENDS)) {
@@ -2930,14 +2930,14 @@ bool alloc_monster(int dis, bool slp, bool quick)
 			continue;
 
 		/* Monsters flying only on mountaintop */
-		f_ptr = &f_info[cave_feat[y][x]];
+		f_ptr = &f_info[cave->feat[y][x]];
 		if (tf_has(f_ptr->flags, TF_FALL)
 			&& (stage_map[p_ptr->stage][STAGE_TYPE] != MOUNTAINTOP))
 			continue;
 
 		/* Do not put random monsters in marked rooms. */
 		if ((!character_dungeon)
-			&& sqinfo_has(cave_info[y][x], SQUARE_TEMP))
+			&& sqinfo_has(cave->info[y][x], SQUARE_TEMP))
 			continue;
 
 		/* Accept far away grids */
@@ -3183,10 +3183,10 @@ bool summon_specific(int y1, int x1, bool scattered, int lev, int type)
 			scatter(&y, &x, y1, x1, d, 0);
 
 			/* Require passable terrain, with no other creature or player. */
-			f_ptr = &f_info[cave_feat[y][x]];
+			f_ptr = &f_info[cave->feat[y][x]];
 			if (!tf_has(f_ptr->flags, TF_PASSABLE))
 				continue;
-			if (cave_m_idx[y][x] != 0)
+			if (cave->m_idx[y][x] != 0)
 				continue;
 
 			/* Hack -- no summon on glyph of warding */
@@ -3266,10 +3266,10 @@ bool summon_questor(int y1, int x1)
 		scatter(&y, &x, y1, x1, d, 0);
 
 		/* Require passable terrain, with no other creature or player. */
-		f_ptr = &f_info[cave_feat[y][x]];
+		f_ptr = &f_info[cave->feat[y][x]];
 		if (!tf_has(f_ptr->flags, TF_PASSABLE))
 			continue;
-		if (cave_m_idx[y][x] != 0)
+		if (cave->m_idx[y][x] != 0)
 			continue;
 
 		/* Hack -- no summon on glyph of warding */

@@ -4099,23 +4099,6 @@ static errr init_other(void)
 	temp_x = ((byte *) (temp_g)) + TEMP_MAX;
 
 
-	/*** Prepare dungeon arrays ***/
-
-	/* Padded into array */
-	cave_info = C_ZNEW(DUNGEON_HGT, grid_256);
-
-	/* Feature array */
-	cave_feat = C_ZNEW(DUNGEON_HGT, byte_wid);
-
-	/* Entity arrays */
-	cave_o_idx = C_ZNEW(DUNGEON_HGT, s16b_wid);
-	cave_m_idx = C_ZNEW(DUNGEON_HGT, s16b_wid);
-
-	/* Flow arrays */
-	cave_cost = C_ZNEW(DUNGEON_HGT, byte_wid);
-	cave_when = C_ZNEW(DUNGEON_HGT, byte_wid);
-
-
 	/*** Prepare entity arrays ***/
 
 	/* Objects */
@@ -4917,16 +4900,6 @@ void cleanup_angband(void)
 	FREE(trap_list);
 	FREE(m_list);
 	FREE(o_list);
-
-	/* Flow arrays */
-	FREE(cave_when);
-	FREE(cave_cost);
-
-	/* Free the cave */
-	FREE(cave_o_idx);
-	FREE(cave_m_idx);
-	FREE(cave_feat);
-	FREE(cave_info);
 
 	/* Free the temp array */
 	FREE(temp_g);
