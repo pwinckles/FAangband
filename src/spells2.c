@@ -1479,7 +1479,7 @@ static void animate_detect(int rad)
 		for (x = px - rad; x <= px + rad; x++) {
 
 			/* Ignore "illegal" locations */
-			if (!in_bounds(y, x))
+			if (!square_in_bounds(cave, y, x))
 				continue;
 
 			/* Enforce a "circular" area */
@@ -1515,7 +1515,7 @@ static void animate_detect(int rad)
 	for (y = py - rad; y <= py + rad; y++) {
 		for (x = px - rad; x <= px + rad; x++) {
 			/* Ignore "illegal" locations */
-			if (!in_bounds(y, x))
+			if (!square_in_bounds(cave, y, x))
 				continue;
 
 			/* Enforce a "circular" area */
@@ -1585,7 +1585,7 @@ bool detect_traps(int range, bool show)
 		for (x = 0; x < DUNGEON_WID; x++) {
 			/* check range */
 			if (distance(py, px, y, x) <= range) {
-				if (!in_bounds_fully(y, x)) continue;
+				if (!square_in_bounds_fully(cave, y, x)) continue;
 
 				/* see if this grid is on the edge */
 				if (dtrap_edge(y, x)) {
@@ -2354,7 +2354,7 @@ bool detect_monsters_living(int range, bool show)
 			feature_type *f_ptr = &f_info[cave->feat[y][x]];
 
 			/* Ignore "illegal" locations */
-			if (!in_bounds(y, x))
+			if (!square_in_bounds(cave, y, x))
 				continue;
 
 			/* Enforce a "circular" area */
@@ -4615,7 +4615,7 @@ void destroy_area(int y1, int x1, int r, bool full)
 	for (y = (y1 - r); y <= (y1 + r); y++) {
 		for (x = (x1 - r); x <= (x1 + r); x++) {
 			/* Skip illegal grids */
-			if (!in_bounds_fully(y, x))
+			if (!square_in_bounds_fully(cave, y, x))
 				continue;
 
 			/* Extract the distance */
@@ -4772,7 +4772,7 @@ void earthquake(int cy, int cx, int r, bool volcano)
 			xx = cx + dx;
 
 			/* Skip illegal grids */
-			if (!in_bounds_fully(yy, xx))
+			if (!square_in_bounds_fully(cave, yy, xx))
 				continue;
 
 			/* Skip distant grids */
@@ -5372,7 +5372,7 @@ static void cave_unlight(struct point_set *ps)
 static void cave_temp_room_aux(struct point_set *seen, int y, int x)
 {
 	/* Check in bounds - thanks George */
-	if (!in_bounds(y, x))
+	if (!square_in_bounds(cave, y, x))
 		return;
 
 	/* Avoid infinite recursion */

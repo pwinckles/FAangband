@@ -190,7 +190,7 @@ int get_scent(int y, int x)
 	int scent;
 
 	/* Check Bounds */
-	if (!(in_bounds(y, x)))
+	if (!(square_in_bounds(cave, y, x)))
 		return (-1);
 
 	/* Scent trace? */
@@ -270,7 +270,7 @@ static int summon_possible(int y1, int x1)
 	for (y = y1 - 2; y <= y1 + 2; y++) {
 		for (x = x1 - 2; x <= x1 + 2; x++) {
 			/* Ignore illegal locations */
-			if (!in_bounds(y, x))
+			if (!square_in_bounds(cave, y, x))
 				continue;
 
 			/* Only check a circular area */
@@ -1194,7 +1194,7 @@ bool cave_exist_mon(monster_race *r_ptr, int y, int x, bool occupied_ok)
 	feature_type *f_ptr;
 
 	/* Check Bounds */
-	if (!in_bounds_fully(y, x))
+	if (!square_in_bounds_fully(cave, y, x))
 		return (FALSE);
 
 	/* Check location */
@@ -1317,7 +1317,7 @@ static int cave_passable_mon(monster_type * m_ptr, int y, int x,
 	feature_type *f_ptr;
 
 	/* Check Bounds */
-	if (!in_bounds(y, x))
+	if (!square_in_bounds(cave, y, x))
 		return (FALSE);
 
 	/* Check location */
@@ -1682,7 +1682,7 @@ static void get_move_advance(monster_type * m_ptr, int *ty, int *tx)
 		x = x1 + ddx_ddd[i];
 
 		/* Check Bounds */
-		if (!in_bounds(y, x))
+		if (!square_in_bounds(cave, y, x))
 			continue;
 
 		/* We're following a scent trail */
@@ -1808,7 +1808,7 @@ static bool find_safety(monster_type * m_ptr, int *ty, int *tx)
 					x_tmp = x + 1;
 
 				/* Grid and adjacent grids must be legal */
-				if (!in_bounds_fully(y - conv_y, x - conv_x)) {
+				if (!square_in_bounds_fully(cave, y - conv_y, x - conv_x)) {
 					x = x_tmp;
 					continue;
 				}
@@ -1892,7 +1892,7 @@ static bool find_safety(monster_type * m_ptr, int *ty, int *tx)
 									int xxx = xx - conv_x + ddx_ddd[i];
 
 									/* Check bounds */
-									if (!in_bounds(yyy, xxx))
+									if (!square_in_bounds(cave, yyy, xxx))
 										continue;
 
 									/* Look for any passable grid that isn't in 
@@ -2025,7 +2025,7 @@ static bool get_move_retreat(monster_type * m_ptr, int *ty, int *tx)
 					x = m_ptr->fx + ddx_ddd[i];
 
 					/* Check Bounds */
-					if (!in_bounds(y, x))
+					if (!square_in_bounds(cave, y, x))
 						continue;
 
 					if (player_has_los_bold(y, x))
@@ -2073,7 +2073,7 @@ static bool get_move_retreat(monster_type * m_ptr, int *ty, int *tx)
 					x = m_ptr->fx + ddx_ddd[i];
 
 					/* Check Bounds */
-					if (!in_bounds(y, x))
+					if (!square_in_bounds(cave, y, x))
 						continue;
 
 					/* Accept the first non-visible grid with a higher cost */
@@ -2107,7 +2107,7 @@ static bool get_move_retreat(monster_type * m_ptr, int *ty, int *tx)
 			x = m_ptr->fx + ddx_ddd[i % 8];
 
 			/* Check Bounds */
-			if (!in_bounds(y, x))
+			if (!square_in_bounds(cave, y, x))
 				continue;
 
 			/* No grids in LOS */
@@ -2365,7 +2365,7 @@ static bool get_move(monster_type * m_ptr, int *ty, int *tx, bool * fear,
 					x = targ_x + ddx_ddd[i];
 
 					/* Check Bounds */
-					if (!in_bounds(y, x))
+					if (!square_in_bounds(cave, y, x))
 						continue;
 
 					/* Count passable grids */
@@ -2430,7 +2430,7 @@ static bool get_move(monster_type * m_ptr, int *ty, int *tx, bool * fear,
 			x = targ_x + ddx_ddd[i % 8];
 
 			/* Check Bounds */
-			if (!in_bounds(y, x))
+			if (!square_in_bounds(cave, y, x))
 				continue;
 
 			/* Ignore occupied grids */
@@ -2574,7 +2574,7 @@ static bool get_route_to_target(monster_type * m_ptr, int *ty, int *tx)
 			x = m_ptr->fx + ddx_ddd[i];
 
 			/* Check Bounds (fully) */
-			if (!in_bounds_fully(y, x))
+			if (!square_in_bounds_fully(cave, y, x))
 				continue;
 
 			/* Grid is not passable */
@@ -2631,7 +2631,7 @@ static bool get_route_to_target(monster_type * m_ptr, int *ty, int *tx)
 			x = m_ptr->fx + ddx_ddd[i];
 
 			/* Check Bounds (fully) */
-			if (!in_bounds_fully(y, x))
+			if (!square_in_bounds_fully(cave, y, x))
 				continue;
 
 			/* Grid is not passable */
@@ -2699,7 +2699,7 @@ static bool get_route_to_target(monster_type * m_ptr, int *ty, int *tx)
  * water.  This function assumes that the monster does not belong in this 
  * grid, and therefore should suffer for trying to enter it.
  */
-static void make_confused_move(monster_type * m_ptr, int y, int x)
+static void make_confused_move(monster_type *m_ptr, int y, int x)
 {
 	char m_name[80];
 
@@ -2712,7 +2712,7 @@ static void make_confused_move(monster_type * m_ptr, int y, int x)
 	bool death = TRUE;
 
 	/* Check Bounds (fully) */
-	if (!in_bounds_fully(y, x))
+	if (!square_in_bounds_fully(cave, y, x))
 		return;
 
 	/* Check location */
@@ -2999,7 +2999,7 @@ static bool make_move(monster_type * m_ptr, int *ty, int *tx, bool fear,
 			nx = ox + ddx[dir];
 
 			/* Check Bounds */
-			if (!in_bounds(ny, nx))
+			if (!square_in_bounds(cave, ny, nx))
 				continue;
 
 			/* Store this grid's movement data. */
@@ -3264,7 +3264,7 @@ static bool push_aside(monster_type * m_ptr, monster_type * n_ptr)
 		x = n_ptr->fx + ddx[side_dir];
 
 		/* Illegal grid */
-		if (!in_bounds_fully(y, x))
+		if (!square_in_bounds_fully(cave, y, x))
 			continue;
 
 		/* Grid is not occupied, and the 2nd monster can exist in it. */
@@ -3678,7 +3678,7 @@ static void process_move(monster_type *m_ptr, int ty, int tx, bool bash)
 	nx = tx;
 
 	/* Check Bounds */
-	if (!in_bounds(ny, nx))
+	if (!square_in_bounds(cave, ny, nx))
 		return;
 
 	/* The grid is occupied by the player. */
@@ -3906,7 +3906,7 @@ static void process_move(monster_type *m_ptr, int ty, int tx, bool bash)
 				xx = nx + ddx_ddd[i];
 
 				/* Paranoia */
-				if (!in_bounds_fully(yy, xx))
+				if (!square_in_bounds_fully(cave, yy, xx))
 					continue;
 
 				/* Get the feature */
@@ -4335,7 +4335,7 @@ static void process_monster(monster_type * m_ptr)
 		for (k = 0, y = m_ptr->fy - 1; y <= m_ptr->fy + 1; y++) {
 			for (x = m_ptr->fx - 1; x <= m_ptr->fx + 1; x++) {
 				/* Check Bounds */
-				if (!in_bounds(y, x))
+				if (!square_in_bounds(cave, y, x))
 					continue;
 
 				/* Count monsters */

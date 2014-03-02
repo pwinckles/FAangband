@@ -125,7 +125,7 @@ void delete_monster_idx(int i)
 void delete_monster(int y, int x)
 {
 	/* Paranoia */
-	if (!in_bounds(y, x))
+	if (!square_in_bounds(cave, y, x))
 		return;
 
 	/* Delete the monster (if any) */
@@ -2002,7 +2002,7 @@ bool is_detected(int y, int x)
 		xx = x + ddx_ddd[d];
 
 		/* Paranoia */
-		if (!in_bounds_fully(yy, xx))
+		if (!square_in_bounds_fully(cave, yy, xx))
 			continue;
 
 		/* Only check trappable grids */
@@ -2279,7 +2279,7 @@ static bool place_monster_one(int y, int x, int r_idx, bool slp)
 		return (FALSE);
 
 	/* Paranoia */
-	if (!in_bounds(y, x))
+	if (!square_in_bounds(cave, y, x))
 		return (FALSE);
 
 	/* Race */

@@ -559,7 +559,7 @@ bool dtrap_edge(int y, int x)
 	/* Check for non-dtrap adjacent grids */
 	for (i = -1; i <= 1; i++)
 		for (j = -1; j <= 1; j++)
-			if (in_bounds_fully(y + i, x + j) &&
+			if (square_in_bounds_fully(cave, y + i, x + j) &&
 				(!sqinfo_has(cave->info[y + i][x + j], SQUARE_DTRAP)))
 				return TRUE;
 	
@@ -1308,7 +1308,7 @@ static void prt_map_aux(void)
 				continue;
 			for (x = t->offset_x, vx = 0; x < tx; vx++, x++) {
 				/* Check bounds */
-				if (!in_bounds(y, x))
+				if (!square_in_bounds(cave, y, x))
 					continue;
 
 				if (vx + tile_width - 1 >= t->wid)
@@ -1360,7 +1360,7 @@ void prt_map(void)
 	for (y = Term->offset_y, vy = ROW_MAP; y < ty; vy++, y++) {
 		for (x = Term->offset_x, vx = COL_MAP; x < tx; vx++, x++) {
 			/* Check bounds */
-			if (!in_bounds(y, x))
+			if (!square_in_bounds(cave, y, x))
 				continue;
 
 			/* Determine what is there */
@@ -2083,7 +2083,7 @@ bool cave_iswall(int y, int x)
 	/* Terrain */
 	feature_type *f_ptr;
 
-	if (!in_bounds(y, x))
+	if (!square_in_bounds(cave, y, x))
 		return FALSE;
 
 	f_ptr = &f_info[cave->feat[y][x]];
@@ -2345,7 +2345,7 @@ void update_noise(void)
 					x2 = x + ddx_ddd[d];
 
 					/* Check Bounds */
-					if (!in_bounds(y2, x2))
+					if (!square_in_bounds(cave, y2, x2))
 						continue;
 
 					/* Ignore illegal grids */
@@ -2468,7 +2468,7 @@ void update_noise(void)
 				x2 = x + ddx_ddd[d];
 
 				/* Check Bounds */
-				if (!in_bounds(y2, x2))
+				if (!square_in_bounds(cave, y2, x2))
 					continue;
 
 				/* When doing a rebuild... */
@@ -2585,7 +2585,7 @@ void update_smell(void)
 			x = j + px - 2;
 
 			/* Check Bounds */
-			if (!in_bounds(y, x))
+			if (!square_in_bounds(cave, y, x))
 				continue;
 
 			/* Get the feature */
@@ -2644,7 +2644,7 @@ void map_area(int y, int x, bool extended)
 			feature_type *f_ptr = &f_info[cave->feat[y][x]];
 
 			/* Ignore "illegal" locations */
-			if (!in_bounds(y, x))
+			if (!square_in_bounds(cave, y, x))
 				continue;
 
 			/* Enforce a "circular" area */
@@ -2736,7 +2736,7 @@ void wiz_light(bool wizard)
 			/* Process all passable grids (or all grids, if a wizard) */
 			if (square_ispassable(cave, y, x)) {
 				/* Paranoia -- stay in bounds */
-				if (!in_bounds_fully(y, x))
+				if (!square_in_bounds_fully(cave, y, x))
 					continue;
 
 				/* Scan the grid and all neighbors */
@@ -2924,6 +2924,16 @@ void cave_set_feat(int y, int x, int feat)
 		/* Redraw */
 		light_spot(y, x);
 	}
+}
+
+bool square_in_bounds(struct cave *c, int y, int x)
+{
+	return x >= 0 && x < c->width && y >= 0 && y < c->height;
+}
+
+bool square_in_bounds_fully(struct cave *c, int y, int x)
+{
+	return x > 0 && x < c->width - 1 && y > 0 && y < c->height - 1;
 }
 
 
@@ -3286,7 +3296,7 @@ void scatter(int *yp, int *xp, int y, int x, int d, int m)
 		nx = rand_spread(x, d);
 
 		/* Ignore annoying locations */
-		if (!in_bounds_fully(y, x))
+		if (!square_in_bounds_fully(cave, y, x))
 			continue;
 
 		/* Ignore "excessively distant" locations */
@@ -3734,7 +3744,7 @@ bool feat_is_monster_walkable(feature_type *feature)
  */
 bool square_is_monster_walkable(struct cave *c, int y, int x)
 {
-	assert(in_bounds(y, x));
+	assert(square_in_bounds(c, y, x));
 	return feat_is_monster_walkable(&f_info[c->feat[y][x]]);
 }
 
@@ -3749,7 +3759,7 @@ bool feat_ispassable(feature_type *f_ptr) {
  * True if the square is passable by the player.
  */
 bool square_ispassable(struct cave *c, int y, int x) {
-	assert(in_bounds(y, x));
+	assert(square_in_bounds(c, y, x));
 	return feat_ispassable(&f_info[c->feat[y][x]]);
 }
 
@@ -3766,7 +3776,7 @@ bool feat_isprojectable(feature_type *f_ptr) {
  * This function is the logical negation of square_iswall().
  */
 bool square_isprojectable(struct cave *c, int y, int x) {
-	assert(in_bounds(y, x));
+	assert(square_in_bounds(c, y, x));
 	return feat_isprojectable(&f_info[c->feat[y][x]]);
 }
 
@@ -3776,7 +3786,7 @@ bool square_isprojectable(struct cave *c, int y, int x) {
  * This function is the logical negation of square_isprojectable().
  */
 bool square_iswall(struct cave *c, int y, int x) {
-	assert(in_bounds(y, x));
+	assert(square_in_bounds(c, y, x));
 	return !square_isprojectable(c, y, x);
 }
 
@@ -3787,7 +3797,7 @@ bool square_iswall(struct cave *c, int y, int x) {
  * secret doors and rubble.
  */
 bool square_isstrongwall(struct cave *c, int y, int x) {
-	assert(in_bounds(y, x));
+	assert(square_in_bounds(c, y, x));
 	return square_ismineral(c, y, x) || square_isperm(c, y, x);
 }
 
@@ -3797,7 +3807,7 @@ bool square_isstrongwall(struct cave *c, int y, int x) {
  * This doesn't say what kind of square it is, just that it is part of a vault.
  */
 bool square_isvault(struct cave *c, int y, int x) {
-	assert(in_bounds(y, x));
+	assert(square_in_bounds(c, y, x));
 	return sqinfo_has(c->info[y][x], SQUARE_ICKY);
 }
 
@@ -3805,28 +3815,28 @@ bool square_isvault(struct cave *c, int y, int x) {
  * True if the square is part of a room.
  */
 bool square_isroom(struct cave *c, int y, int x) {
-	assert(in_bounds(y, x));
+	assert(square_in_bounds(c, y, x));
 	return sqinfo_has(c->info[y][x], SQUARE_ROOM);
 }
 
 /* True if the cave square is viewable */
 bool square_isview(struct cave *c, int y, int x) {
-	assert(in_bounds(y, x));
+	assert(square_in_bounds(c, y, x));
 	return sqinfo_has(c->info[y][x], SQUARE_VIEW);
 }
 
 bool square_isseen(struct cave *c, int y, int x) {
-	assert(in_bounds(y, x));
+	assert(square_in_bounds(c, y, x));
 	return sqinfo_has(c->info[y][x], SQUARE_SEEN);
 }
 
 bool square_wasseen(struct cave *c, int y, int x) {
-	assert(in_bounds(y, x));
+	assert(square_in_bounds(c, y, x));
 	return sqinfo_has(c->info[y][x], SQUARE_TEMP);
 }
 
 bool square_isglow(struct cave *c, int y, int x) {
-	assert(in_bounds(y, x));
+	assert(square_in_bounds(c, y, x));
 	return sqinfo_has(c->info[y][x], SQUARE_GLOW);
 }
 
@@ -3841,7 +3851,7 @@ bool feat_isboring(feature_type *f_ptr) {
  * True if the cave square is "boring".
  */
 bool square_isboring(struct cave *c, int y, int x) {
-	assert(in_bounds(y, x));
+	assert(square_in_bounds(c, y, x));
 	return feat_isboring(&f_info[c->feat[y][x]]);
 }
 
@@ -3857,8 +3867,8 @@ struct monster *cave_monster(struct cave *c, int idx) {
  */
 struct monster *square_monster(struct cave *c, int y, int x) {
 	if (c->m_idx[y][x] > 0) {
-	struct monster *mon = cave_monster(c, c->m_idx[y][x]);
-	return &r_info[mon->r_idx] ? mon : NULL;
+		struct monster *mon = cave_monster(c, c->m_idx[y][x]);
+		return &r_info[mon->r_idx] ? mon : NULL;
 	}
 
 	return NULL;
@@ -3978,7 +3988,7 @@ void square_show_vein(struct cave *c, int y, int x) {
 //}
 
 void square_destroy(struct cave *c, int y, int x) {
-	int feat = FEAT_FLOOR;
+int feat = FEAT_FLOOR;
 	int r = randint0(200);
 
 	if (r < 20)
@@ -4058,7 +4068,7 @@ void square_force_floor(struct cave *c, int y, int x) {
  */
 int count_feats(int *y, int *x, bool (*test)(struct cave *cave, int y, int x), bool under)
 {
-	int d;
+int d;
 	int xx, yy;
 	int count = 0; /* Count how many matches */
 
@@ -4073,7 +4083,7 @@ int count_feats(int *y, int *x, bool (*test)(struct cave *cave, int y, int x), b
 		xx = p_ptr->px + ddx_ddd[d];
 
 		/* Paranoia */
-		if (!in_bounds_fully(yy, xx)) continue;
+		if (!square_in_bounds_fully(cave, yy, xx)) continue;
 
 		/* Must have knowledge */
 		if (!sqinfo_has(cave->info[yy][xx], SQUARE_MARK)) continue;

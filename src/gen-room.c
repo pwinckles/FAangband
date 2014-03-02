@@ -56,13 +56,13 @@ static void spread_objects(int depth, int num, int y0, int x0, int dy,
 		if ((dy == 0) && (dx == 0)) {
 			y = y0;
 			x = x0;
-			if (!in_bounds(y, x))
+			if (!square_in_bounds(cave, y, x))
 				return;
 		} else {
 			for (j = 0; j < 10; j++) {
 				y = rand_spread(y0, dy);
 				x = rand_spread(x0, dx);
-				if (!in_bounds(y, x)) {
+				if (!square_in_bounds(cave, y, x)) {
 					if (j < 9)
 						continue;
 					else
@@ -113,13 +113,13 @@ static void spread_traps(int num, int y0, int x0, int dy, int dx)
 		if ((dy == 0) && (dx == 0)) {
 			y = y0;
 			x = x0;
-			if (!in_bounds(y, x))
+			if (!square_in_bounds(cave, y, x))
 				return;
 		} else {
 			for (j = 0; j < 10; j++) {
 				y = rand_spread(y0, dy);
 				x = rand_spread(x0, dx);
-				if (!in_bounds(y, x)) {
+				if (!square_in_bounds(cave, y, x)) {
 					if (j < 9)
 						continue;
 					else
@@ -155,7 +155,7 @@ static bool generate_room(int y1, int x1, int y2, int x2, int light)
 	int y, x;
 
 	/* Confirm that room is in bounds. */
-	if ((!in_bounds(y1, x1)) || (!in_bounds(y2, x2)))
+	if ((!square_in_bounds(cave, y1, x1)) || (!square_in_bounds(cave, y2, x2)))
 		return (FALSE);
 
 	for (y = y1; y <= y2; y++) {
@@ -514,7 +514,7 @@ extern bool generate_starburst_room(int y1, int x1, int y2, int x2,
 	feature_type *f_ptr = &f_info[feat];
 
 	/* Make certain the room does not cross the dungeon edge. */
-	if ((!in_bounds(y1, x1)) || (!in_bounds(y2, x2)))
+	if ((!square_in_bounds(cave, y1, x1)) || (!square_in_bounds(cave, y2, x2)))
 		return (FALSE);
 
 	/* Robustness -- test sanity of input coordinates. */
@@ -1963,7 +1963,7 @@ static void make_chamber(int c_y1, int c_x1, int c_y2, int c_x2)
 			continue;
 
 		/* Paranoia */
-		if (!in_bounds_fully(y, x))
+		if (!square_in_bounds_fully(cave, y, x))
 			continue;
 
 		/* Reset wall count */
@@ -2095,7 +2095,7 @@ static bool build_type6(void)
 	x2 = x0 + (width - 1) / 2;
 
 	/* Make certain the room does not cross the dungeon edge. */
-	if ((!in_bounds(y1, x1)) || (!in_bounds(y2, x2)))
+	if ((!square_in_bounds(cave, y1, x1)) || (!square_in_bounds(cave, y2, x2)))
 		return (FALSE);
 
 
@@ -2138,7 +2138,7 @@ static bool build_type6(void)
 			count = 0;
 
 			/* Stay legal. */
-			if (!in_bounds_fully(y, x))
+			if (!square_in_bounds_fully(cave, y, x))
 				continue;
 
 			/* Check all adjacent grids. */
@@ -2190,7 +2190,7 @@ static bool build_type6(void)
 					continue;
 
 				/* Stay legal. */
-				if (!in_bounds_fully(y, x))
+				if (!square_in_bounds_fully(cave, y, x))
 					continue;
 
 				/* Check only horizontal and vertical directions. */
@@ -2206,7 +2206,7 @@ static bool build_type6(void)
 						xx2 = xx1 + ddx_ddd[d];
 
 						/* If we find open floor, place a door. */
-						if ((in_bounds(yy2, xx2))
+						if ((square_in_bounds(cave, yy2, xx2))
 							&& (cave->feat[yy2][xx2] == FEAT_FLOOR)) {
 							joy = TRUE;
 
@@ -2221,14 +2221,14 @@ static bool build_type6(void)
 						}
 
 						/* If we find more inner wall... */
-						if ((in_bounds(yy2, xx2))
+						if ((square_in_bounds(cave, yy2, xx2))
 							&& (cave->feat[yy2][xx2] == FEAT_WALL_INNER)) {
 							/* ...Keep going in the same direction. */
 							yy3 = yy2 + ddy_ddd[d];
 							xx3 = xx2 + ddx_ddd[d];
 
 							/* If we /now/ find floor, make a tunnel. */
-							if ((in_bounds(yy3, xx3))
+							if ((square_in_bounds(cave, yy3, xx3))
 								&& (cave->feat[yy3][xx3] == FEAT_FLOOR)) {
 								joy = TRUE;
 
@@ -2279,7 +2279,7 @@ static bool build_type6(void)
 					int xx = x + ddx_ddd[d];
 
 					/* Stay legal */
-					if (!in_bounds(yy, xx))
+					if (!square_in_bounds(cave, yy, xx))
 						continue;
 
 					/* No floors allowed */
@@ -2299,7 +2299,7 @@ static bool build_type6(void)
 					int xx = x + ddx_ddd[d];
 
 					/* Stay legal */
-					if (!in_bounds(yy, xx))
+					if (!square_in_bounds(cave, yy, xx))
 						continue;
 
 					/* Turn into room. */
@@ -2320,7 +2320,7 @@ static bool build_type6(void)
 		for (x = (x1 - 1 > 0 ? x1 - 1 : 0);
 			 x < (x2 + 2 < DUNGEON_WID ? x2 + 2 : DUNGEON_WID); x++) {
 			/* Stay legal. */
-			if (!in_bounds_fully(y, x))
+			if (!square_in_bounds_fully(cave, y, x))
 				continue;
 
 			if (cave->feat[y][x] == FEAT_WALL_INNER) {
@@ -2389,7 +2389,7 @@ extern bool build_vault(int y0, int x0, int ymax, int xmax,
 	}
 
 	/* Make certain that the vault does not cross the dungeon edge. */
-	if ((!in_bounds(y1, x1)) || (!in_bounds(y2, x2)))
+	if ((!square_in_bounds(cave, y1, x1)) || (!square_in_bounds(cave, y2, x2)))
 		return (FALSE);
 
 

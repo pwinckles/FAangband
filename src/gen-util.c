@@ -393,7 +393,7 @@ void alloc_object(int set, int typ, int num)
 			f_ptr = &f_info[cave->feat[y][x]];
 
 			/* Paranoia - keep objects out of the outer walls */
-			if (!in_bounds_fully(y, x))
+			if (!square_in_bounds_fully(cave, y, x))
 				continue;
 
 			/* Require "naked" floor grid */

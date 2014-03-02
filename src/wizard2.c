@@ -275,7 +275,7 @@ static void prt_binary(const bitflag * flags, int offset, int row, int col,
 
 
 /**
- * Teleport to the target.  Oangband asks for a target after the command.
+ * Teleport to the requested target.
  */
 static void do_cmd_wiz_bamf(void)
 {

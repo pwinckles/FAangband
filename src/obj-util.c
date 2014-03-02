@@ -785,7 +785,7 @@ int scan_floor(int *items, int max_size, int y, int x, int mode)
 	int num = 0;
 
 	/* Sanity */
-	if (!in_bounds(y, x))
+	if (!square_in_bounds(cave, y, x))
 		return 0;
 
 	/* Scan all objects in the grid */
@@ -982,7 +982,7 @@ void delete_object(int y, int x)
 
 
 	/* Paranoia */
-	if (!in_bounds(y, x))
+	if (!square_in_bounds(cave, y, x))
 		return;
 
 
@@ -2576,7 +2576,7 @@ void drop_near(object_type * j_ptr, int chance, int y, int x, bool verbose)
 			f_ptr = &f_info[cave->feat[ty][tx]];
 
 			/* Skip illegal grids */
-			if (!in_bounds_fully(ty, tx))
+			if (!square_in_bounds_fully(cave, ty, tx))
 				continue;
 
 			/* Require line of sight */

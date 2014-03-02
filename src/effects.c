@@ -3152,7 +3152,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 							continue;
 
 						/* Skip grids that are out of bounds */
-						if (!in_bounds_fully(y, x))
+						if (!square_in_bounds_fully(cave, y, x))
 							continue;
 
 						/* Skip grids that are not projectable */
@@ -3216,7 +3216,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 						continue;
 
 					/* Skip grids that are out of bounds */
-					if (!in_bounds_fully(y, x))
+					if (!square_in_bounds_fully(cave, y, x))
 						continue;
 
 					/* Skip grids that are permanent */

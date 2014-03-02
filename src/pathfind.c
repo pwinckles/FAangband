@@ -233,8 +233,8 @@ static int see_wall(int dir, int y, int x)
 	y += ddy[dir];
 	x += ddx[dir];
 
-	/* Illegal grids are not known walls XXX XXX XXX */
-	if (!in_bounds(y, x))
+	/* Illegal grids are not known walls */
+	if (!square_in_bounds(cave, y, x))
 		return (FALSE);
 
 	f_ptr = &f_info[cave->feat[y][x]];

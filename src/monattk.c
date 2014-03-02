@@ -329,7 +329,7 @@ static void make_request(int m_idx)
 /**
  * Attack the player via physical attacks.
  */
-bool make_attack_normal(monster_type * m_ptr, int y, int x)
+bool make_attack_normal(monster_type *m_ptr, int y, int x)
 {
 	int m_idx = cave->m_idx[m_ptr->fy][m_ptr->fx];
 
@@ -358,7 +358,7 @@ bool make_attack_normal(monster_type * m_ptr, int y, int x)
 	bool blinked;
 
 	/* Check Bounds */
-	if (!in_bounds(y, x))
+	if (!square_in_bounds(cave, y, x))
 		return (FALSE);
 
 	/* Not allowed to attack */

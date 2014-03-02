@@ -1937,7 +1937,7 @@ void place_object(int y, int x, bool good, bool great, bool exact_kind,
 	object_type object_type_body;
 
 	/* Paranoia */
-	if (!in_bounds(y, x))
+	if (!square_in_bounds(cave, y, x))
 		return;
 
 	/* Require clean floor space */
@@ -1975,7 +1975,7 @@ void place_gold(int y, int x)
 	object_type object_type_body;
 
 	/* Paranoia */
-	if (!in_bounds(y, x))
+	if (!square_in_bounds(cave, y, x))
 		return;
 
 	/* Require clean floor space */

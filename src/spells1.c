@@ -212,7 +212,7 @@ void teleport_away(int m_idx, int dis)
 			}
 
 			/* Ignore illegal locations */
-			if (!in_bounds_fully(ny, nx))
+			if (!square_in_bounds_fully(cave, ny, nx))
 				continue;
 
 			/* Require a grid that the monster can (safely) exist in. */
@@ -544,7 +544,7 @@ void teleport_player(int dis, bool safe)
 			}
 
 			/* Ignore illegal locations */
-			if (!in_bounds_fully(y, x))
+			if (!square_in_bounds_fully(cave, y, x))
 				continue;
 
 			if (safe) {
@@ -655,7 +655,7 @@ void teleport_towards(int oy, int ox, int ny, int nx)
 		while (1) {
 			y = rand_spread(ny, max);
 			x = rand_spread(nx, max);
-			if (in_bounds_fully(y, x))
+			if (square_in_bounds_fully(cave, y, x))
 				break;
 		}
 		f_ptr = &f_info[cave->feat[y][x]];
@@ -726,7 +726,7 @@ void teleport_player_to(int ny, int nx, bool friendly)
 		while (1) {
 			y = rand_spread(ny, dis);
 			x = rand_spread(nx, dis);
-			if (in_bounds_fully(y, x))
+			if (square_in_bounds_fully(cave, y, x))
 				break;
 		}
 
@@ -8322,7 +8322,7 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg,
 					break;
 
 				/* Ignore "illegal" locations */
-				if (!in_bounds(y, x))
+				if (!square_in_bounds(cave, y, x))
 					continue;
 
 				/* Some explosions are allowed to affect one layer of walls */

@@ -2319,7 +2319,7 @@ bool trap_menu(struct cave *c, int y, int x, int *idx)
 bool get_trap(struct cave *c, int y, int x, int *idx)
 {
 	/* Require that grid be legal */
-	if (!in_bounds_fully(y, x))
+	if (!square_in_bounds_fully(c, y, x))
 		return (FALSE);
 
 	/* Look for the trap marker */

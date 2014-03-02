@@ -935,13 +935,13 @@ extern void spread_monsters(char symbol, int depth, int num, int y0,
 		if ((dy == 0) && (dx == 0)) {
 			y = y0;
 			x = x0;
-			if (!in_bounds(y, x))
+			if (!square_in_bounds(cave, y, x))
 				return;
 		} else {
 			for (j = 0; j < 10; j++) {
 				y = rand_spread(y0, dy);
 				x = rand_spread(x0, dx);
-				if (!in_bounds(y, x)) {
+				if (!square_in_bounds(cave, y, x)) {
 					if (j < 9)
 						continue;
 					else

@@ -148,7 +148,7 @@ static void build_streamer(int feat, int chance)
 		if (ddy[dir]) {
 			for (dx = x - out1; dx <= x + out2; dx++) {
 				/* Stay within dungeon. */
-				if (!in_bounds(y, dx))
+				if (!square_in_bounds(cave, y, dx))
 					continue;
 
 				f_ptr = &f_info[cave->feat[y][dx]];
@@ -186,7 +186,7 @@ static void build_streamer(int feat, int chance)
 		if (ddx[dir]) {
 			for (dy = y - out1; dy <= y + out2; dy++) {
 				/* Stay within dungeon. */
-				if (!in_bounds(dy, x))
+				if (!square_in_bounds(cave, dy, x))
 					continue;
 
 				f_ptr = &f_info[cave->feat[dy][x]];
@@ -297,7 +297,7 @@ static void build_streamer(int feat, int chance)
 		x += ddx[dir];
 
 		/* Stop at dungeon edge */
-		if (!in_bounds(y, x))
+		if (!square_in_bounds(cave, y, x))
 			break;
 	}
 }
@@ -332,7 +332,7 @@ void destroy_level(bool new_level)
 		for (y = (y1 - 15); y <= (y1 + 15); y++) {
 			for (x = (x1 - 15); x <= (x1 + 15); x++) {
 				/* Skip illegal grids */
-				if (!in_bounds_fully(y, x))
+				if (!square_in_bounds_fully(cave, y, x))
 					continue;
 
 				/* Extract the distance */
@@ -553,7 +553,7 @@ static void rand_dir(int *row_dir, int *col_dir, int y, int x)
 	/* Save useful grids. */
 	if ((-(*row_dir) == row_dir_tmp) && (-(*col_dir) == col_dir_tmp)) {
 		/* Save the current tunnel location if surrounded by walls. */
-		if ((in_bounds_fully(y, x)) && (dun->stair_n < STAIR_MAX)
+		if ((square_in_bounds_fully(cave, y, x)) && (dun->stair_n < STAIR_MAX)
 			&& (next_to_walls(y, x) == 4)) {
 			dun->stair[dun->stair_n].y = y;
 			dun->stair[dun->stair_n].x = x;
@@ -703,7 +703,7 @@ static bool find_entrance(int row_dir, int col_dir, int *row1, int *col1)
 				}
 
 				/* We have hit the dungeon edge. */
-				if (!in_bounds_fully(y + dy, x + dx)) {
+				if (!square_in_bounds_fully(cave, y + dy, x + dx)) {
 					stop_loop = TRUE;
 					break;
 				}
@@ -1074,7 +1074,7 @@ void build_tunnel(int start_room, int end_room)
 		tmp_col = col1 + col_dir;
 
 		/* Do not leave the dungeon */
-		if (!in_bounds_fully(tmp_row, tmp_col)) {
+		if (!square_in_bounds_fully(cave, tmp_row, tmp_col)) {
 			/* Adjust direction */
 			adjust_dir(&row_dir, &col_dir, row1, col1, row2, col2);
 
@@ -1083,7 +1083,7 @@ void build_tunnel(int start_room, int end_room)
 			tmp_col = col1 + col_dir;
 
 			/* Our destination is illegal - stop. */
-			if (!in_bounds_fully(tmp_row, tmp_col))
+			if (!square_in_bounds_fully(cave, tmp_row, tmp_col))
 				break;
 		}
 
@@ -1114,7 +1114,7 @@ void build_tunnel(int start_room, int end_room)
 			x0 = tmp_col + col_dir;
 
 			/* No annoying little alcoves near edge. */
-			if (!in_bounds_fully(y0, x0))
+			if (!square_in_bounds_fully(cave, y0, x0))
 				continue;
 
 
@@ -1269,7 +1269,7 @@ void build_tunnel(int start_room, int end_room)
 				if (row_dir) {
 					for (x = col1 - 3; x <= col1 + 3; x++) {
 						/* Convert adjacent "outer" walls */
-						if ((in_bounds(row1, x))
+						if ((square_in_bounds(cave, row1, x))
 							&& (cave->feat[row1][x] == FEAT_WALL_OUTER)) {
 							/* Change the wall to a "solid" wall */
 							cave_set_feat(row1, x, FEAT_WALL_SOLID);
@@ -1278,7 +1278,7 @@ void build_tunnel(int start_room, int end_room)
 				} else {
 					for (y = row1 - 3; y <= row1 + 3; y++) {
 						/* Convert adjacent "outer" walls */
-						if ((in_bounds(y, col1))
+						if ((square_in_bounds(cave, y, col1))
 							&& (cave->feat[y][col1] == FEAT_WALL_OUTER)) {
 							/* Change the wall to a "solid" wall */
 							cave_set_feat(y, col1, FEAT_WALL_SOLID);

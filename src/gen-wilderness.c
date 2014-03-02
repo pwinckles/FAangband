@@ -80,7 +80,7 @@ static coord path_start(int sy, int sx, int ty, int tx)
 	correct_dir(&row_dir, &col_dir, sy, sx, ty, tx);
 	y = sy + row_dir;
 	x = sx + col_dir;
-	if (in_bounds_fully(y, x)) {
+	if (square_in_bounds_fully(cave, y, x)) {
 		cave_set_feat(y, x, FEAT_ROAD);
 		fy = y;
 		fx = x;
@@ -96,7 +96,7 @@ static coord path_start(int sy, int sx, int ty, int tx)
 		adjust_dir(&row_dir, &col_dir, y, x, ty, tx);
 		y += row_dir;
 		x += col_dir;
-		if (in_bounds_fully(y, x)) {
+		if (square_in_bounds_fully(cave, y, x)) {
 			cave_set_feat(y, x, FEAT_ROAD);
 			fy = y;
 			fx = x;
@@ -110,7 +110,7 @@ static coord path_start(int sy, int sx, int ty, int tx)
 		correct_dir(&row_dir, &col_dir, y, x, ty, tx);
 		y += row_dir;
 		x += col_dir;
-		if (in_bounds_fully(y, x)) {
+		if (square_in_bounds_fully(cave, y, x)) {
 			cave_set_feat(y, x, FEAT_ROAD);
 			fy = y;
 			fx = x;
@@ -680,8 +680,8 @@ static int make_formation(int y, int x, int base_feat1, int base_feat2,
 		v_ptr = &v_info[v_idx[randint0(v_cnt)]];
 
 		/* Check to see if it will fit here (only avoid edges) */
-		if ((in_bounds_fully(y - v_ptr->hgt / 2, x - v_ptr->wid / 2))
-			&& (in_bounds_fully(y + v_ptr->hgt / 2, x + v_ptr->wid / 2))) {
+		if ((square_in_bounds_fully(cave, y - v_ptr->hgt / 2, x - v_ptr->wid / 2))
+			&& (square_in_bounds_fully(cave, y + v_ptr->hgt / 2, x + v_ptr->wid / 2))) {
 			for (yy = y - v_ptr->hgt / 2; yy < y + v_ptr->hgt / 2; yy++)
 				for (xx = x - v_ptr->wid / 2; xx < x + v_ptr->wid / 2;
 					 xx++) {
@@ -738,7 +738,7 @@ static int make_formation(int y, int x, int base_feat1, int base_feat2,
 		/* Avoid paths, stay in bounds */
 		if (((cave->feat[ty][tx] != base_feat1)
 			 && (cave->feat[ty][tx] != base_feat2))
-			|| !(in_bounds_fully(ty, tx))
+			|| !(square_in_bounds_fully(cave, ty, tx))
 			|| sqinfo_has(cave->info[ty][tx], SQUARE_ICKY)) {
 			free(all_feat);
 			return (total);
@@ -931,7 +931,7 @@ static void mtn_connect(int y, int x, int y1, int x1)
 	/* Make the path, adding an adjacent grid 8/9 of the time */
 	for (j = 0; j < path_grids; j++) {
 		if ((cave->feat[GRID_Y(gp[j])][GRID_X(gp[j])] == FEAT_ROAD)
-			|| (!in_bounds_fully(GRID_Y(gp[j]), GRID_X(gp[j]))))
+			|| (!square_in_bounds_fully(cave, GRID_Y(gp[j]), GRID_X(gp[j]))))
 			break;
 		cave_set_feat(GRID_Y(gp[j]), GRID_X(gp[j]), FEAT_ROAD);
 		sqinfo_on(cave->info[GRID_Y(gp[j])][GRID_X(gp[j])], SQUARE_ICKY);
@@ -1635,7 +1635,7 @@ extern void desert_gen(void)
 		for (d = 0; d < DUNGEON_WID; d++) {
 			for (y = 0; y < d; y++) {
 				x = d - y;
-				if (!in_bounds_fully(y, x))
+				if (!square_in_bounds_fully(cave, y, x))
 					continue;
 				if (cave->feat[y][x] == FEAT_ROAD) {
 					/* The gate of Angband */

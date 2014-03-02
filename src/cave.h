@@ -402,6 +402,9 @@ extern void cave_generate(struct cave *c, struct player *p);
 extern bool square_in_bounds(struct cave *c, int y, int x);
 extern bool square_in_bounds_fully(struct cave *c, int y, int x);
 
+extern bool square_in_bounds(struct cave *c, int y, int x);
+extern bool square_in_bounds_fully(struct cave *c, int y, int x);
+
 extern struct monster *cave_monster(struct cave *c, int idx);
 extern struct monster *square_monster(struct cave *c, int y, int x);
 extern int cave_monster_max(struct cave *c);

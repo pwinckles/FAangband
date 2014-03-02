@@ -334,7 +334,7 @@ void target_set_object(int o_idx)
 void target_set_location(int y, int x)
 {
 	/* Legal target */
-	if (in_bounds_fully(y, x)) {
+	if (square_in_bounds_fully(cave, y, x)) {
 		/* Save target info */
 		target_set = TRUE;
 		target_who = NULL;
@@ -524,7 +524,7 @@ static struct point_set *target_set_interactive_prepare(int mode)
 	for (y = Term->offset_y; y < Term->offset_y + SCREEN_HGT; y++) {
 		for (x = Term->offset_x; x < Term->offset_x + SCREEN_WID; x++) {
 			/* Check bounds */
-			if (!in_bounds_fully(y, x))
+			if (!square_in_bounds_fully(cave, y, x))
 				continue;
 
 			/* Require "interesting" contents */

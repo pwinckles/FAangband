@@ -42,7 +42,7 @@ void get_feats(int *surroundings)
 		xx = p_ptr->px + ddx_ddd[d];
 
 		/* Paranoia */
-		if (!in_bounds_fully(yy, xx))
+		if (!square_in_bounds_fully(cave, yy, xx))
 			continue;
 
 		/* Must have knowledge */
