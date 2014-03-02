@@ -297,7 +297,7 @@ static int summon_possible(int y1, int x1)
  */
 static void update_smart_cheat(int m_idx)
 {
-	monster_type *m_ptr = &m_list[m_idx];
+	monster_type *m_ptr = cave_monster(cave, m_idx);
 
 	/* Know weirdness */
 	if (p_ptr->state.free_act)
@@ -379,7 +379,7 @@ static void update_smart_cheat(int m_idx)
  */
 static int find_resist(int m_idx, int spell_lrn)
 {
-	monster_type *m_ptr = &m_list[m_idx];
+	monster_type *m_ptr = cave_monster(cave, m_idx);
 
 	int a;
 	u32b smart;
@@ -777,7 +777,7 @@ static bitflag mon_spells[RSF_SIZE];
  */
 static void remove_expensive_spells(int m_idx)
 {
-	monster_type *m_ptr = &m_list[m_idx];
+	monster_type *m_ptr = cave_monster(cave, m_idx);
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
 	int i, max_cost;
@@ -804,7 +804,7 @@ static void remove_expensive_spells(int m_idx)
  */
 static void remove_useless_spells(int m_idx, bool los)
 {
-	monster_type *m_ptr = &m_list[m_idx];
+	monster_type *m_ptr = cave_monster(cave, m_idx);
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
 	/* Don't regain mana if full */
@@ -913,7 +913,7 @@ static int choose_attack_spell_fast(int m_idx, bool random)
  */
 int choose_ranged_attack(int m_idx, bool archery_only, int shape_rate)
 {
-	monster_type *m_ptr = &m_list[m_idx];
+	monster_type *m_ptr = cave_monster(cave, m_idx);
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
 	bool rand = FALSE;
@@ -944,8 +944,8 @@ int choose_ranged_attack(int m_idx, bool archery_only, int shape_rate)
 	}
 	/* Another monster is the target */
 	else if (m_ptr->hostile > 0) {
-		ty = m_list[m_ptr->hostile].fy;
-		tx = m_list[m_ptr->hostile].fx;
+		ty = cave_monster(cave, m_ptr->hostile)->fy;
+		tx = cave_monster(cave, m_ptr->hostile)->fx;
 	}
 	/* No spell target */
 	else
@@ -1305,8 +1305,7 @@ bool cave_exist_mon(monster_race *r_ptr, int y, int x, bool occupied_ok)
  * another is also a tad iffy, but ensures that black orcs can always 
  * push past other black orcs.
  */
-static int cave_passable_mon(monster_type * m_ptr, int y, int x,
-							 bool * bash)
+static int cave_passable_mon(monster_type *m_ptr, int y, int x, bool *bash)
 {
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
@@ -1337,7 +1336,7 @@ static int cave_passable_mon(monster_type * m_ptr, int y, int x,
 
 	/* The grid is occupied by a monster. */
 	else if (cave->m_idx[y][x] > 0) {
-		monster_type *n_ptr = &m_list[cave->m_idx[y][x]];
+		monster_type *n_ptr = square_monster(cave, y, x);
 		monster_race *nr_ptr = &r_info[n_ptr->r_idx];
 
 		/* Kill weaker monsters */
@@ -1633,8 +1632,8 @@ static void get_move_advance(monster_type * m_ptr, int *ty, int *tx)
 		}
 		/* Another monster is the target */
 		else if (m_ptr->hostile > 0) {
-			*ty = m_list[m_ptr->hostile].fy;
-			*tx = m_list[m_ptr->hostile].fx;
+			*ty = cave_monster(cave, m_ptr->hostile)->fy;
+			*tx = cave_monster(cave, m_ptr->hostile)->fx;
 		}
 		return;
 	}
@@ -1669,8 +1668,8 @@ static void get_move_advance(monster_type * m_ptr, int *ty, int *tx)
 		}
 		/* Another monster is the target */
 		else if (m_ptr->hostile > 0) {
-			*ty = m_list[m_ptr->hostile].fy;
-			*tx = m_list[m_ptr->hostile].fx;
+			*ty = cave_monster(cave, m_ptr->hostile)->fy;
+			*tx = cave_monster(cave, m_ptr->hostile)->fx;
 		}
 		return;
 	}
@@ -2236,8 +2235,8 @@ static bool get_move(monster_type * m_ptr, int *ty, int *tx, bool * fear,
 		targ_y = py;
 		targ_x = px;
 	} else if (m_ptr->hostile > 0) {
-		targ_y = m_list[m_ptr->hostile].fy;
-		targ_x = m_list[m_ptr->hostile].fx;
+		targ_y = cave_monster(cave, m_ptr->hostile)->fy;
+		targ_x = cave_monster(cave, m_ptr->hostile)->fx;
 	}
 
 	/* 
@@ -3566,7 +3565,7 @@ static void apply_monster_trap(monster_type *m_ptr, int y, int x,
 
 			/* Delete the monsters of that "type" */
 			for (i = 1; i < m_max; i++) {
-				monster_type *n_ptr = &m_list[i];
+				monster_type *n_ptr = cave_monster(cave, i);
 				monster_race *r1_ptr = &r_info[n_ptr->r_idx];
 
 				/* Paranoia -- Skip dead monsters */
@@ -3851,7 +3850,7 @@ static void process_move(monster_type *m_ptr, int ty, int tx, bool bash)
 	if (do_move) {
 		/* The grid is occupied by a monster. */
 		if (cave->m_idx[ny][nx] > 0) {
-			monster_type *n_ptr = &m_list[cave->m_idx[ny][nx]];
+			monster_type *n_ptr = square_monster(cave, ny, nx);
 			monster_race *nr_ptr = &r_info[n_ptr->r_idx];
 
 			/* XXX - Kill weaker monsters */
@@ -4010,7 +4009,7 @@ static void process_move(monster_type *m_ptr, int ty, int tx, bool bash)
 			/* Scan all other monsters */
 			for (i = m_max - 1; i >= 1; i--) {
 				/* Access the monster */
-				n_ptr = &m_list[i];
+				n_ptr = cave_monster(cave, i);
 				nr_ptr = &r_info[n_ptr->r_idx];
 
 				/* Ignore dead monsters */
@@ -4533,7 +4532,7 @@ static void process_monster(monster_type * m_ptr)
 
 	/* Monsters near their leader will take the lead from him/her/it */
 	if (m_ptr->group_leader) {
-		monster_type *n_ptr = &m_list[m_ptr->group_leader];
+		monster_type *n_ptr = cave_monster(cave, m_ptr->group_leader);
 
 		if ((!m_ptr->monfear)
 			&& (distance(m_ptr->fy, m_ptr->fx, n_ptr->fy, n_ptr->fx) <
@@ -5084,7 +5083,7 @@ void process_monsters(byte minimum_energy)
 			break;
 
 		/* Access the monster */
-		m_ptr = &m_list[i];
+		m_ptr = cave_monster(cave, i);
 
 		/* Ignore dead monsters */
 		if (!m_ptr->r_idx)
@@ -5134,7 +5133,7 @@ void reset_monsters(void)
 	/* Process the monsters (backwards) */
 	for (i = m_max - 1; i >= 1; i--) {
 		/* Access the monster */
-		m_ptr = &m_list[i];
+		m_ptr = cave_monster(cave, i);
 
 		/* Monster is ready to go again */
 		m_ptr->moved = FALSE;

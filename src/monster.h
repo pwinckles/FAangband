@@ -535,7 +535,7 @@ extern bool mon_take_hit(int m_idx, int dam, bool *fear, const char *note);
 extern void delete_monster_idx(int i);
 extern void delete_monster(int y, int x);
 extern void compact_monsters(int size);
-extern void wipe_m_list(void);
+extern void wipe_m_list(struct cave *c, struct player *p);
 extern s16b m_pop(void);
 extern errr get_mon_num_prep(void);
 extern s16b get_mon_num(int level);

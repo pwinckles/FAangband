@@ -2567,7 +2567,7 @@ void do_cmd_alter_aux(int dir)
 	 * Otherwise, the player will simply attack. -LM- */
 	if (cave->m_idx[y][x] > 0) {
 		if ((player_has(PF_STEAL)) && (!SCHANGE)) {
-			m_ptr = &m_list[cave->m_idx[y][x]];
+			m_ptr = square_monster(cave, y, x);
 			if (m_ptr->ml)
 				py_steal(y, x);
 			else
@@ -2801,7 +2801,7 @@ static bool do_cmd_walk_test(int y, int x)
 
 	/* Access the monster, if any is present. */
 	if (cave->m_idx[y][x] != 0)
-		m_ptr = &m_list[cave->m_idx[y][x]];
+		m_ptr = square_monster(cave, y, x);
 
 	/* If a monster can be seen, it can be attacked normally.  Code in cmd1.c
 	 * controls whether a player can actually move to the destination grid. */

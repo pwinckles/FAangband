@@ -2198,7 +2198,7 @@ int rd_monsters(void)
 		}
 
 		/* Get the monster */
-		m_ptr = &m_list[o_ptr->held_m_idx];
+		m_ptr = cave_monster(cave, o_ptr->held_m_idx);
 
 		/* Link the object to the pile */
 		o_ptr->next_o_idx = m_ptr->hold_o_idx;

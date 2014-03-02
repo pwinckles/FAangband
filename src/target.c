@@ -54,7 +54,7 @@ static s16b target_x, target_y;
  */
 static void look_mon_desc(char *buf, size_t max, int m_idx)
 {
-	monster_type *m_ptr = &m_list[m_idx];
+	monster_type *m_ptr = cave_monster(cave, m_idx);
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
 	bool living = TRUE;
@@ -480,7 +480,7 @@ static bool target_set_interactive_accept(int y, int x)
 
 	/* Visible monsters */
 	if (cave->m_idx[y][x] > 0) {
-		monster_type *m_ptr = &m_list[cave->m_idx[y][x]];
+		monster_type *m_ptr = square_monster(cave, y, x);
 
 		/* Visible monsters */
 		if (m_ptr->ml)
@@ -538,7 +538,7 @@ static struct point_set *target_set_interactive_prepare(int mode)
 					continue;
 
 				/* Must be a targettable monster */
-				if (!target_able(&m_list[cave->m_idx[y][x]]))
+				if (!target_able(square_monster(cave, y, x)))
 					continue;
 			}
 
@@ -800,7 +800,7 @@ static ui_event target_set_interactive_aux(int y, int x, int mode)
 
 		/* Actual monsters */
 		if (cave->m_idx[y][x] > 0) {
-			monster_type *m_ptr = &m_list[cave->m_idx[y][x]];
+			monster_type *m_ptr = square_monster(cave, y, x);
 			monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
 			/* Visible */
@@ -1233,14 +1233,14 @@ bool target_set_closest(int mode)
 	m_idx = cave->m_idx[y][x];
 
 	/* Target the monster, if possible */
-	if ((m_idx <= 0) || !target_able(&m_list[m_idx])) {
+	if ((m_idx <= 0) || !target_able(cave_monster(cave, m_idx))) {
 		msg("No Available Target.");
 		point_set_dispose(targets);
 		return FALSE;
 	}
 
 	/* Target the monster */
-	m_ptr = &m_list[m_idx];
+	m_ptr = cave_monster(cave, m_idx);
 	monster_desc(m_name, sizeof(m_name), m_ptr, 0x100);
 	if (!(mode & TARGET_QUIET))
 		msg("%s is targeted.", m_name);
@@ -1329,7 +1329,7 @@ static int draw_path(u16b path_n, u16b * path_g, wchar_t * c, int *a,
 		Term_what(Term->scr->cx, Term->scr->cy, a + i, c + i);
 
 		/* Choose a colour. */
-		if (cave->m_idx[y][x] && m_list[cave->m_idx[y][x]].ml) {
+		if (cave->m_idx[y][x] && square_monster(cave, y, x)->ml) {
 			/* Visible monsters are red. */
 			colour = TERM_L_RED;
 		}
@@ -1508,7 +1508,7 @@ bool target_set_interactive(int mode, int x, int y)
 			if (help) {
 				bool good_target = FALSE;
 				if ((mode & TARGET_KILL) && (cave->m_idx[y][x] > 0)
-					&& target_able(&m_list[cave->m_idx[y][x]]))
+					&& target_able(square_monster(cave, y, x)))
 					good_target = TRUE;
 				if ((mode & TARGET_OBJ) && (cave->o_idx[y][x] > 0)
 					&& target_able_obj(cave->o_idx[y][x]))
@@ -1555,8 +1555,8 @@ bool target_set_interactive(int mode, int x, int y)
 						/* same as keyboard target selection command below */
 						int m_idx = cave->m_idx[y][x];
 
-						if ((m_idx > 0) && target_able(&m_list[m_idx])) {
-							monster_type *m_ptr = &m_list[m_idx];
+						if ((m_idx > 0) && target_able(cave_monster(cave, m_idx))) {
+							monster_type *m_ptr = cave_monster(cave, m_idx);
 							/* Set up target information */
 							monster_race_track(m_ptr->r_idx);
 							health_track(m_idx);
@@ -1653,7 +1653,7 @@ bool target_set_interactive(int mode, int x, int y)
 					{
 						if (mode & TARGET_KILL) {
 							int m_idx = cave->m_idx[y][x];
-							struct monster *m = &m_list[m_idx];
+							struct monster *m = cave_monster(cave, m_idx);
 
 							if ((m_idx > 0) && target_able(m)) {
 								health_track(m_idx);
@@ -1764,24 +1764,20 @@ bool target_set_interactive(int mode, int x, int y)
 		else {
 			/* Update help */
 			if (help) {
-				bool good_target = ((cave->m_idx[y][x] > 0)
-									&&
-									target_able(&m_list
-												[cave->m_idx[y][x]]));
+				bool good_target = ((cave->m_idx[y][x] > 0)	&&
+									target_able(square_monster(cave, y, x)));
 				target_display_help(good_target,
 									!(flag && point_set_size(targets)));
 			}
 
 			/* Find the path. */
 			path_n =
-				project_path(path_g, MAX_RANGE, py, px, y, x,
-							 PROJECT_THRU);
+				project_path(path_g, MAX_RANGE, py, px, y, x, PROJECT_THRU);
 
 			/* Draw the path in "target" mode. If there is one */
 			if (mode & (TARGET_KILL))
 				path_drawn =
-					draw_path(path_n, path_g, path_char, path_attr, py,
-							  px);
+					draw_path(path_n, path_g, path_char, path_attr, py, px);
 
 			/* Describe and Prompt (enable "TARGET_LOOK") */
 			press = target_set_interactive_aux(y, x, mode | TARGET_LOOK);

@@ -176,7 +176,7 @@ s16b poly_r_idx(int base_idx, bool shapechange)
  */
 void teleport_away(int m_idx, int dis)
 {
-	monster_type *m_ptr = &m_list[m_idx];
+	monster_type *m_ptr = cave_monster(cave, m_idx);
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
 	int ny, nx, oy, ox, d, i, min;
@@ -269,8 +269,8 @@ static void thrust_away(int who, int t_y, int t_x, int grids_away)
 
 	/* Get location of caster (assumes index of caster is not zero) */
 	if (who > 0) {
-		c_y = m_list[who].fy;
-		c_x = m_list[who].fx;
+		c_y = cave_monster(cave, who)->fy;
+		c_x = cave_monster(cave, who)->fx;
 	} else {
 		c_y = p_ptr->py;
 		c_x = p_ptr->px;
@@ -339,10 +339,10 @@ static void thrust_away(int who, int t_y, int t_x, int grids_away)
 				/* A monster is trying to pass. */
 				if (cave->m_idx[y][x] > 0) {
 
-					monster_type *m_ptr = &m_list[cave->m_idx[y][x]];
+					monster_type *m_ptr = square_monster(cave, y, x);
 
 					if (cave->m_idx[yy][xx] > 0) {
-						monster_type *n_ptr = &m_list[cave->m_idx[yy][xx]];
+						monster_type *n_ptr = square_monster(cave, yy, xx);
 
 						/* Monsters cannot pass by stronger monsters. */
 						if (r_info[n_ptr->r_idx].mexp >
@@ -358,7 +358,7 @@ static void thrust_away(int who, int t_y, int t_x, int grids_away)
 				/* The player is trying to pass. */
 				if (cave->m_idx[y][x] < 0) {
 					if (cave->m_idx[yy][xx] > 0) {
-						monster_type *n_ptr = &m_list[cave->m_idx[yy][xx]];
+						monster_type *n_ptr = square_monster(cave, yy, xx);
 
 						/* Players cannot pass by stronger monsters. */
 						if (r_info[n_ptr->r_idx].level > p_ptr->lev * 2)
@@ -430,7 +430,7 @@ static void thrust_away(int who, int t_y, int t_x, int grids_away)
 
 	/* Some monsters don't like lava or water; none like falling. */
 	if (cave->m_idx[y][x] > 0) {
-		monster_type *m_ptr = &m_list[cave->m_idx[y][x]];
+		monster_type *m_ptr = square_monster(cave, y, x);
 		monster_race *r_ptr = &r_info[m_ptr->r_idx];
 		bool fear = FALSE;
 
@@ -1000,7 +1000,7 @@ bool chaotic_effects(monster_type * m_ptr)
 				/* Create a new monster (no groups) */
 				if (place_monster_aux(my, mx, tmp, FALSE, FALSE)) {
 					/* Hack -- Get new monster */
-					m_ptr = &m_list[cave->m_idx[my][mx]];
+					m_ptr = square_monster(cave, my, mx);
 
 					/* Success */
 					return (TRUE);
@@ -3870,7 +3870,7 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
 		return (FALSE);
 
 	/* Obtain monster info */
-	m_ptr = &m_list[cave->m_idx[y][x]];
+	m_ptr = square_monster(cave, y, x);
 	r_ptr = &r_info[m_ptr->r_idx];
 	l_ptr = &l_list[m_ptr->r_idx];
 	name = r_ptr->name;
@@ -3880,7 +3880,7 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
 	/* Breathers don't blast members of the same race. */
 	if ((who > 0) && (flg & (PROJECT_SAFE))) {
 		/* Point to monster information of caster */
-		m2_ptr = &m_list[who];
+		m2_ptr = cave_monster(cave, who);
 
 		/* Skip monsters with the same racial index */
 		if (m2_ptr->r_idx == m_ptr->r_idx)
@@ -5613,7 +5613,7 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
 			/* Hack -- Assume success XXX XXX XXX */
 
 			/* Hack -- Get new monster */
-			m_ptr = &m_list[cave->m_idx[y][x]];
+			m_ptr = square_monster(cave, y, x);
 
 			/* Hack -- Get new race */
 			r_ptr = &r_info[m_ptr->r_idx];
@@ -6008,7 +6008,7 @@ static bool project_p(int who, int d, int y, int x, int dam, int typ)
 	/* Is this cast by a monster */
 	if (!self) {
 		/* Get the source monster */
-		m_ptr = &m_list[who];
+		m_ptr = cave_monster(cave, who);
 
 		/* Get the monster race. */
 		r_ptr = &r_info[m_ptr->r_idx];
@@ -7467,7 +7467,7 @@ static bool project_t(int who, int y, int x, int dam, int typ, int flg)
 	if ((flg & (PROJECT_KILL)) && (cave->m_idx[y][x] > 0)
 		&& (cave->m_idx[y][x] != who)) {
 		affect_monster = TRUE;
-		m_ptr = &m_list[cave->m_idx[y][x]];
+		m_ptr = square_monster(cave, y, x);
 		r_ptr = &r_info[m_ptr->r_idx];
 		l_ptr = &l_list[m_ptr->r_idx];
 
@@ -7699,7 +7699,7 @@ static bool project_t(int who, int y, int x, int dam, int typ, int flg)
 			if (affect_player) {
 				if (!p_resist_good(P_RES_NEXUS)) {
 					/* Get caster */
-					monster_type *n_ptr = &m_list[who];
+					monster_type *n_ptr = cave_monster(cave, who);
 
 					/* Various effects. */
 					apply_nexus(n_ptr);
@@ -7758,7 +7758,7 @@ static bool project_t(int who, int y, int x, int dam, int typ, int flg)
 			if (affect_player) {
 				if (!p_resist_good(P_RES_NEXUS)) {
 					/* Get caster */
-					monster_type *n_ptr = &m_list[who];
+					monster_type *n_ptr = cave_monster(cave, who);
 
 					/* Various effects. */
 					apply_nexus(n_ptr);
@@ -8104,8 +8104,8 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg,
 
 	/* Start at monster */
 	else if (who > 0) {
-		y1 = m_list[who].fy;
-		x1 = m_list[who].fx;
+		y1 = cave_monster(cave, who)->fy;
+		x1 = cave_monster(cave, who)->fx;
 
 		/* Subtract rune of power effect */
 		if (square_trap_specific(cave, py, px, RUNE_POWER))
@@ -8581,7 +8581,7 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg,
 
 			/* Track if possible */
 			if (cave->m_idx[y][x] > 0) {
-				monster_type *m_ptr = &m_list[cave->m_idx[y][x]];
+				monster_type *m_ptr = square_monster(cave, y, x);
 
 				/* Hack -- auto-recall */
 				if (m_ptr->ml)

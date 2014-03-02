@@ -89,7 +89,7 @@ static int check_hit(int power, int level, int terrain_bonus, int m_idx)
 {
 	int i, k, ac;
 
-	monster_type *m_ptr = &m_list[m_idx];
+	monster_type *m_ptr = cave_monster(cave, m_idx);
 
 	/* Percentile dice */
 	k = randint0(100);
@@ -172,7 +172,7 @@ static const char *desc_sneer[] = {
  */
 static void make_request(int m_idx)
 {
-	monster_type *m_ptr = &m_list[m_idx];
+	monster_type *m_ptr = cave_monster(cave, m_idx);
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
 	object_type *o_ptr;
 
@@ -1877,7 +1877,7 @@ static void mon_ball(int m_idx, int typ, int dam, int rad)
 static void mon_arc(int m_idx, int typ, bool noharm, int dam, int rad,
 					int degrees_of_arc)
 {
-	monster_type *m_ptr = &m_list[m_idx];
+	monster_type *m_ptr = cave_monster(cave, m_idx);
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
 	int py = p_ptr->py;

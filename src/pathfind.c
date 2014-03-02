@@ -110,7 +110,7 @@ bool findpath(int y, int x)
 	terrain[p_ptr->py - oy][p_ptr->px - ox] = 1;
 
 	if ((x >= ox) && (x < ex) && (y >= oy) && (y < ey)) {
-		if ((cave->m_idx[y][x] > 0) && (m_list[cave->m_idx[y][x]].ml)) {
+		if ((cave->m_idx[y][x] > 0) && square_monster(cave, y, x)->ml) {
 			terrain[y - oy][x - ox] = MAX_PF_LENGTH;
 		}
 		/* else if (terrain[y - oy][x - ox] != MAX_PF_LENGTH) { bell("Target
@@ -629,7 +629,7 @@ static bool run_test(void)
 
 			/* Visible monsters abort running */
 			if (cave->m_idx[row][col] > 0) {
-				monster_type *m_ptr = &m_list[cave->m_idx[row][col]];
+				monster_type *m_ptr = square_monster(cave, row, col);
 
 				/* Visible monster */
 				if (m_ptr->ml)
@@ -752,7 +752,7 @@ static bool run_test(void)
 
 		/* Visible monsters abort running */
 		if (cave->m_idx[row][col] > 0) {
-			monster_type *m_ptr = &m_list[cave->m_idx[row][col]];
+			monster_type *m_ptr = square_monster(cave, row, col);
 
 			/* Visible monster */
 			if (m_ptr->ml)
@@ -886,7 +886,7 @@ static bool run_test(void)
 
 		/* Visible monsters abort running */
 		if (cave->m_idx[row][col] > 0) {
-			monster_type *m_ptr = &m_list[cave->m_idx[row][col]];
+			monster_type *m_ptr = square_monster(cave, row, col);
 
 			/* Visible monster */
 			if (m_ptr->ml)
@@ -895,7 +895,7 @@ static bool run_test(void)
 
 		/* Visible monsters abort running */
 		if (cave->m_idx[row][col] > 0) {
-			monster_type *m_ptr = &m_list[cave->m_idx[row][col]];
+			monster_type *m_ptr = square_monster(cave, row, col);
 
 			/* Visible monster */
 			if (m_ptr->ml)

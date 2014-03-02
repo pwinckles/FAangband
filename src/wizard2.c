@@ -1679,7 +1679,7 @@ static void do_cmd_wiz_zap(int d)
 
 	/* Genocide everyone nearby */
 	for (i = 1; i < m_max; i++) {
-		monster_type *m_ptr = &m_list[i];
+		monster_type *m_ptr = cave_monster(cave, i);
 
 		/* Skip dead monsters */
 		if (!m_ptr->r_idx)
@@ -1704,7 +1704,7 @@ static void do_cmd_wiz_unhide(int d)
 
 	/* Process monsters */
 	for (i = 1; i < m_max; i++) {
-		monster_type *m_ptr = &m_list[i];
+		monster_type *m_ptr = cave_monster(cave, i);
 
 		/* Skip dead monsters */
 		if (!m_ptr->r_idx)

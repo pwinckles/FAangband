@@ -3178,8 +3178,8 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 					targ_y = p_ptr->py;
 					targ_x = p_ptr->px;
 				} else {
-					targ_y = m_list[avail_mon[target]].fy;
-					targ_x = m_list[avail_mon[target]].fx;
+					targ_y = cave_monster(cave, avail_mon[target])->fy;
+					targ_x = cave_monster(cave, avail_mon[target])->fx;
 				}
 
 				/* Paranoia */
@@ -3338,7 +3338,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 						continue;
 
 					/* Get the monster */
-					m_ptr = &m_list[cave->m_idx[y][x]];
+					m_ptr = square_monster(cave, y, x);
 
 					/* Take the energy */
 					p_ptr->energy += m_ptr->energy;
@@ -3417,7 +3417,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 
 			/* Hack - make all local golems hostile to the target */
 			for (m_idx = 0; m_idx < z_info->m_max; m_idx++) {
-				monster_type *m_ptr = &m_list[m_idx];
+				monster_type *m_ptr = cave_monster(cave, m_idx);
 				monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
 				if ((distance(targ_y, targ_x, m_ptr->fy, m_ptr->fx) < 7)

@@ -433,7 +433,7 @@ static void clear_cave(void)
 	int x, y;
 
 	wipe_o_list();
-	wipe_m_list();
+	wipe_m_list(cave, p_ptr);
 	wipe_trap_list(cave);
 	/* Clear flags and flow information. */
 	for (y = 0; y < DUNGEON_HGT; y++) {
@@ -708,7 +708,7 @@ void generate_cave(void)
 		wipe_o_list();
 
 		/* Wipe the monsters */
-		wipe_m_list();
+		wipe_m_list(cave, p_ptr);
 
 		/* A themed level was generated */
 		if (p_ptr->themed_level) {

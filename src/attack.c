@@ -817,10 +817,10 @@ static void apply_deadliness(long *die_average, int deadliness)
 /**
  * Attempt a shield bash; return true if the monster dies
  */
-bool attempt_shield_bash(int y, int x, bool * fear, int *blows,
+bool attempt_shield_bash(int y, int x, bool *fear, int *blows,
 						 char *m_name)
 {
-	monster_type *m_ptr = &m_list[cave->m_idx[y][x]];
+	monster_type *m_ptr = square_monster(cave, y, x);
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
 	monster_lore *l_ptr = &l_list[m_ptr->r_idx];
 
@@ -1038,7 +1038,7 @@ bool py_attack(int y, int x, bool can_push)
 	bool chaotic = FALSE;
 
 	/* Get the monster */
-	m_ptr = &m_list[cave->m_idx[y][x]];
+	m_ptr = square_monster(cave, y, x);
 	r_ptr = &r_info[m_ptr->r_idx];
 	l_ptr = &l_list[m_ptr->r_idx];
 
@@ -1774,7 +1774,7 @@ void do_cmd_fire(cmd_code code, cmd_arg args[])
 
 		/* Handle monster */
 		if (cave->m_idx[y][x] > 0) {
-			monster_type *m_ptr = &m_list[cave->m_idx[y][x]];
+			monster_type *m_ptr = square_monster(cave, y, x);
 			monster_race *r_ptr = &r_info[m_ptr->r_idx];
 			feature_type *f_ptr = &f_info[cave->feat[y][x]];
 
@@ -2319,7 +2319,7 @@ void do_cmd_throw(cmd_code code, cmd_arg args[])
 
 		/* Handle monster */
 		if (cave->m_idx[y][x] > 0) {
-			monster_type *m_ptr = &m_list[cave->m_idx[y][x]];
+			monster_type *m_ptr = square_monster(cave, y, x);
 			monster_race *r_ptr = &r_info[m_ptr->r_idx];
 			feature_type *f_ptr = &f_info[cave->feat[y][x]];
 

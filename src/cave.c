@@ -704,7 +704,7 @@ void grid_data_as_text(grid_data * g, int *ap, wchar_t * cp, byte * tap,
 			/* Just pick a random monster to display. */
 			hallucinatory_monster(&a, &c);
 		} else {
-			monster_type *m_ptr = &m_list[g->m_idx];
+			monster_type *m_ptr = cave_monster(cave, g->m_idx);
 			monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
 			byte da;
@@ -966,7 +966,7 @@ void map_info(unsigned y, unsigned x, grid_data * g)
 	/* Monsters */
 	if (g->m_idx > 0) {
 		/* If the monster isn't "visible", make sure we don't list it. */
-		monster_type *m_ptr = &m_list[g->m_idx];
+		monster_type *m_ptr = cave_monster(cave, g->m_idx);
 		if (!m_ptr->ml)
 			g->m_idx = 0;
 

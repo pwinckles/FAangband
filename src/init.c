@@ -4096,9 +4096,6 @@ static errr init_other(void)
 	/* Objects */
 	o_list = C_ZNEW(z_info->o_max, object_type);
 
-	/* Monsters */
-	m_list = C_ZNEW(z_info->m_max, monster_type);
-
 	/* Traps */
 	trap_list = C_ZNEW(z_info->l_max, trap_type);
 
@@ -4890,7 +4887,6 @@ void cleanup_angband(void)
 	/* Free the lore, trap, monster, and object lists */
 	FREE(l_list);
 	FREE(trap_list);
-	FREE(m_list);
 	FREE(o_list);
 
 	cave_free(cave);

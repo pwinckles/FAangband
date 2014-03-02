@@ -1614,7 +1614,7 @@ extern void py_steal(int y, int x)
 {
 	const char *act = NULL;
 
-	monster_type *m_ptr = &m_list[cave->m_idx[y][x]];
+	monster_type *m_ptr = square_monster(cave, y, x);
 	monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
 	char m_name[80];

@@ -342,7 +342,7 @@ void sun_banish(void)
 	/* Process all monsters */
 	for (i = 1; i < m_max - 1; i++) {
 		/* Access the monster */
-		m_ptr = &m_list[i];
+		m_ptr = cave_monster(cave, i);
 
 
 		/* Check if it hates light */
@@ -1635,7 +1635,7 @@ static void process_player(void)
 					monster_race *r_ptr;
 
 					/* Access monster */
-					m_ptr = &m_list[i];
+					m_ptr = cave_monster(cave, i);
 
 					/* Skip dead monsters */
 					if (!m_ptr->r_idx)
@@ -1666,7 +1666,7 @@ static void process_player(void)
 					monster_type *m_ptr;
 
 					/* Access monster */
-					m_ptr = &m_list[i];
+					m_ptr = cave_monster(cave, i);
 
 					/* Skip dead monsters */
 					/* if (!m_ptr->r_idx) continue; */
@@ -1702,7 +1702,7 @@ static void process_player(void)
 				monster_type *m_ptr;
 
 				/* Access monster */
-				m_ptr = &m_list[i];
+				m_ptr = cave_monster(cave, i);
 
 				/* Skip dead monsters */
 				/* if (!m_ptr->r_idx) continue; */
@@ -1810,7 +1810,7 @@ void do_animation(void)
 
 	for (i = 1; i < m_max; i++) {
 		byte attr;
-		monster_type *m_ptr = &m_list[i];
+		monster_type *m_ptr = cave_monster(cave, i);
 		monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
 		if (!m_ptr || !m_ptr->ml)
@@ -2073,7 +2073,7 @@ static void dungeon(void)
 				/* Give the player more energy than any monster */
 				for (i = m_max - 1; i >= 1; i--) {
 					/* Access the monster */
-					m_ptr = &m_list[i];
+					m_ptr = cave_monster(cave, i);
 
 					/* Ignore dead monsters */
 					if (!m_ptr->r_idx)

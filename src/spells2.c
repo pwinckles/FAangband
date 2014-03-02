@@ -2046,7 +2046,7 @@ bool detect_monsters_normal(int range, bool show)
 
 	/* Scan monsters */
 	for (i = 1; i < m_max; i++) {
-		monster_type *m_ptr = &m_list[i];
+		monster_type *m_ptr = cave_monster(cave, i);
 		monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
 		/* Skip dead monsters */
@@ -2121,7 +2121,7 @@ bool detect_monsters_invis(int range, bool show)
 
 	/* Scan monsters */
 	for (i = 1; i < m_max; i++) {
-		monster_type *m_ptr = &m_list[i];
+		monster_type *m_ptr = cave_monster(cave, i);
 		monster_race *r_ptr = &r_info[m_ptr->r_idx];
 		monster_lore *l_ptr = &l_list[m_ptr->r_idx];
 
@@ -2207,7 +2207,7 @@ bool detect_monsters_evil(int range, bool show)
 
 	/* Scan monsters */
 	for (i = 1; i < m_max; i++) {
-		monster_type *m_ptr = &m_list[i];
+		monster_type *m_ptr = cave_monster(cave, i);
 		monster_race *r_ptr = &r_info[m_ptr->r_idx];
 		monster_lore *l_ptr = &l_list[m_ptr->r_idx];
 
@@ -2295,7 +2295,7 @@ bool detect_monsters_living(int range, bool show)
 
 	/* Scan monsters */
 	for (i = 1; i < m_max; i++) {
-		monster_type *m_ptr = &m_list[i];
+		monster_type *m_ptr = cave_monster(cave, i);
 		monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
 		/* Skip dead monsters */
@@ -3857,7 +3857,7 @@ bool listen_to_natural_creatures(void)
 
 	/* Check all the monsters */
 	for (i = 1; i < m_max; i++) {
-		monster_type *m_ptr = &m_list[i];
+		monster_type *m_ptr = cave_monster(cave, i);
 		monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
 		/* Paranoia -- skip "dead" monsters */
@@ -4111,7 +4111,7 @@ bool project_los_not_player(int y1, int x1, int dam, int typ)
 
 	/* Affect all (nearby) monsters */
 	for (i = 1; i < m_max; i++) {
-		monster_type *m_ptr = &m_list[i];
+		monster_type *m_ptr = cave_monster(cave, i);
 
 		/* Paranoia -- Skip dead monsters */
 		if (!m_ptr->r_idx)
@@ -4159,7 +4159,7 @@ static bool project_hack(int typ, int dam)
 
 	/* Affect all (nearby) monsters */
 	for (i = 1; i < m_max; i++) {
-		monster_type *m_ptr = &m_list[i];
+		monster_type *m_ptr = cave_monster(cave, i);
 
 		/* Paranoia -- Skip dead monsters */
 		if (!m_ptr->r_idx)
@@ -4374,7 +4374,7 @@ bool aggravate_monsters(int who, bool the_entire_level)
 
 	/* Aggravate everyone nearby */
 	for (i = 1; i < m_max; i++) {
-		monster_type *m_ptr = &m_list[i];
+		monster_type *m_ptr = cave_monster(cave, i);
 		monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
 		/* Paranoia -- Skip dead monsters */
@@ -4457,7 +4457,7 @@ bool genocide(void)
 
 	/* Delete the monsters of that "type" */
 	for (i = 1; i < m_max; i++) {
-		monster_type *m_ptr = &m_list[i];
+		monster_type *m_ptr = cave_monster(cave, i);
 		monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
 		/* Paranoia -- Skip dead monsters */
@@ -4499,7 +4499,7 @@ bool mass_genocide(void)
 
 	/* Delete the (nearby) monsters */
 	for (i = 1; i < m_max; i++) {
-		monster_type *m_ptr = &m_list[i];
+		monster_type *m_ptr = cave_monster(cave, i);
 		monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
 		/* Paranoia -- Skip dead monsters */
@@ -4545,7 +4545,7 @@ bool probing(void)
 
 	/* Probe all (nearby) monsters */
 	for (i = 1; i < m_max; i++) {
-		monster_type *m_ptr = &m_list[i];
+		monster_type *m_ptr = cave_monster(cave, i);
 		monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
 		/* Paranoia -- Skip dead monsters */
@@ -4947,7 +4947,7 @@ void earthquake(int cy, int cx, int r, bool volcano)
 
 			/* Process monsters */
 			if (cave->m_idx[yy][xx] > 0) {
-				monster_type *m_ptr = &m_list[cave->m_idx[yy][xx]];
+				monster_type *m_ptr = square_monster(cave, yy, xx);
 				monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
 				/* Most monsters cannot co-exist with rock */
@@ -5058,7 +5058,7 @@ void earthquake(int cy, int cx, int r, bool volcano)
 			if (cave_valid_bold(yy, xx)) {
 				int feat = outside ? FEAT_ROAD : FEAT_FLOOR;
 
-				monster_type *m_ptr = &m_list[cave->m_idx[yy][xx]];
+				monster_type *m_ptr = square_monster(cave, yy, xx);
 				monster_race *r_ptr = &r_info[m_ptr->r_idx];
 				feature_type *f_ptr = &f_info[cave->feat[yy][xx]];
 
@@ -5278,7 +5278,7 @@ static void cave_light(struct point_set *ps)
 		if (cave->m_idx[y][x] > 0) {
 			int chance = 25;
 
-			monster_type *m_ptr = &m_list[cave->m_idx[y][x]];
+			monster_type *m_ptr = square_monster(cave, y, x);
 			monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
 			/* Stupid monsters rarely wake up */

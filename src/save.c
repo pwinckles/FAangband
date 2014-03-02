@@ -1006,7 +1006,7 @@ void wr_monsters(void)
 
 	/* Dump the monsters */
 	for (i = 1; i < m_max; i++) {
-		monster_type *m_ptr = &m_list[i];
+		monster_type *m_ptr = cave_monster(cave, i);
 
 		/* Dump it */
 		wr_monster(m_ptr);
