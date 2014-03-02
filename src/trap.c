@@ -876,7 +876,7 @@ void hit_trap_aux(struct cave *c, int y, int x, int trap)
 
 			/* Change to pit terrain */
 			square_remove_trap(c, y, x, FALSE, trap);
-			cave_set_feat(y, x, FEAT_PIT);
+			square_set_feat(c, y, x, FEAT_PIT);
 
 			break;
 		}

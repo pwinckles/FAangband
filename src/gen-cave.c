@@ -170,7 +170,7 @@ static void build_streamer(int feat, int chance)
 					continue;
 
 				/* Clear previous contents, add proper vein type */
-				cave_set_feat(y, dx, feat);
+				square_set_feat(cave, y, dx, feat);
 
 				/* Count down time to next treasure. */
 				time_to_treas--;
@@ -208,7 +208,7 @@ static void build_streamer(int feat, int chance)
 					continue;
 
 				/* Clear previous contents, add proper vein type */
-				cave_set_feat(dy, x, feat);
+				square_set_feat(cave, dy, x, feat);
 
 				/* Count down time to next treasure. */
 				time_to_treas--;
@@ -356,31 +356,31 @@ void destroy_level(bool new_level)
 					/* Granite */
 					if (t < 20) {
 						/* Create granite wall */
-						cave_set_feat(y, x, FEAT_WALL_EXTRA);
+						square_set_feat(cave, y, x, FEAT_WALL_EXTRA);
 					}
 
 					/* Quartz */
 					else if (t < 60) {
 						/* Create quartz vein */
-						cave_set_feat(y, x, FEAT_QUARTZ);
+						square_set_feat(cave, y, x, FEAT_QUARTZ);
 					}
 
 					/* Magma */
 					else if (t < 80) {
 						/* Create magma vein */
-						cave_set_feat(y, x, FEAT_MAGMA);
+						square_set_feat(cave, y, x, FEAT_MAGMA);
 					}
 
 					/* Rubble. */
 					else if (t < 130) {
 						/* Create rubble */
-						cave_set_feat(y, x, FEAT_RUBBLE);
+						square_set_feat(cave, y, x, FEAT_RUBBLE);
 					}
 
 					/* Floor */
 					else {
 						/* Create floor */
-						cave_set_feat(y, x, FEAT_FLOOR);
+						square_set_feat(cave, y, x, FEAT_FLOOR);
 					}
 
 					/* No longer part of a room or vault */
@@ -1190,8 +1190,8 @@ void build_tunnel(int start_room, int end_room)
 				/* We've found something passable. */
 				if (passable(cave->feat[y1][x1])) {
 					/* Turn both outer wall grids into floor. */
-					cave_set_feat(tmp_row, tmp_col, FEAT_FLOOR);
-					cave_set_feat(y0, x0, FEAT_FLOOR);
+					square_set_feat(cave, tmp_row, tmp_col, FEAT_FLOOR);
+					square_set_feat(cave, y0, x0, FEAT_FLOOR);
 
 					/* Save the wall location */
 					if (dun->wall_n < WALL_MAX) {
@@ -1253,7 +1253,7 @@ void build_tunnel(int start_room, int end_room)
 				col1 = tmp_col;
 
 				/* Convert to floor grid */
-				cave_set_feat(row1, col1, FEAT_FLOOR);
+				square_set_feat(cave, row1, col1, FEAT_FLOOR);
 
 				/* Save the wall location */
 				if (dun->wall_n < WALL_MAX) {
@@ -1272,7 +1272,7 @@ void build_tunnel(int start_room, int end_room)
 						if ((square_in_bounds(cave, row1, x))
 							&& (cave->feat[row1][x] == FEAT_WALL_OUTER)) {
 							/* Change the wall to a "solid" wall */
-							cave_set_feat(row1, x, FEAT_WALL_SOLID);
+							square_set_feat(cave, row1, x, FEAT_WALL_SOLID);
 						}
 					}
 				} else {
@@ -1281,7 +1281,7 @@ void build_tunnel(int start_room, int end_room)
 						if ((square_in_bounds(cave, y, col1))
 							&& (cave->feat[y][col1] == FEAT_WALL_OUTER)) {
 							/* Change the wall to a "solid" wall */
-							cave_set_feat(y, col1, FEAT_WALL_SOLID);
+							square_set_feat(cave, y, col1, FEAT_WALL_SOLID);
 						}
 					}
 				}
@@ -1419,7 +1419,7 @@ void build_tunnel(int start_room, int end_room)
 						col1 += col_dir;
 
 						/* Clear previous contents, add a floor */
-						cave_set_feat(row1, col1, FEAT_FLOOR);
+						square_set_feat(cave, row1, col1, FEAT_FLOOR);
 
 						/* Return to main loop. */
 						break;
@@ -1568,7 +1568,7 @@ void build_tunnel(int start_room, int end_room)
 		x = dun->tunn[i].x;
 
 		/* Clear previous contents, add a floor */
-		cave_set_feat(y, x, FEAT_FLOOR);
+		square_set_feat(cave, y, x, FEAT_FLOOR);
 	}
 
 	/* Make doors in entranceways. */
@@ -1898,7 +1898,7 @@ extern void cave_gen(void)
 		y = 0;
 
 		/* Clear previous contents, add "solid" perma-wall */
-		cave_set_feat(y, x, FEAT_PERM_SOLID);
+		square_set_feat(cave, y, x, FEAT_PERM_SOLID);
 	}
 
 	/* Special boundary walls -- Bottom */
@@ -1906,7 +1906,7 @@ extern void cave_gen(void)
 		y = DUNGEON_HGT - 1;
 
 		/* Clear previous contents, add "solid" perma-wall */
-		cave_set_feat(y, x, FEAT_PERM_SOLID);
+		square_set_feat(cave, y, x, FEAT_PERM_SOLID);
 	}
 
 	/* Special boundary walls -- Left */
@@ -1914,7 +1914,7 @@ extern void cave_gen(void)
 		x = 0;
 
 		/* Clear previous contents, add "solid" perma-wall */
-		cave_set_feat(y, x, FEAT_PERM_SOLID);
+		square_set_feat(cave, y, x, FEAT_PERM_SOLID);
 	}
 
 	/* Special boundary walls -- Right */
@@ -1922,7 +1922,7 @@ extern void cave_gen(void)
 		x = DUNGEON_WID - 1;
 
 		/* Clear previous contents, add "solid" perma-wall */
-		cave_set_feat(y, x, FEAT_PERM_SOLID);
+		square_set_feat(cave, y, x, FEAT_PERM_SOLID);
 	}
 
 	/* Hack -- Scramble the room order */

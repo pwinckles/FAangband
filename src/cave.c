@@ -2905,16 +2905,20 @@ void illuminate(void)
 /**
  * Change the "feat" flag for a grid, and notice/redraw the grid. 
  */
-void cave_set_feat(int y, int x, int feat)
+void square_set_feat(struct cave *c, int y, int x, int feat)
 {
-	int current_feat = cave->feat[y][x];
+	int current_feat = c->feat[y][x];
+
+	assert(c);
+	assert(y >= 0 && y < DUNGEON_HGT);
+	assert(x >= 0 && x < DUNGEON_WID);
 
 	/* Track changes */
-	if (current_feat) cave->feat_count[current_feat]--;
-	if (feat) cave->feat_count[feat]++;
+	if (current_feat) c->feat_count[current_feat]--;
+	if (feat) c->feat_count[feat]++;
 
 	/* Change the feature */
-	cave->feat[y][x] = feat;
+	c->feat[y][x] = feat;
 
 	/* Notice/Redraw */
 	if (character_dungeon) {
@@ -3453,6 +3457,10 @@ struct cave *cave_new(void) {
 	c->trap_cnt = 0;
 
 	c->created_at = 1;
+
+	/* temp hack */
+	c->height = DUNGEON_HGT;
+	c->width = DUNGEON_WID;
 	return c;
 }
 
@@ -3893,8 +3901,8 @@ int cave_monster_count(struct cave *c) {
  */
 void upgrade_mineral(struct cave *c, int y, int x) {
 	switch (c->feat[y][x]) {
-	case FEAT_MAGMA: cave_set_feat(y, x, FEAT_MAGMA_K); break;
-	case FEAT_QUARTZ: cave_set_feat(y, x, FEAT_QUARTZ_K); break;
+	case FEAT_MAGMA: square_set_feat(c, y, x, FEAT_MAGMA_K); break;
+	case FEAT_QUARTZ: square_set_feat(c, y, x, FEAT_QUARTZ_K); break;
 	}
 }
 
@@ -3903,11 +3911,11 @@ int square_door_power(struct cave *c, int y, int x) {
 }
 
 void square_open_door(struct cave *c, int y, int x) {
-	cave_set_feat(y, x, FEAT_OPEN);
+	square_set_feat(c, y, x, FEAT_OPEN);
 }
 
 void square_smash_door(struct cave *c, int y, int x) {
-	cave_set_feat(y, x, FEAT_BROKEN);
+	square_set_feat(c, y, x, FEAT_BROKEN);
 }
 
 void square_destroy_trap(struct cave *c, int y, int x) {
@@ -3915,7 +3923,7 @@ void square_destroy_trap(struct cave *c, int y, int x) {
 }
 
 void square_lock_door(struct cave *c, int y, int x, int power) {
-	cave_set_feat(y, x, FEAT_DOOR_HEAD + power);
+	square_set_feat(c, y, x, FEAT_DOOR_HEAD + power);
 }
 
 bool square_hasgoldvein(struct cave *c, int y, int x) {
@@ -3923,15 +3931,15 @@ bool square_hasgoldvein(struct cave *c, int y, int x) {
 }
 
 void square_tunnel_wall(struct cave *c, int y, int x) {
-	cave_set_feat(y, x, FEAT_FLOOR);
+	square_set_feat(c, y, x, FEAT_FLOOR);
 }
 
 void square_destroy_wall(struct cave *c, int y, int x) {
-	cave_set_feat(y, x, FEAT_FLOOR);
+	square_set_feat(c, y, x, FEAT_FLOOR);
 }
 
 void square_close_door(struct cave *c, int y, int x) {
-	cave_set_feat(y, x, FEAT_DOOR_HEAD);
+	square_set_feat(c, y, x, FEAT_DOOR_HEAD);
 }
 
 bool square_isbrokendoor(struct cave *c, int y, int x) {
@@ -3973,9 +3981,9 @@ bool square_isinteresting(struct cave *c, int y, int x) {
 
 void square_show_vein(struct cave *c, int y, int x) {
 	if (c->feat[y][x] == FEAT_MAGMA_H)
-		cave_set_feat(y, x, FEAT_MAGMA_K);
+		square_set_feat(c, y, x, FEAT_MAGMA_K);
 	else if (c->feat[y][x] == FEAT_QUARTZ_H)
-		cave_set_feat(y, x, FEAT_QUARTZ_K);
+		square_set_feat(c, y, x, FEAT_QUARTZ_K);
 }
 
 //void square_add_stairs(struct cave *c, int y, int x, int depth) {
@@ -3984,7 +3992,7 @@ void square_show_vein(struct cave *c, int y, int x) {
 //		down = 1;
 //	else if (is_quest(depth) || depth >= MAX_DEPTH - 1)
 //		down = 0;
-//	cave_set_feat(y, x, down ? FEAT_MORE : FEAT_LESS);
+//	square_set_feat(c, y, x, down ? FEAT_MORE : FEAT_LESS);
 //}
 
 void square_destroy(struct cave *c, int y, int x) {
@@ -3998,7 +4006,7 @@ int feat = FEAT_FLOOR;
 	else if (r < 100)
 		feat = FEAT_MAGMA;
 
-	cave_set_feat(y, x, feat);
+	square_set_feat(c, y, x, feat);
 }
 
 void square_earthquake(struct cave *c, int y, int x) {
@@ -4006,7 +4014,7 @@ void square_earthquake(struct cave *c, int y, int x) {
 	int f;
 
 	if (!square_ispassable(c, y, x)) {
-		cave_set_feat(y, x, FEAT_FLOOR);
+		square_set_feat(c, y, x, FEAT_FLOOR);
 		return;
 	}
 
@@ -4016,7 +4024,7 @@ void square_earthquake(struct cave *c, int y, int x) {
 		f = FEAT_QUARTZ;
 	else
 		f = FEAT_MAGMA;
-	cave_set_feat(y, x, f);
+	square_set_feat(c, y, x, f);
 }
 
 bool square_hassecretvein(struct cave *c, int y, int x) {
@@ -4042,25 +4050,25 @@ const char *square_apparent_name(struct cave *c, struct player *p, int y, int x)
 
 void square_unlock_door(struct cave *c, int y, int x) {
 	assert(square_islockeddoor(c, y, x));
-	cave_set_feat(y, x, FEAT_DOOR_HEAD);
+	square_set_feat(c, y, x, FEAT_DOOR_HEAD);
 }
 
 void square_destroy_door(struct cave *c, int y, int x) {
 	assert(square_isdoor(c, y, x));
-	cave_set_feat(y, x, FEAT_FLOOR);
+	square_set_feat(c, y, x, FEAT_FLOOR);
 }
 
 void square_destroy_rubble(struct cave *c, int y, int x) {
 	assert(square_isrubble(c, y, x));
-	cave_set_feat(y, x, FEAT_FLOOR);
+	square_set_feat(c, y, x, FEAT_FLOOR);
 }
 
 void square_add_door(struct cave *c, int y, int x, bool closed) {
-	cave_set_feat(y, x, closed ? FEAT_DOOR_HEAD : FEAT_OPEN);
+	square_set_feat(c, y, x, closed ? FEAT_DOOR_HEAD : FEAT_OPEN);
 }
 
 void square_force_floor(struct cave *c, int y, int x) {
-	cave_set_feat(y, x, FEAT_FLOOR);
+	square_set_feat(c, y, x, FEAT_FLOOR);
 }
 
 /*

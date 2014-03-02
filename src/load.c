@@ -1989,7 +1989,7 @@ int rd_dungeon(void)
 		/* Apply the RLE info */
 		for (i = count; i > 0; i--) {
 			/* Extract "feat" */
-			cave_set_feat(y, x, tmp8u);
+			square_set_feat(cave, y, x, tmp8u);
 
 			/* Advance/Wrap */
 			if (++x >= DUNGEON_WID) {

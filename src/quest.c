@@ -70,7 +70,7 @@ void build_quest_stairs(int y, int x, char *portal)
 	msg("A magical %s appears...", portal);
 
 	/* Create stairs down */
-	cave_set_feat(y, x, FEAT_MORE);
+	square_set_feat(cave, y, x, FEAT_MORE);
 
 	/* Update the visuals */
 	p_ptr->update |= (PU_UPDATE_VIEW | PU_MONSTERS);
@@ -114,8 +114,8 @@ bool quest_check(const struct monster *m) {
 			 && (MAP(COMPRESSED) || MAP(EXTENDED))) {
 		/* Make a path */
 		for (y = p_ptr->py; y < DUNGEON_HGT - 2; y++)
-			cave_set_feat(y, p_ptr->px, FEAT_ROAD);
-		cave_set_feat(DUNGEON_HGT - 2, p_ptr->px, FEAT_LESS_SOUTH);
+			square_set_feat(cave, y, p_ptr->px, FEAT_ROAD);
+		square_set_feat(cave, DUNGEON_HGT - 2, p_ptr->px, FEAT_LESS_SOUTH);
 
 		/* Announce it */
 		msg("The way out of Nan Dungortheb is revealed!");

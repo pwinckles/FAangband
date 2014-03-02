@@ -1930,7 +1930,7 @@ static void dungeon(void)
 			delete_object(py, px);
 
 			/* Make stairs */
-			cave_set_feat(py, px, p_ptr->create_stair);
+			square_set_feat(cave, py, px, p_ptr->create_stair);
 
 			/* Mark the stairs as known */
 			sqinfo_on(cave->info[py][px], SQUARE_MARK);

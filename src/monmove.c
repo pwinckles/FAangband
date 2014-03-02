@@ -3777,9 +3777,9 @@ static void process_move(monster_type *m_ptr, int ty, int tx, bool bash)
 
 			/* Notice */
 			if (outside)
-				cave_set_feat(ny, nx, FEAT_ROAD);
+				square_set_feat(cave, ny, nx, FEAT_ROAD);
 			else
-				cave_set_feat(ny, nx, FEAT_FLOOR);
+				square_set_feat(cave, ny, nx, FEAT_FLOOR);
 
 			/* Note changes to grid - but only if actually seen */
 			if (sqinfo_has(cave->info[ny][nx], SQUARE_SEEN))
@@ -3804,9 +3804,9 @@ static void process_move(monster_type *m_ptr, int ty, int tx, bool bash)
 
 				/* Break down the door */
 				if (randint0(100) < 50)
-					cave_set_feat(ny, nx, FEAT_BROKEN);
+					square_set_feat(cave, ny, nx, FEAT_BROKEN);
 				else
-					cave_set_feat(ny, nx, FEAT_OPEN);
+					square_set_feat(cave, ny, nx, FEAT_OPEN);
 
 				/* Handle viewable doors */
 				if (sqinfo_has(cave->info[ny][nx], SQUARE_SEEN))
@@ -3821,7 +3821,7 @@ static void process_move(monster_type *m_ptr, int ty, int tx, bool bash)
 				/* Locked doors */
 				if (tf_has(f_ptr->flags, TF_DOOR_LOCKED)) {
 					/* Unlock the door */
-					cave_set_feat(ny, nx, FEAT_DOOR_HEAD);
+					square_set_feat(cave, ny, nx, FEAT_DOOR_HEAD);
 
 					/* Do not move */
 					do_move = FALSE;
@@ -3833,7 +3833,7 @@ static void process_move(monster_type *m_ptr, int ty, int tx, bool bash)
 					did_open_door = TRUE;
 
 					/* Open the door */
-					cave_set_feat(ny, nx, FEAT_OPEN);
+					square_set_feat(cave, ny, nx, FEAT_OPEN);
 
 					/* Step into doorway sometimes */
 					if (randint0(5) != 0)
@@ -3923,9 +3923,9 @@ static void process_move(monster_type *m_ptr, int ty, int tx, bool bash)
 
 					/* Notice */
 					if (outside)
-						cave_set_feat(yy, xx, FEAT_ROAD);
+						square_set_feat(cave, yy, xx, FEAT_ROAD);
 					else
-						cave_set_feat(yy, xx, FEAT_FLOOR);
+						square_set_feat(cave, yy, xx, FEAT_FLOOR);
 
 					/* Note changes to grid - but only if actually seen */
 					if (sqinfo_has(cave->info[yy][xx], SQUARE_SEEN))

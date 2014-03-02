@@ -81,7 +81,7 @@ static coord path_start(int sy, int sx, int ty, int tx)
 	y = sy + row_dir;
 	x = sx + col_dir;
 	if (square_in_bounds_fully(cave, y, x)) {
-		cave_set_feat(y, x, FEAT_ROAD);
+		square_set_feat(cave, y, x, FEAT_ROAD);
 		fy = y;
 		fx = x;
 	} else {
@@ -97,7 +97,7 @@ static coord path_start(int sy, int sx, int ty, int tx)
 		y += row_dir;
 		x += col_dir;
 		if (square_in_bounds_fully(cave, y, x)) {
-			cave_set_feat(y, x, FEAT_ROAD);
+			square_set_feat(cave, y, x, FEAT_ROAD);
 			fy = y;
 			fx = x;
 		} else {
@@ -111,7 +111,7 @@ static coord path_start(int sy, int sx, int ty, int tx)
 		y += row_dir;
 		x += col_dir;
 		if (square_in_bounds_fully(cave, y, x)) {
-			cave_set_feat(y, x, FEAT_ROAD);
+			square_set_feat(cave, y, x, FEAT_ROAD);
 			fy = y;
 			fx = x;
 		} else {
@@ -194,7 +194,7 @@ static void alloc_paths(int stage, int last_stage)
 			if (river)
 				river_move(&pcoord);
 
-			cave_set_feat(1, pcoord, path);
+			square_set_feat(cave, 1, pcoord, path);
 			py = 1;
 			px = pcoord;
 			jumped = FALSE;
@@ -230,7 +230,7 @@ static void alloc_paths(int stage, int last_stage)
 			if (river)
 				river_move(&x);
 
-			cave_set_feat(1, x, path);
+			square_set_feat(cave, 1, x, path);
 
 			/* make paths to nowhere */
 			ty = 1 + DUNGEON_HGT / 3 + randint1(20) - 10;
@@ -262,7 +262,7 @@ static void alloc_paths(int stage, int last_stage)
 
 		/* Way back */
 		if ((east == last_stage) && (p_ptr->create_stair)) {
-			cave_set_feat(pcoord, DUNGEON_WID - 2, path);
+			square_set_feat(cave, pcoord, DUNGEON_WID - 2, path);
 			py = pcoord;
 			px = DUNGEON_WID - 2;
 			jumped = FALSE;
@@ -293,7 +293,7 @@ static void alloc_paths(int stage, int last_stage)
 		for (i = 0; i < num; i++) {
 			y = 1 + randint0(DUNGEON_HGT / num - 2) +
 				i * DUNGEON_HGT / num;
-			cave_set_feat(y, DUNGEON_WID - 2, path);
+			square_set_feat(cave, y, DUNGEON_WID - 2, path);
 
 			/* make paths to nowhere */
 			ty = y + randint1(40) - 20;
@@ -329,7 +329,7 @@ static void alloc_paths(int stage, int last_stage)
 			if (river)
 				river_move(&pcoord);
 
-			cave_set_feat(DUNGEON_HGT - 2, pcoord, path);
+			square_set_feat(cave, DUNGEON_HGT - 2, pcoord, path);
 			py = DUNGEON_HGT - 2;
 			px = pcoord;
 			jumped = FALSE;
@@ -365,7 +365,7 @@ static void alloc_paths(int stage, int last_stage)
 			if (river)
 				river_move(&x);
 
-			cave_set_feat(DUNGEON_HGT - 2, x, path);
+			square_set_feat(cave, DUNGEON_HGT - 2, x, path);
 
 			/* make paths to nowhere */
 			ty = DUNGEON_HGT - DUNGEON_HGT / 3 - randint1(20) + 8;
@@ -397,7 +397,7 @@ static void alloc_paths(int stage, int last_stage)
 
 		/* Way back */
 		if ((west == last_stage) && (p_ptr->create_stair)) {
-			cave_set_feat(pcoord, 1, path);
+			square_set_feat(cave, pcoord, 1, path);
 			py = pcoord;
 			px = 1;
 			jumped = FALSE;
@@ -428,7 +428,7 @@ static void alloc_paths(int stage, int last_stage)
 		for (i = 0; i < num; i++) {
 			y = 1 + randint0(DUNGEON_HGT / num - 2) +
 				i * DUNGEON_HGT / num;
-			cave_set_feat(y, 1, path);
+			square_set_feat(cave, y, 1, path);
 
 			/* make paths to nowhere */
 			ty = y + randint1(40) - 20;
@@ -474,8 +474,8 @@ static void alloc_paths(int stage, int last_stage)
 
 		/* Make the path, adding an adjacent grid 8/9 of the time */
 		for (j = 0; j < path_grids; j++) {
-			cave_set_feat(GRID_Y(gp[j]), GRID_X(gp[j]), FEAT_ROAD);
-			cave_set_feat(GRID_Y(gp[j]) + randint0(3) - 1,
+			square_set_feat(cave, GRID_Y(gp[j]), GRID_X(gp[j]), FEAT_ROAD);
+			square_set_feat(cave, GRID_Y(gp[j]) + randint0(3) - 1,
 						  GRID_X(gp[j]) + randint0(3) - 1, FEAT_ROAD);
 		}
 	}
@@ -519,20 +519,20 @@ static void make_edges(bool ragged, bool valley)
 				/* Clear previous contents, add "solid" perma-wall */
 				if ((cave->feat[y][x] != FEAT_ROAD)
 					&& !(tf_has(f_ptr->flags, TF_PERMANENT))) {
-					cave_set_feat(y, x, FEAT_PERM_SOLID);
+					square_set_feat(cave, y, x, FEAT_PERM_SOLID);
 				}
 			}
 			if (valley && (x > 0) && (x == p_ptr->path_coord)) {
 				if (y == 0)
 					y++;
-				cave_set_feat(y, x, FEAT_RUBBLE);
+				square_set_feat(cave, y, x, FEAT_RUBBLE);
 				player_place(y, x);
 			}
 		} else {
 			y = 0;
 
 			/* Clear previous contents, add "solid" perma-wall */
-			cave_set_feat(y, x, FEAT_PERM_SOLID);
+			square_set_feat(cave, y, x, FEAT_PERM_SOLID);
 		}
 	}
 
@@ -553,20 +553,20 @@ static void make_edges(bool ragged, bool valley)
 				/* Clear previous contents, add perma-wall or void */
 				if ((cave->feat[y][x] != FEAT_ROAD)
 					&& !(tf_has(f_ptr->flags, TF_PERMANENT))) {
-					cave_set_feat(y, x, (valley ? FEAT_VOID : FEAT_PERM_SOLID));
+					square_set_feat(cave, y, x, (valley ? FEAT_VOID : FEAT_PERM_SOLID));
 				}
 			}
 			/* Down slides */
 			if ((j < num) && valley)
 				if (x == path_x[j]) {
-					cave_set_feat(y, x, FEAT_MORE_SOUTH);
+					square_set_feat(cave, y, x, FEAT_MORE_SOUTH);
 					j++;
 				}
 		} else {
 			y = DUNGEON_HGT - 1;
 
 			/* Clear previous contents, add "solid" perma-wall */
-			cave_set_feat(y, x, FEAT_PERM_SOLID);
+			square_set_feat(cave, y, x, FEAT_PERM_SOLID);
 		}
 	}
 
@@ -585,14 +585,14 @@ static void make_edges(bool ragged, bool valley)
 				/* Clear previous contents, add "solid" perma-wall */
 				if ((cave->feat[y][x] != FEAT_ROAD)
 					&& !(tf_has(f_ptr->flags, TF_PERMANENT))) {
-					cave_set_feat(y, x, FEAT_PERM_SOLID);
+					square_set_feat(cave, y, x, FEAT_PERM_SOLID);
 				}
 			}
 		} else {
 			x = 0;
 
 			/* Clear previous contents, add "solid" perma-wall */
-			cave_set_feat(y, x, FEAT_PERM_SOLID);
+			square_set_feat(cave, y, x, FEAT_PERM_SOLID);
 		}
 	}
 
@@ -611,14 +611,14 @@ static void make_edges(bool ragged, bool valley)
 				/* Clear previous contents, add "solid" perma-wall */
 				if ((cave->feat[y][x] != FEAT_ROAD)
 					&& !(tf_has(f_ptr->flags, TF_PERMANENT))) {
-					cave_set_feat(y, x, FEAT_PERM_SOLID);
+					square_set_feat(cave, y, x, FEAT_PERM_SOLID);
 				}
 			}
 		} else {
 			x = DUNGEON_WID - 1;
 
 			/* Clear previous contents, add "solid" perma-wall */
-			cave_set_feat(y, x, FEAT_PERM_SOLID);
+			square_set_feat(cave, y, x, FEAT_PERM_SOLID);
 		}
 	}
 }
@@ -752,7 +752,7 @@ static int make_formation(int y, int x, int base_feat1, int base_feat2,
 			all_feat[i] = FEAT_QUARTZ_K;
 
 		/* Set the feature */
-		cave_set_feat(ty, tx, all_feat[i]);
+		square_set_feat(cave, ty, tx, all_feat[i]);
 		sqinfo_on(cave->info[ty][tx], SQUARE_ICKY);
 
 		/* Choose a random step for next feature, try to keep going */
@@ -844,7 +844,7 @@ static int populate(bool valley)
 			/* Paranoia - remake the dungeon walls */
 			if ((y == 0) || (x == 0) || (y == DUNGEON_HGT - 1)
 				|| (x == DUNGEON_WID - 1))
-				cave_set_feat(y, x, FEAT_PERM_SOLID);
+				square_set_feat(cave, y, x, FEAT_PERM_SOLID);
 		}
 	}
 
@@ -933,7 +933,7 @@ static void mtn_connect(int y, int x, int y1, int x1)
 		if ((cave->feat[GRID_Y(gp[j])][GRID_X(gp[j])] == FEAT_ROAD)
 			|| (!square_in_bounds_fully(cave, GRID_Y(gp[j]), GRID_X(gp[j]))))
 			break;
-		cave_set_feat(GRID_Y(gp[j]), GRID_X(gp[j]), FEAT_ROAD);
+		square_set_feat(cave, GRID_Y(gp[j]), GRID_X(gp[j]), FEAT_ROAD);
 		sqinfo_on(cave->info[GRID_Y(gp[j])][GRID_X(gp[j])], SQUARE_ICKY);
 	}
 }
@@ -998,7 +998,7 @@ extern void mtn_gen(void)
 			x = randint0(DUNGEON_WID - 2) + 1;
 			if ((cave->feat[y][x] == FEAT_ROAD)
 				|| (cave->feat[y][x] == FEAT_GRASS)) {
-				cave_set_feat(y, x, FEAT_MORE);
+				square_set_feat(cave, y, x, FEAT_MORE);
 				i--;
 				stairs[2 - i].y = y;
 				stairs[2 - i].x = x;
@@ -1125,38 +1125,38 @@ extern void mtn_gen(void)
 			switch (cave->feat[y][x]) {
 			case FEAT_GRASS:
 				{
-					cave_set_feat(y, x, FEAT_WALL_SOLID);
+					square_set_feat(cave, y, x, FEAT_WALL_SOLID);
 					sqinfo_on(cave->info[y][x], SQUARE_WALL);
 					break;
 				}
 			case FEAT_SHOP_HEAD:
 				{
-					cave_set_feat(y, x, FEAT_RUBBLE);
+					square_set_feat(cave, y, x, FEAT_RUBBLE);
 					break;
 				}
 			case FEAT_SHOP_HEAD + 1:
 				{
-					cave_set_feat(y, x, FEAT_MAGMA);
+					square_set_feat(cave, y, x, FEAT_MAGMA);
 					sqinfo_on(cave->info[y][x], SQUARE_WALL);
 					break;
 				}
 			case FEAT_SHOP_HEAD + 2:
 				{
-					cave_set_feat(y, x, FEAT_GRASS);
+					square_set_feat(cave, y, x, FEAT_GRASS);
 					break;
 				}
 			case FEAT_SHOP_HEAD + 3:
 				{
 					if (randint1(p_ptr->depth + HIGHLAND_TREE_CHANCE)
 						> HIGHLAND_TREE_CHANCE)
-						cave_set_feat(y, x, FEAT_TREE2);
+						square_set_feat(cave, y, x, FEAT_TREE2);
 					else
-						cave_set_feat(y, x, FEAT_TREE);
+						square_set_feat(cave, y, x, FEAT_TREE);
 					break;
 				}
 			case FEAT_SHOP_HEAD + 4:
 				{
-					cave_set_feat(y, x, FEAT_ROAD);
+					square_set_feat(cave, y, x, FEAT_ROAD);
 					break;
 				}
 			}
@@ -1172,7 +1172,7 @@ extern void mtn_gen(void)
 			/* Paranoia - remake the dungeon walls */
 			if ((y == 0) || (x == 0) || (y == DUNGEON_HGT - 1)
 				|| (x == DUNGEON_WID - 1)) {
-				cave_set_feat(y, x, FEAT_PERM_SOLID);
+				square_set_feat(cave, y, x, FEAT_PERM_SOLID);
 			}
 		}
 	}
@@ -1245,7 +1245,7 @@ extern void mtntop_gen(void)
 			for (x1 = x; x1 != (x + i * (a + 1)); x1 += i)
 				if (cave->feat[y1][x1] == FEAT_VOID)
 					break;
-			cave_set_feat(y1, x1, FEAT_MORE);
+			square_set_feat(cave, y1, x1, FEAT_MORE);
 		}
 	}
 
@@ -1277,19 +1277,19 @@ extern void mtntop_gen(void)
 
 			/* Place some rock */
 			if (randint0(10) < 2) {
-				cave_set_feat(y1, x1, FEAT_WALL_SOLID);
+				square_set_feat(cave, y1, x1, FEAT_WALL_SOLID);
 				continue;
 			}
 
 			/* rubble */
 			if (randint0(8) == 0) {
-				cave_set_feat(y1, x1, FEAT_RUBBLE);
+				square_set_feat(cave, y1, x1, FEAT_RUBBLE);
 				continue;
 			}
 
 			/* and the odd tree */
 			if (randint0(20) == 0) {
-				cave_set_feat(y1, x1, FEAT_TREE2);
+				square_set_feat(cave, y1, x1, FEAT_TREE2);
 				continue;
 			}
 		}
@@ -1321,19 +1321,19 @@ extern void mtntop_gen(void)
 
 					/* Place some rock */
 					if (randint0(10) < 2) {
-						cave_set_feat(y1, x1, FEAT_WALL_SOLID);
+						square_set_feat(cave, y1, x1, FEAT_WALL_SOLID);
 						continue;
 					}
 
 					/* rubble */
 					if (randint0(8) == 0) {
-						cave_set_feat(y1, x1, FEAT_RUBBLE);
+						square_set_feat(cave, y1, x1, FEAT_RUBBLE);
 						continue;
 					}
 
 					/* and the odd tree */
 					if (randint0(20) == 0) {
-						cave_set_feat(y1, x1, FEAT_TREE2);
+						square_set_feat(cave, y1, x1, FEAT_TREE2);
 						continue;
 					}
 				}
@@ -1354,7 +1354,7 @@ extern void mtntop_gen(void)
 			/* Paranoia - remake the dungeon walls */
 			if ((y == 0) || (x == 0) || (y == DUNGEON_HGT - 1)
 				|| (x == DUNGEON_WID - 1)) {
-				cave_set_feat(y, x, FEAT_PERM_SOLID);
+				square_set_feat(cave, y, x, FEAT_PERM_SOLID);
 			}
 		}
 	}
@@ -1434,9 +1434,9 @@ extern void forest_gen(void)
 			if (cave->feat[y][x] == FEAT_GRASS) {
 				if (randint1(p_ptr->depth + HIGHLAND_TREE_CHANCE)
 					> HIGHLAND_TREE_CHANCE)
-					cave_set_feat(y, x, FEAT_TREE2);
+					square_set_feat(cave, y, x, FEAT_TREE2);
 				else
-					cave_set_feat(y, x, FEAT_TREE);
+					square_set_feat(cave, y, x, FEAT_TREE);
 			} else
 				/* Hack - prepare for clearings */
 				sqinfo_on(cave->info[y][x], SQUARE_ICKY);
@@ -1444,7 +1444,7 @@ extern void forest_gen(void)
 			/* Mega hack - remove paths if emerging from Nan Dungortheb */
 			if ((last_stage == q_list[2].stage)
 				&& (cave->feat[y][x] == FEAT_MORE_NORTH))
-				cave_set_feat(y, x, FEAT_GRASS);
+				square_set_feat(cave, y, x, FEAT_GRASS);
 		}
 	}
 
@@ -1556,9 +1556,9 @@ extern void swamp_gen(void)
 				continue;
 			if (((p_ptr->py == y) && (p_ptr->px == x))
 				|| (randint0(100) < 50))
-				cave_set_feat(y, x, FEAT_GRASS);
+				square_set_feat(cave, y, x, FEAT_GRASS);
 			else
-				cave_set_feat(y, x, FEAT_WATER);
+				square_set_feat(cave, y, x, FEAT_WATER);
 		}
 	}
 
@@ -1639,7 +1639,7 @@ extern void desert_gen(void)
 					continue;
 				if (cave->feat[y][x] == FEAT_ROAD) {
 					/* The gate of Angband */
-					cave_set_feat(y, x, FEAT_MORE);
+					square_set_feat(cave, y, x, FEAT_MORE);
 					made_gate = TRUE;
 					if ((stage_map[p_ptr->last_stage][STAGE_TYPE] == CAVE)
 						|| (turn < 10))
@@ -1647,7 +1647,7 @@ extern void desert_gen(void)
 					break;
 				} else {
 					/* The walls of Thangorodrim */
-					cave_set_feat(y, x, FEAT_WALL_SOLID);
+					square_set_feat(cave, y, x, FEAT_WALL_SOLID);
 				}
 			}
 			if (made_gate)
@@ -1661,11 +1661,11 @@ extern void desert_gen(void)
 			/* Create desert */
 			if (cave->feat[y][x] == FEAT_GRASS) {
 				if (randint0(100) < 50)
-					cave_set_feat(y, x, FEAT_DUNE);
+					square_set_feat(cave, y, x, FEAT_DUNE);
 				else if (randint0(100) < 50)
-					cave_set_feat(y, x, FEAT_RUBBLE);
+					square_set_feat(cave, y, x, FEAT_RUBBLE);
 				else
-					cave_set_feat(y, x, FEAT_MAGMA);
+					square_set_feat(cave, y, x, FEAT_MAGMA);
 			} else
 				/* Hack - prepare for clearings */
 				sqinfo_on(cave->info[y][x], SQUARE_ICKY);
@@ -1775,7 +1775,7 @@ extern void river_gen(void)
 
 		for (x = i - randint0(5) - 10; x < i + randint0(5) + 10; x++) {
 			/* Make the river */
-			cave_set_feat(y, x, FEAT_WATER);
+			square_set_feat(cave, y, x, FEAT_WATER);
 			sqinfo_on(cave->info[y][x], SQUARE_ICKY);
 		}
 		/* Meander */
@@ -1795,19 +1795,19 @@ extern void river_gen(void)
 					if (distance(y1, mid[y1], y, x) < 6)
 
 						/* ...make Tol-In-Gaurhoth... */
-						cave_set_feat(y, x, FEAT_GRASS);
+						square_set_feat(cave, y, x, FEAT_GRASS);
 					else
 						/* ...surround it by water... */
-						cave_set_feat(y, x, FEAT_WATER);
+						square_set_feat(cave, y, x, FEAT_WATER);
 
 					/* ...and build the tower... */
 					if (distance(y1, mid[y1], y, x) < 2)
-						cave_set_feat(y, x, FEAT_WALL_SOLID);
+						square_set_feat(cave, y, x, FEAT_WALL_SOLID);
 				}
 			}
 			/* ...with door and stairs */
-			cave_set_feat(y1 + 1, mid[y1], FEAT_DOOR_HEAD);
-			cave_set_feat(y1, mid[y1], FEAT_MORE);
+			square_set_feat(cave, y1 + 1, mid[y1], FEAT_DOOR_HEAD);
+			square_set_feat(cave, y1, mid[y1], FEAT_MORE);
 			if (stage_map[p_ptr->last_stage][STAGE_TYPE] == CAVE)
 				player_place(y1, mid[y1]);
 		} else
@@ -1817,16 +1817,16 @@ extern void river_gen(void)
 			for (y = y1 - 1; y < y1 + 2; y++) {
 				for (x = mid[y1] - 15; x < mid[y1] - 5; x++)
 					if ((y == y1) && (x == mid[y1] - 6)) {
-						cave_set_feat(y, x, FEAT_MORE);
+						square_set_feat(cave, y, x, FEAT_MORE);
 						if (stage_map[p_ptr->last_stage][STAGE_TYPE] ==
 							CAVE)
 							player_place(y, x);
 					} else
-						cave_set_feat(y, x, FEAT_WALL_SOLID);
+						square_set_feat(cave, y, x, FEAT_WALL_SOLID);
 				for (x = mid[y1] - 5; x < mid[y1]; x++)
-					cave_set_feat(y, x, FEAT_ROAD);
+					square_set_feat(cave, y, x, FEAT_ROAD);
 				for (x = mid[y1] - 4; x < mid[y1] + 5; x++) {
-					cave_set_feat(y, x, FEAT_WATER);
+					square_set_feat(cave, y, x, FEAT_WATER);
 				}
 			}
 		}
@@ -1864,10 +1864,10 @@ extern void river_gen(void)
 	if (x != p_ptr->px) {
 		cave->m_idx[p_ptr->py][p_ptr->px] = -1;
 		cave->m_idx[y][x] = 0;
-		cave_set_feat(y, x, path);
+		square_set_feat(cave, y, x, path);
 		for (y = p_ptr->py; y > 0; y--)
 			if (tf_has(f_info[cave->feat[y][p_ptr->px]].flags, TF_WALL))
-				cave_set_feat(y, p_ptr->px, FEAT_ROAD);
+				square_set_feat(cave, y, p_ptr->px, FEAT_ROAD);
 	}
 
 	/* Place objects, traps and monsters */
@@ -1984,9 +1984,9 @@ extern void valley_gen(void)
 			/* Create trees */
 			if (randint1(p_ptr->depth + HIGHLAND_TREE_CHANCE)
 				> HIGHLAND_TREE_CHANCE)
-				cave_set_feat(y, x, FEAT_TREE2);
+				square_set_feat(cave, y, x, FEAT_TREE2);
 			else
-				cave_set_feat(y, x, FEAT_TREE);
+				square_set_feat(cave, y, x, FEAT_TREE);
 		}
 	}
 
@@ -2037,7 +2037,7 @@ extern void valley_gen(void)
 	if (!p_ptr->path_coord) {
 		y = DUNGEON_HGT / 2 - 10 + randint0(20);
 		x = DUNGEON_WID / 2 - 15 + randint0(30);
-		cave_set_feat(y, x, FEAT_GRASS);
+		square_set_feat(cave, y, x, FEAT_GRASS);
 		player_place(y, x);
 		p_ptr->path_coord = 0;
 
@@ -2066,7 +2066,7 @@ extern void valley_gen(void)
 			/* Paranoia - remake the dungeon walls */
 			if ((y == 0) || (x == 0) || (y == DUNGEON_HGT - 1)
 				|| (x == DUNGEON_WID - 1))
-				cave_set_feat(y, x, FEAT_PERM_SOLID);
+				square_set_feat(cave, y, x, FEAT_PERM_SOLID);
 		}
 	}
 
@@ -2080,7 +2080,7 @@ extern void valley_gen(void)
 			x = randint1(DUNGEON_WID - 1);
 			f_ptr = &f_info[cave->feat[y][x]];
 			if (tf_has(f_ptr->flags, TF_TREE)) {
-				cave_set_feat(y, x, FEAT_MORE);
+				square_set_feat(cave, y, x, FEAT_MORE);
 				k--;
 			}
 		}

@@ -95,7 +95,7 @@ void new_player_spot(void)
 					f_ptr = &f_info[cave->feat[y][x]];
 					if (cave_naked_bold(y, x)
 						&& tf_has(f_ptr->flags, TF_FLOOR)) {
-						cave_set_feat(y, x, p_ptr->create_stair);
+						square_set_feat(cave, y, x, p_ptr->create_stair);
 						break;
 					}
 				}
@@ -148,7 +148,7 @@ void new_player_spot(void)
 static void place_rubble(int y, int x)
 {
 	/* Create rubble */
-	cave_set_feat(y, x, FEAT_RUBBLE);
+	square_set_feat(cave, y, x, FEAT_RUBBLE);
 }
 
 
@@ -158,7 +158,7 @@ static void place_rubble(int y, int x)
 static void place_up_stairs(int y, int x)
 {
 	/* Create up stairs */
-	cave_set_feat(y, x, FEAT_LESS);
+	square_set_feat(cave, y, x, FEAT_LESS);
 }
 
 
@@ -168,7 +168,7 @@ static void place_up_stairs(int y, int x)
 static void place_down_stairs(int y, int x)
 {
 	/* Create down stairs */
-	cave_set_feat(y, x, FEAT_MORE);
+	square_set_feat(cave, y, x, FEAT_MORE);
 }
 
 
@@ -205,7 +205,7 @@ void place_random_stairs(int y, int x)
 void place_secret_door(int y, int x)
 {
 	/* Create secret door */
-	cave_set_feat(y, x, FEAT_SECRET);
+	square_set_feat(cave, y, x, FEAT_SECRET);
 }
 
 
@@ -215,7 +215,7 @@ void place_secret_door(int y, int x)
 void place_unlocked_door(int y, int x)
 {
 	/* Create secret door */
-	cave_set_feat(y, x, FEAT_DOOR_HEAD + 0x00);
+	square_set_feat(cave, y, x, FEAT_DOOR_HEAD + 0x00);
 }
 
 
@@ -232,19 +232,19 @@ void place_closed_door(int y, int x)
 	/* Closed doors (300/400) */
 	if (tmp < 300) {
 		/* Create closed door */
-		cave_set_feat(y, x, FEAT_DOOR_HEAD + 0x00);
+		square_set_feat(cave, y, x, FEAT_DOOR_HEAD + 0x00);
 	}
 
 	/* Locked doors (99/400) */
 	else if (tmp < 399) {
 		/* Create locked door */
-		cave_set_feat(y, x, FEAT_DOOR_HEAD + randint1(7));
+		square_set_feat(cave, y, x, FEAT_DOOR_HEAD + randint1(7));
 	}
 
 	/* Stuck doors (1/400) */
 	else {
 		/* Create jammed door */
-		cave_set_feat(y, x, FEAT_DOOR_HEAD + 0x08 + randint0(8));
+		square_set_feat(cave, y, x, FEAT_DOOR_HEAD + 0x08 + randint0(8));
 	}
 }
 
@@ -262,19 +262,19 @@ void place_random_door(int y, int x)
 	/* Open doors (300/1000) */
 	if (tmp < 300) {
 		/* Create open door */
-		cave_set_feat(y, x, FEAT_OPEN);
+		square_set_feat(cave, y, x, FEAT_OPEN);
 	}
 
 	/* Broken doors (100/1000) */
 	else if (tmp < 400) {
 		/* Create broken door */
-		cave_set_feat(y, x, FEAT_BROKEN);
+		square_set_feat(cave, y, x, FEAT_BROKEN);
 	}
 
 	/* Secret doors (200/1000) */
 	else if (tmp < 600) {
 		/* Create secret door */
-		cave_set_feat(y, x, FEAT_SECRET);
+		square_set_feat(cave, y, x, FEAT_SECRET);
 	}
 
 	/* Closed, locked, or stuck doors (400/1000) */
@@ -349,7 +349,7 @@ void alloc_stairs(int feat, int num, int walls)
 			if ((!p_ptr->depth) || (!stage_map[p_ptr->stage][UP])) {
 				/* Clear previous contents, add down stairs */
 				if (feat != FEAT_MORE_SHAFT)
-					cave_set_feat(y, x, FEAT_MORE);
+					square_set_feat(cave, y, x, FEAT_MORE);
 			}
 
 			/* Bottom of dungeon, Morgoth or underworld -- must go up */
@@ -357,13 +357,13 @@ void alloc_stairs(int feat, int num, int walls)
 					 || dunquest) {
 				/* Clear previous contents, add up stairs */
 				if (feat != FEAT_LESS_SHAFT)
-					cave_set_feat(y, x, FEAT_LESS);
+					square_set_feat(cave, y, x, FEAT_LESS);
 			}
 
 			/* Requested type */
 			else {
 				/* Clear previous contents, add stairs */
-				cave_set_feat(y, x, feat);
+				square_set_feat(cave, y, x, feat);
 			}
 
 			/* Finished with this staircase. */

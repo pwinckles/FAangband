@@ -2138,9 +2138,9 @@ s16b player_place(int y, int x)
 	if (MODE(NO_STAIRS) && !p_ptr->themed_level && p_ptr->depth &&
 		!(MODE(THRALL) && (p_ptr->depth == 58) && (turn < 10))) {
 		if (outside)
-			cave_set_feat(y, x, FEAT_ROAD);
+			square_set_feat(cave, y, x, FEAT_ROAD);
 		else
-			cave_set_feat(y, x, FEAT_FLOOR);
+			square_set_feat(cave, y, x, FEAT_FLOOR);
 	}
 
 	/* Save player location */

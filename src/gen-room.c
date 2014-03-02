@@ -180,7 +180,7 @@ static void generate_fill(int y1, int x1, int y2, int x2, int feat)
 
 	for (y = y1; y <= y2; y++) {
 		for (x = x1; x <= x2; x++) {
-			cave_set_feat(y, x, feat);
+			square_set_feat(cave, y, x, feat);
 		}
 	}
 }
@@ -209,13 +209,13 @@ static void generate_draw(int y1, int x1, int y2, int x2, int feat)
 	int y, x;
 
 	for (y = y1; y <= y2; y++) {
-		cave_set_feat(y, x1, feat);
-		cave_set_feat(y, x2, feat);
+		square_set_feat(cave, y, x1, feat);
+		square_set_feat(cave, y, x2, feat);
 	}
 
 	for (x = x1; x <= x2; x++) {
-		cave_set_feat(y1, x, feat);
-		cave_set_feat(y2, x, feat);
+		square_set_feat(cave, y1, x, feat);
+		square_set_feat(cave, y2, x, feat);
 	}
 }
 
@@ -233,11 +233,11 @@ static void generate_plus(int y1, int x1, int y2, int x2, int feat)
 	x0 = (x1 + x2) / 2;
 
 	for (y = y1; y <= y2; y++) {
-		cave_set_feat(y, x0, feat);
+		square_set_feat(cave, y, x0, feat);
 	}
 
 	for (x = x1; x <= x2; x++) {
-		cave_set_feat(y0, x, feat);
+		square_set_feat(cave, y0, x, feat);
 	}
 }
 
@@ -254,10 +254,10 @@ static void generate_open(int y1, int x1, int y2, int x2, int feat)
 	x0 = (x1 + x2) / 2;
 
 	/* Open all sides */
-	cave_set_feat(y1, x0, feat);
-	cave_set_feat(y0, x1, feat);
-	cave_set_feat(y2, x0, feat);
-	cave_set_feat(y0, x2, feat);
+	square_set_feat(cave, y1, x0, feat);
+	square_set_feat(cave, y0, x1, feat);
+	square_set_feat(cave, y2, x0, feat);
+	square_set_feat(cave, y0, x2, feat);
 }
 
 
@@ -276,22 +276,22 @@ static void generate_hole(int y1, int x1, int y2, int x2, int feat)
 	switch (randint0(4)) {
 	case 0:
 		{
-			cave_set_feat(y1, x0, feat);
+			square_set_feat(cave, y1, x0, feat);
 			break;
 		}
 	case 1:
 		{
-			cave_set_feat(y0, x1, feat);
+			square_set_feat(cave, y0, x1, feat);
 			break;
 		}
 	case 2:
 		{
-			cave_set_feat(y2, x0, feat);
+			square_set_feat(cave, y2, x0, feat);
 			break;
 		}
 	case 3:
 		{
-			cave_set_feat(y0, x2, feat);
+			square_set_feat(cave, y0, x2, feat);
 			break;
 		}
 	}
@@ -564,7 +564,7 @@ extern bool generate_starburst_room(int y1, int x1, int y2, int x2,
 		if (tf_has(f_ptr->flags, TF_FLOOR)) {
 			for (y = (y1 + tmp_ay) / 2; y <= (tmp_by + y2) / 2; y++) {
 				for (x = (x1 + tmp_ax) / 2; x <= (tmp_bx + x2) / 2; x++) {
-					cave_set_feat(y, x, feat);
+					square_set_feat(cave, y, x, feat);
 				}
 			}
 		}
@@ -750,7 +750,7 @@ extern bool generate_starburst_room(int y1, int x1, int y2, int x2,
 							 * place it. */
 							if ((tf_has(f_ptr->flags, TF_FLOOR))
 								|| (!passable(feat))) {
-								cave_set_feat(y, x, feat);
+								square_set_feat(cave, y, x, feat);
 
 								if (tf_has(f_ptr->flags, TF_FLOOR))
 									sqinfo_on(cave->info[y][x],
@@ -780,14 +780,14 @@ extern bool generate_starburst_room(int y1, int x1, int y2, int x2,
 										  TF_FLOOR))
 										&& (randint1(max_dist + 5) >=
 											dist + 5))
-										cave_set_feat(y, x, feat);
+										square_set_feat(cave, y, x, feat);
 								}
 								if ((feat == FEAT_WATER)
 									|| (feat == FEAT_LAVA)) {
 									if (tf_has
 										(f_info[cave->feat[y][x]].flags,
 										 TF_FLOOR))
-										cave_set_feat(y, x, feat);
+										square_set_feat(cave, y, x, feat);
 								}
 
 								/* Light grid. */
@@ -830,7 +830,7 @@ extern bool generate_starburst_room(int y1, int x1, int y2, int x2,
 						/* Look for dungeon granite. */
 						if (cave->feat[yy][xx] == FEAT_WALL_EXTRA) {
 							/* Turn into outer wall. */
-							cave_set_feat(yy, xx, FEAT_WALL_OUTER);
+							square_set_feat(cave, yy, xx, FEAT_WALL_OUTER);
 						}
 					}
 				}
@@ -1019,7 +1019,7 @@ static bool build_type1(void)
 
 			for (y = y1 + offsety; y <= y2 - offsety; y += 2) {
 				for (x = x1 + offsetx; x <= x2 - offsetx; x += 2) {
-					cave_set_feat(y, x, FEAT_WALL_INNER);
+					square_set_feat(cave, y, x, FEAT_WALL_INNER);
 				}
 			}
 		}
@@ -1031,13 +1031,13 @@ static bool build_type1(void)
 				offset = 1;
 
 			for (y = y1 + offset; y <= y2 - offset; y += 2) {
-				cave_set_feat(y, x1, FEAT_WALL_INNER);
-				cave_set_feat(y, x2, FEAT_WALL_INNER);
+				square_set_feat(cave, y, x1, FEAT_WALL_INNER);
+				square_set_feat(cave, y, x2, FEAT_WALL_INNER);
 			}
 
 			for (x = x1 + offset; x <= x2 - offset; x += 2) {
-				cave_set_feat(y1, x, FEAT_WALL_INNER);
-				cave_set_feat(y2, x, FEAT_WALL_INNER);
+				square_set_feat(cave, y1, x, FEAT_WALL_INNER);
+				square_set_feat(cave, y2, x, FEAT_WALL_INNER);
 			}
 		}
 
@@ -1051,31 +1051,31 @@ static bool build_type1(void)
 					/* Granite */
 					if (t < 5) {
 						/* Create granite wall */
-						cave_set_feat(y, x, FEAT_WALL_EXTRA);
+						square_set_feat(cave, y, x, FEAT_WALL_EXTRA);
 					}
 
 					/* Quartz */
 					else if (t < 15) {
 						/* Create quartz vein */
-						cave_set_feat(y, x, FEAT_QUARTZ);
+						square_set_feat(cave, y, x, FEAT_QUARTZ);
 					}
 
 					/* Magma */
 					else if (t < 25) {
 						/* Create magma vein */
-						cave_set_feat(y, x, FEAT_MAGMA);
+						square_set_feat(cave, y, x, FEAT_MAGMA);
 					}
 
 					/* Rubble. */
 					else if (t < 70) {
 						/* Create rubble */
-						cave_set_feat(y, x, FEAT_RUBBLE);
+						square_set_feat(cave, y, x, FEAT_RUBBLE);
 					}
 
 					/* Floor */
 					else {
 						/* Create floor */
-						cave_set_feat(y, x, FEAT_FLOOR);
+						square_set_feat(cave, y, x, FEAT_FLOOR);
 					}
 				}
 			}
@@ -1405,16 +1405,16 @@ static bool build_type3(void)
 				for (y = y1b; y <= y2b; y++) {
 					if (y == y0)
 						continue;
-					cave_set_feat(y, x1a - 1, FEAT_WALL_INNER);
-					cave_set_feat(y, x2a + 1, FEAT_WALL_INNER);
+					square_set_feat(cave, y, x1a - 1, FEAT_WALL_INNER);
+					square_set_feat(cave, y, x2a + 1, FEAT_WALL_INNER);
 				}
 
 				/* Pinch the north/south sides */
 				for (x = x1a; x <= x2a; x++) {
 					if (x == x0)
 						continue;
-					cave_set_feat(y1b - 1, x, FEAT_WALL_INNER);
-					cave_set_feat(y2b + 1, x, FEAT_WALL_INNER);
+					square_set_feat(cave, y1b - 1, x, FEAT_WALL_INNER);
+					square_set_feat(cave, y2b + 1, x, FEAT_WALL_INNER);
 				}
 
 				/* Open sides with secret doors */
@@ -1431,7 +1431,7 @@ static bool build_type3(void)
 
 			/* Occasionally put a "pillar" in the center */
 			else if (randint0(3) == 0) {
-				cave_set_feat(y0, x0, FEAT_WALL_INNER);
+				square_set_feat(cave, y0, x0, FEAT_WALL_INNER);
 			}
 
 			break;
@@ -1607,7 +1607,7 @@ static bool build_type4(void)
 			for (y = y1; y <= y2; y++) {
 				for (x = x1; x <= x2; x++) {
 					if ((x + y) & 0x01) {
-						cave_set_feat(y, x, FEAT_WALL_INNER);
+						square_set_feat(cave, y, x, FEAT_WALL_INNER);
 					}
 				}
 			}
@@ -1909,7 +1909,7 @@ static void make_chamber(int c_y1, int c_x1, int c_y2, int c_x2)
 
 		if ((cave->feat[y][x] == FEAT_WALL_EXTRA)
 			|| (cave->feat[y][x] == FEAT_MAGMA))
-			cave_set_feat(y, x, FEAT_WALL_INNER);
+			square_set_feat(cave, y, x, FEAT_WALL_INNER);
 	}
 
 	for (y = c_y1; y <= c_y2; y++) {
@@ -1918,7 +1918,7 @@ static void make_chamber(int c_y1, int c_x1, int c_y2, int c_x2)
 
 		if ((cave->feat[y][x] == FEAT_WALL_EXTRA)
 			|| (cave->feat[y][x] == FEAT_MAGMA))
-			cave_set_feat(y, x, FEAT_WALL_INNER);
+			square_set_feat(cave, y, x, FEAT_WALL_INNER);
 	}
 
 	for (x = c_x1; x <= c_x2; x++) {
@@ -1927,7 +1927,7 @@ static void make_chamber(int c_y1, int c_x1, int c_y2, int c_x2)
 
 		if ((cave->feat[y][x] == FEAT_WALL_EXTRA)
 			|| (cave->feat[y][x] == FEAT_MAGMA))
-			cave_set_feat(y, x, FEAT_WALL_INNER);
+			square_set_feat(cave, y, x, FEAT_WALL_INNER);
 	}
 
 	for (x = c_x1; x <= c_x2; x++) {
@@ -1936,7 +1936,7 @@ static void make_chamber(int c_y1, int c_x1, int c_y2, int c_x2)
 
 		if ((cave->feat[y][x] == FEAT_WALL_EXTRA)
 			|| (cave->feat[y][x] == FEAT_MAGMA))
-			cave_set_feat(y, x, FEAT_WALL_INNER);
+			square_set_feat(cave, y, x, FEAT_WALL_INNER);
 	}
 
 	/* Try a few times to place a door. */
@@ -1991,7 +1991,7 @@ static void make_chamber(int c_y1, int c_x1, int c_y2, int c_x2)
 			/* Checked every direction? */
 			if (d == 8) {
 				/* Place an open door. */
-				cave_set_feat(y, x, FEAT_OPEN);
+				square_set_feat(cave, y, x, FEAT_OPEN);
 
 				/* Success. */
 				return;
@@ -2017,14 +2017,14 @@ static void hollow_out_room(int y, int x)
 
 		/* Change magma to floor. */
 		if (cave->feat[yy][xx] == FEAT_MAGMA) {
-			cave_set_feat(yy, xx, FEAT_FLOOR);
+			square_set_feat(cave, yy, xx, FEAT_FLOOR);
 
 			/* Hollow out the room. */
 			hollow_out_room(yy, xx);
 		}
 		/* Change open door to broken door. */
 		else if (cave->feat[yy][xx] == FEAT_OPEN) {
-			cave_set_feat(yy, xx, FEAT_BROKEN);
+			square_set_feat(cave, yy, xx, FEAT_BROKEN);
 
 			/* Hollow out the (new) room. */
 			hollow_out_room(yy, xx);
@@ -2155,11 +2155,11 @@ static bool build_type6(void)
 
 			/* Five adjacent walls: Change non-chamber to wall. */
 			if ((count == 5) && (cave->feat[y][x] != FEAT_MAGMA))
-				cave_set_feat(y, x, FEAT_WALL_INNER);
+				square_set_feat(cave, y, x, FEAT_WALL_INNER);
 
 			/* More than five adjacent walls: Change anything to wall. */
 			else if (count > 5)
-				cave_set_feat(y, x, FEAT_WALL_INNER);
+				square_set_feat(cave, y, x, FEAT_WALL_INNER);
 		}
 	}
 
@@ -2173,7 +2173,7 @@ static bool build_type6(void)
 
 
 	/* Hollow out the first room. */
-	cave_set_feat(y, x, FEAT_FLOOR);
+	square_set_feat(cave, y, x, FEAT_FLOOR);
 	hollow_out_room(y, x);
 
 
@@ -2211,10 +2211,10 @@ static bool build_type6(void)
 							joy = TRUE;
 
 							/* Make a broken door in the wall grid. */
-							cave_set_feat(yy1, xx1, FEAT_BROKEN);
+							square_set_feat(cave, yy1, xx1, FEAT_BROKEN);
 
 							/* Hollow out the new room. */
-							cave_set_feat(y, x, FEAT_FLOOR);
+							square_set_feat(cave, y, x, FEAT_FLOOR);
 							hollow_out_room(y, x);
 
 							break;
@@ -2233,11 +2233,11 @@ static bool build_type6(void)
 								joy = TRUE;
 
 								/* Turn both wall grids into floor. */
-								cave_set_feat(yy1, xx1, FEAT_FLOOR);
-								cave_set_feat(yy2, xx2, FEAT_FLOOR);
+								square_set_feat(cave, yy1, xx1, FEAT_FLOOR);
+								square_set_feat(cave, yy2, xx2, FEAT_FLOOR);
 
 								/* Hollow out the new room. */
-								cave_set_feat(y, x, FEAT_FLOOR);
+								square_set_feat(cave, y, x, FEAT_FLOOR);
 								hollow_out_room(y, x);
 
 								break;
@@ -2258,7 +2258,7 @@ static bool build_type6(void)
 	for (y = y1; y <= y2; y++) {
 		for (x = x1; x <= x2; x++) {
 			if (cave->feat[y][x] == FEAT_OPEN)
-				cave_set_feat(y, x, FEAT_WALL_INNER);
+				square_set_feat(cave, y, x, FEAT_WALL_INNER);
 			else if (cave->feat[y][x] == FEAT_BROKEN)
 				place_random_door(y, x);
 		}
@@ -2288,7 +2288,7 @@ static bool build_type6(void)
 
 					/* Turn me into dungeon granite. */
 					if (d == 8) {
-						cave_set_feat(y, x, FEAT_WALL_EXTRA);
+						square_set_feat(cave, y, x, FEAT_WALL_EXTRA);
 					}
 				}
 			}
@@ -2332,7 +2332,7 @@ static bool build_type6(void)
 					/* Look for dungeon granite */
 					if (cave->feat[yy][xx] == FEAT_WALL_EXTRA) {
 						/* Turn me into outer wall. */
-						cave_set_feat(y, x, FEAT_WALL_OUTER);
+						square_set_feat(cave, y, x, FEAT_WALL_OUTER);
 
 						/* Done; */
 						break;
@@ -2420,9 +2420,9 @@ extern bool build_vault(int y0, int x0, int ymax, int xmax,
 				 || (stage_map[p_ptr->stage][STAGE_TYPE] == DESERT)
 				 || (stage_map[p_ptr->stage][STAGE_TYPE] == MOUNTAIN))
 				&& (p_ptr->themed_level != THEME_SLAIN))
-				cave_set_feat(y, x, FEAT_FLOOR);
+				square_set_feat(cave, y, x, FEAT_FLOOR);
 			else
-				cave_set_feat(y, x, FEAT_GRASS);
+				square_set_feat(cave, y, x, FEAT_GRASS);
 
 			/* Part of a vault.  Can be lit.  May be "icky". */
 			if (icky) {
@@ -2439,51 +2439,51 @@ extern bool build_vault(int y0, int x0, int ymax, int xmax,
 			case '%':
 				{
 					if (p_ptr->themed_level)
-						cave_set_feat(y, x, FEAT_PERM_SOLID);
+						square_set_feat(cave, y, x, FEAT_PERM_SOLID);
 					else if (stage_map[p_ptr->stage][STAGE_TYPE] == VALLEY) {
 						if (randint1(3) == 1)
-							cave_set_feat(y, x, FEAT_FLOOR);
+							square_set_feat(cave, y, x, FEAT_FLOOR);
 						else if (randint1(2) == 1)
-							cave_set_feat(y, x, FEAT_TREE);
+							square_set_feat(cave, y, x, FEAT_TREE);
 						else
-							cave_set_feat(y, x, FEAT_TREE2);
+							square_set_feat(cave, y, x, FEAT_TREE2);
 
 						place_trap(cave, y, x, OBST_WEB, 0);
 					} else
-						cave_set_feat(y, x, FEAT_WALL_OUTER);
+						square_set_feat(cave, y, x, FEAT_WALL_OUTER);
 					break;
 				}
 				/* Granite wall (inner) */
 			case '#':
 				{
-					cave_set_feat(y, x, FEAT_WALL_INNER);
+					square_set_feat(cave, y, x, FEAT_WALL_INNER);
 					break;
 				}
 				/* Permanent wall (inner) */
 			case '@':
 				{
-					cave_set_feat(y, x, FEAT_PERM_INNER);
+					square_set_feat(cave, y, x, FEAT_PERM_INNER);
 					break;
 				}
 				/* Treasure seam, in either magma or quartz. */
 			case '*':
 				{
 					if (randint1(2) == 1)
-						cave_set_feat(y, x, FEAT_MAGMA_K);
+						square_set_feat(cave, y, x, FEAT_MAGMA_K);
 					else
-						cave_set_feat(y, x, FEAT_QUARTZ_K);
+						square_set_feat(cave, y, x, FEAT_QUARTZ_K);
 					break;
 				}
 				/* Lava. */
 			case '`':
 				{
-					cave_set_feat(y, x, FEAT_LAVA);
+					square_set_feat(cave, y, x, FEAT_LAVA);
 					break;
 				}
 				/* Water. */
 			case '/':
 				{
-					cave_set_feat(y, x, FEAT_WATER);
+					square_set_feat(cave, y, x, FEAT_WATER);
 					break;
 				}
 				/* Tree. */
@@ -2491,22 +2491,22 @@ extern bool build_vault(int y0, int x0, int ymax, int xmax,
 				{
 					if (randint1(p_ptr->depth + HIGHLAND_TREE_CHANCE)
 						> HIGHLAND_TREE_CHANCE)
-						cave_set_feat(y, x, FEAT_TREE2);
+						square_set_feat(cave, y, x, FEAT_TREE2);
 					else
-						cave_set_feat(y, x, FEAT_TREE);
+						square_set_feat(cave, y, x, FEAT_TREE);
 					break;
 				}
 				/* Rubble. */
 			case ':':
 				{
-					cave_set_feat(y, x, FEAT_RUBBLE);
+					square_set_feat(cave, y, x, FEAT_RUBBLE);
 					break;
 				}
 				/* Sand dune */
 			case '(':
 				{
 					if (p_ptr->themed_level)
-						cave_set_feat(y, x, FEAT_DUNE);
+						square_set_feat(cave, y, x, FEAT_DUNE);
 					break;
 				}
 				/* Treasure/trap */
@@ -2536,7 +2536,7 @@ extern bool build_vault(int y0, int x0, int ymax, int xmax,
 			case '<':
 				{
 					if (stage_map[p_ptr->stage][UP])
-						cave_set_feat(y, x, FEAT_LESS);
+						square_set_feat(cave, y, x, FEAT_LESS);
 
 					/* Place player only in themed level, and only once. */
 					if ((p_ptr->themed_level) && (!placed)) {
@@ -2554,7 +2554,7 @@ extern bool build_vault(int y0, int x0, int ymax, int xmax,
 						|| (!stage_map[p_ptr->stage][DOWN]))
 						break;
 
-					cave_set_feat(y, x, FEAT_MORE);
+					square_set_feat(cave, y, x, FEAT_MORE);
 					break;
 				}
 				/* Wilderness paths. */
@@ -2587,33 +2587,33 @@ extern bool build_vault(int y0, int x0, int ymax, int xmax,
 					case NORTH:
 						{
 							if (more)
-								cave_set_feat(y, x, FEAT_MORE_NORTH);
+								square_set_feat(cave, y, x, FEAT_MORE_NORTH);
 							else
-								cave_set_feat(y, x, FEAT_LESS_NORTH);
+								square_set_feat(cave, y, x, FEAT_LESS_NORTH);
 							break;
 						}
 					case EAST:
 						{
 							if (more)
-								cave_set_feat(y, x, FEAT_MORE_EAST);
+								square_set_feat(cave, y, x, FEAT_MORE_EAST);
 							else
-								cave_set_feat(y, x, FEAT_LESS_EAST);
+								square_set_feat(cave, y, x, FEAT_LESS_EAST);
 							break;
 						}
 					case SOUTH:
 						{
 							if (more)
-								cave_set_feat(y, x, FEAT_MORE_SOUTH);
+								square_set_feat(cave, y, x, FEAT_MORE_SOUTH);
 							else
-								cave_set_feat(y, x, FEAT_LESS_SOUTH);
+								square_set_feat(cave, y, x, FEAT_LESS_SOUTH);
 							break;
 						}
 					case WEST:
 						{
 							if (more)
-								cave_set_feat(y, x, FEAT_MORE_WEST);
+								square_set_feat(cave, y, x, FEAT_MORE_WEST);
 							else
-								cave_set_feat(y, x, FEAT_LESS_WEST);
+								square_set_feat(cave, y, x, FEAT_LESS_WEST);
 							break;
 						}
 					}

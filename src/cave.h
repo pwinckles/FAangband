@@ -297,7 +297,7 @@ extern void map_area(int y, int x, bool extended);
 extern void wiz_light(bool wizard);
 extern void wiz_dark(void);
 extern void illuminate(void);
-extern void cave_set_feat(int y, int x, int feat);
+extern void square_set_feat(struct cave *c, int y, int x, int feat);
 extern int project_path(u16b *gp, int range, \
                          int y1, int x1, int y2, int x2, int flg);
 extern byte projectable(int y1, int x1, int y2, int x2, int flg);

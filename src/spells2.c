@@ -2453,13 +2453,13 @@ void stair_creation(void)
 
 	/* Create a staircase */
 	if (is_quest(p_ptr->stage) || (!stage_map[p_ptr->stage][DOWN])) {
-		cave_set_feat(py, px, FEAT_LESS);
+		square_set_feat(cave, py, px, FEAT_LESS);
 	} else if (!stage_map[p_ptr->stage][UP]) {
-		cave_set_feat(py, px, FEAT_MORE);
+		square_set_feat(cave, py, px, FEAT_MORE);
 	} else if (randint0(100) < 50) {
-		cave_set_feat(py, px, FEAT_MORE);
+		square_set_feat(cave, py, px, FEAT_MORE);
 	} else {
-		cave_set_feat(py, px, FEAT_LESS);
+		square_set_feat(cave, py, px, FEAT_LESS);
 	}
 }
 
@@ -3941,11 +3941,11 @@ void grow_trees_and_grass(bool powerful)
 			/* Probably grass, otherwise a tree */
 			if ((randint0(4) == 0) || powerful) {
 				if (p_ptr->depth < 40)
-					cave_set_feat(y, x, FEAT_TREE);
+					square_set_feat(cave, y, x, FEAT_TREE);
 				else
-					cave_set_feat(y, x, FEAT_TREE2);
+					square_set_feat(cave, y, x, FEAT_TREE2);
 			} else
-				cave_set_feat(y, x, FEAT_GRASS);
+				square_set_feat(cave, y, x, FEAT_GRASS);
 		}
 
 	return;
@@ -4684,7 +4684,7 @@ void destroy_area(int y1, int x1, int r, bool full)
 				}
 
 				/* Change the feature */
-				cave_set_feat(y, x, feat);
+				square_set_feat(cave, y, x, feat);
 			}
 		}
 	}
@@ -5178,7 +5178,7 @@ void earthquake(int cy, int cx, int r, bool volcano)
 				}
 
 				/* Change the feature */
-				cave_set_feat(yy, xx, feat);
+				square_set_feat(cave, yy, xx, feat);
 			}
 		}
 	}

@@ -1640,7 +1640,7 @@ extern bool do_cmd_open_aux(int y, int x)
 			msgt(MSG_LOCKPICK, "You have picked the lock.");
 
 			/* Open the door */
-			cave_set_feat(y, x, FEAT_OPEN);
+			square_set_feat(cave, y, x, FEAT_OPEN);
 
 			/* Update the visuals */
 			p_ptr->update |= (PU_UPDATE_VIEW | PU_MONSTERS);
@@ -1665,7 +1665,7 @@ extern bool do_cmd_open_aux(int y, int x)
 	/* Closed door */
 	else {
 		/* Open the door */
-		cave_set_feat(y, x, FEAT_OPEN);
+		square_set_feat(cave, y, x, FEAT_OPEN);
 
 		/* Update the visuals */
 		p_ptr->update |= (PU_UPDATE_VIEW | PU_MONSTERS);
@@ -1819,7 +1819,7 @@ static bool do_cmd_close_aux(int y, int x)
 	/* Open door */
 	else {
 		/* Close the door */
-		cave_set_feat(y, x, FEAT_DOOR_HEAD + 0x00);
+		square_set_feat(cave, y, x, FEAT_DOOR_HEAD + 0x00);
 
 		/* Update the visuals */
 		p_ptr->update |= (PU_UPDATE_VIEW | PU_MONSTERS);
@@ -1926,9 +1926,9 @@ static bool twall(int y, int x)
 
 	/* Remove the feature */
 	if (outside)
-		cave_set_feat(y, x, FEAT_ROAD);
+		square_set_feat(cave, y, x, FEAT_ROAD);
 	else
-		cave_set_feat(y, x, FEAT_FLOOR);
+		square_set_feat(cave, y, x, FEAT_FLOOR);
 
 	/* Update the visuals */
 	p_ptr->update |= (PU_UPDATE_VIEW | PU_MONSTERS);
@@ -2412,12 +2412,12 @@ static bool do_cmd_bash_aux(int y, int x)
 	if (randint0(100) < temp) {
 		/* Break down the door */
 		if (randint0(100) < 50) {
-			cave_set_feat(y, x, FEAT_BROKEN);
+			square_set_feat(cave, y, x, FEAT_BROKEN);
 		}
 
 		/* Open the door */
 		else {
-			cave_set_feat(y, x, FEAT_OPEN);
+			square_set_feat(cave, y, x, FEAT_OPEN);
 		}
 
 		/* Message */

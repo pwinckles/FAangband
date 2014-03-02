@@ -106,9 +106,9 @@ static void build_store(int n, int yy, int xx, int stage)
 		for (x = x1; x <= x2; x++) {
 			/* Create the building (or not ... NRM) */
 			if ((n != 7) || (p_ptr->home == stage))
-				cave_set_feat(y, x, FEAT_PERM_EXTRA);
+				square_set_feat(cave, y, x, FEAT_PERM_EXTRA);
 			else
-				cave_set_feat(y, x, FEAT_FLOOR);
+				square_set_feat(cave, y, x, FEAT_FLOOR);
 		}
 	}
 
@@ -159,9 +159,9 @@ static void build_store(int n, int yy, int xx, int stage)
 
 	/* Clear previous contents, add a store door */
 	if ((n != 7) || (p_ptr->home == stage))
-		cave_set_feat(y, x, FEAT_SHOP_HEAD + n);
+		square_set_feat(cave, y, x, FEAT_SHOP_HEAD + n);
 	else
-		cave_set_feat(y, x, FEAT_FLOOR);
+		square_set_feat(cave, y, x, FEAT_FLOOR);
 }
 
 
@@ -264,7 +264,7 @@ static void town_gen_hack(void)
 		}
 		
 		/* Clear previous contents, add down stairs */
-		cave_set_feat(y, x, FEAT_MORE);
+		square_set_feat(cave, y, x, FEAT_MORE);
 		
 		
 		/* Place the player */
@@ -293,28 +293,28 @@ static void town_gen_hack(void)
 				{
 					y = 1;
 					if (stage_map[stage][n])
-						cave_set_feat(y, x, FEAT_MORE_NORTH);
+						square_set_feat(cave, y, x, FEAT_MORE_NORTH);
 					break;
 				}
 			case EAST:
 				{
 					x = qx - 2;
 					if (stage_map[stage][n])
-						cave_set_feat(y, x, FEAT_MORE_EAST);
+						square_set_feat(cave, y, x, FEAT_MORE_EAST);
 					break;
 				}
 			case SOUTH:
 				{
 					y = qy - 2;
 					if (stage_map[stage][n])
-						cave_set_feat(y, x, FEAT_MORE_SOUTH);
+						square_set_feat(cave, y, x, FEAT_MORE_SOUTH);
 					break;
 				}
 			case WEST:
 				{
 					x = 1;
 					if (stage_map[stage][n])
-						cave_set_feat(y, x, FEAT_MORE_WEST);
+						square_set_feat(cave, y, x, FEAT_MORE_WEST);
 				}
 			}
 			if (place) {
@@ -384,27 +384,27 @@ static void town_gen(void)
 	for (y = 0; y < DUNGEON_HGT; y++) {
 		for (x = 0; x < DUNGEON_WID; x++) {
 			/* Create "solid" perma-wall */
-			cave_set_feat(y, x, FEAT_PERM_SOLID);
+			square_set_feat(cave, y, x, FEAT_PERM_SOLID);
 		}
 	}
 
 	/* Boundary walls (see town_illuminate() */
 	for (x = qx; x < qx + width; x++) {
-		cave_set_feat(qy, x, FEAT_PERM_INNER);
-		cave_set_feat(qy + (DUNGEON_HGT / 3) - 1, x, FEAT_PERM_INNER);
+		square_set_feat(cave, qy, x, FEAT_PERM_INNER);
+		square_set_feat(cave, qy + (DUNGEON_HGT / 3) - 1, x, FEAT_PERM_INNER);
 	}
 
 	/* Boundary walls (see town_illuminate() */
 	for (y = qy; y < qy + (DUNGEON_HGT / 3); y++) {
-		cave_set_feat(y, qx, FEAT_PERM_INNER);
-		cave_set_feat(y, qx + width - 1, FEAT_PERM_INNER);
+		square_set_feat(cave, y, qx, FEAT_PERM_INNER);
+		square_set_feat(cave, y, qx + width - 1, FEAT_PERM_INNER);
 	}
 
 	/* Then place some floors */
 	for (y = qy + 1; y < qy + (DUNGEON_HGT / 3) - 1; y++) {
 		for (x = qx + 1; x < qx + width - 1; x++) {
 			/* Create empty floor */
-			cave_set_feat(y, x, FEAT_FLOOR);
+			square_set_feat(cave, y, x, FEAT_FLOOR);
 		}
 	}
 

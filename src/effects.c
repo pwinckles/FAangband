@@ -3228,7 +3228,7 @@ bool effect_do(effect_type effect, bool * ident, bool aware, int dir)
 						continue;
 
 					/* Lava now */
-					cave_set_feat(y, x, FEAT_LAVA);
+					square_set_feat(cave, y, x, FEAT_LAVA);
 				}
 
 			return TRUE;
