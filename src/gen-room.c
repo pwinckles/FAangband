@@ -3253,7 +3253,7 @@ extern bool room_build(int room_type)
 		}
 
 		/* Help prevent monster over-flow */
-		if (m_max > 3 * z_info->m_max / 4) {
+		if (cave_monster_max(cave) > 3 * z_info->m_max / 4) {
 			return (FALSE);
 		}
 	}

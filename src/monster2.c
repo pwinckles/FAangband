@@ -111,7 +111,7 @@ void delete_monster_idx(int i)
 	(void) WIPE(m_ptr, monster_type);
 
 	/* Count monsters */
-	m_cnt--;
+	cave->mon_cnt--;
 
 
 	/* Visual update */
@@ -227,7 +227,7 @@ void compact_monsters(int size)
 		j = 0;
 
 		/* Check all the monsters */
-		for (i = 1; i < m_max; i++) {
+		for (i = 1; i < cave_monster_max(cave); i++) {
 			monster_type *m_ptr = cave_monster(cave, i);
 
 			monster_race *r_ptr = &r_info[m_ptr->r_idx];
@@ -273,7 +273,7 @@ void compact_monsters(int size)
 
 
 	/* Excise dead monsters (backwards!) */
-	for (i = m_max - 1; i >= 1; i--) {
+	for (i = cave_monster_max(cave) - 1; i >= 1; i--) {
 		/* Get the i'th monster */
 		monster_type *m_ptr = cave_monster(cave, i);
 
@@ -282,10 +282,10 @@ void compact_monsters(int size)
 			continue;
 
 		/* Move last monster into open hole */
-		compact_monsters_aux(m_max - 1, i);
+		compact_monsters_aux(cave_monster_max(cave) - 1, i);
 
-		/* Compress "m_max" */
-		m_max--;
+		/* Compress cave->mon_max */
+		cave->mon_max--;
 	}
 }
 
@@ -336,7 +336,7 @@ void wipe_m_list(struct cave *c, struct player *p)
 	/* Hack - wipe the player */
 	c->m_idx[p->py][p->px] = 0;
 
-	/* Reset "m_max" */
+	/* Reset c->mon_max */
 	c->mon_max = 1;
 
 	/* Reset "m_cnt" */
@@ -367,15 +367,15 @@ s16b m_pop(void)
 
 
 	/* Normal allocation */
-	if (m_max < z_info->m_max) {
+	if (cave_monster_max(cave) < z_info->m_max) {
 		/* Access the next hole */
-		i = m_max;
+		i = cave_monster_max(cave);
 
 		/* Expand the array */
-		m_max++;
+		cave->mon_max++;
 
 		/* Count monsters */
-		m_cnt++;
+		cave->mon_cnt++;
 
 		/* Return the index */
 		return (i);
@@ -383,7 +383,7 @@ s16b m_pop(void)
 
 
 	/* Recycle dead monsters */
-	for (i = 1; i < m_max; i++) {
+	for (i = 1; i < cave_monster_max(cave); i++) {
 		monster_type *m_ptr;
 
 		/* Acquire monster */
@@ -394,7 +394,7 @@ s16b m_pop(void)
 			continue;
 
 		/* Count monsters */
-		m_cnt++;
+		cave->mon_cnt++;
 
 		/* Use this monster */
 		return (i);
@@ -942,7 +942,7 @@ void display_monlist(void)
 	list = C_ZNEW(z_info->r_max, monster_vis);
 
 	/* Scan the list of monsters on the level */
-	for (ii = 1; ii < m_max; ii++) {
+	for (ii = 1; ii < cave_monster_max(cave); ii++) {
 		monster_vis *v;
 
 		m_ptr = cave_monster(cave, ii);
@@ -1906,7 +1906,7 @@ void update_monsters(bool full)
 	int i;
 
 	/* Update each (live) monster */
-	for (i = 1; i < m_max; i++) {
+	for (i = 1; i < cave_monster_max(cave); i++) {
 		monster_type *m_ptr = cave_monster(cave, i);
 
 		/* Skip dead monsters */
@@ -4279,7 +4279,7 @@ void monster_death(int m_idx)
 	object_type object_type_body;
 
 	/* If this monster was a group leader, others become leaderless */
-	for (i = m_max - 1; i >= 1; i--) {
+	for (i = cave_monster_max(cave) - 1; i >= 1; i--) {
 		/* Access the monster */
 		monster_type *n_ptr = cave_monster(cave, i);
 

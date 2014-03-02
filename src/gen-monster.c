@@ -915,7 +915,7 @@ extern void spread_monsters(char symbol, int depth, int num, int y0,
 	int i, j;					/* Limits on loops */
 	int count;
 	int y = y0, x = x0;
-	int start_mon_num = m_max;
+	int start_mon_num = cave_monster_max(cave);
 	bool dummy;
 
 	/* Restrict monsters.  Allow uniques. */
@@ -959,7 +959,7 @@ extern void spread_monsters(char symbol, int depth, int num, int y0,
 		(void) place_monster(y, x, TRUE, TRUE, TRUE);
 
 		/* Rein in monster groups and escorts a little. */
-		if (m_max - start_mon_num > num * 2)
+		if (cave_monster_max(cave) - start_mon_num > num * 2)
 			break;
 
 		/* Count the monster(s), reset the loop count */

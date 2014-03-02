@@ -340,7 +340,7 @@ void sun_banish(void)
 	int i;
 
 	/* Process all monsters */
-	for (i = 1; i < m_max - 1; i++) {
+	for (i = 1; i < cave_monster_max(cave) - 1; i++) {
 		/* Access the monster */
 		m_ptr = cave_monster(cave, i);
 
@@ -1630,7 +1630,7 @@ static void process_player(void)
 				shimmer_monsters = FALSE;
 
 				/* Shimmer multi-hued monsters */
-				for (i = 1; i < m_max; i++) {
+				for (i = 1; i < cave_monster_max(cave); i++) {
 					monster_type *m_ptr;
 					monster_race *r_ptr;
 
@@ -1662,7 +1662,7 @@ static void process_player(void)
 				repair_mflag_mark = FALSE;
 
 				/* Process the monsters */
-				for (i = 1; i < m_max; i++) {
+				for (i = 1; i < cave_monster_max(cave); i++) {
 					monster_type *m_ptr;
 
 					/* Access monster */
@@ -1698,7 +1698,7 @@ static void process_player(void)
 			repair_mflag_show = FALSE;
 
 			/* Process the monsters */
-			for (i = 1; i < m_max; i++) {
+			for (i = 1; i < cave_monster_max(cave); i++) {
 				monster_type *m_ptr;
 
 				/* Access monster */
@@ -1808,7 +1808,7 @@ void do_animation(void)
 {
 	int i;
 
-	for (i = 1; i < m_max; i++) {
+	for (i = 1; i < cave_monster_max(cave); i++) {
 		byte attr;
 		monster_type *m_ptr = cave_monster(cave, i);
 		monster_race *r_ptr = &r_info[m_ptr->r_idx];
@@ -2038,11 +2038,11 @@ static void dungeon(void)
 	/* Main loop */
 	while (TRUE) {
 		/* Hack -- Compact the monster list occasionally */
-		if (m_cnt + 32 > z_info->m_max)
+		if (cave_monster_count(cave) + 32 > z_info->m_max)
 			compact_monsters(64);
 
 		/* Hack -- Compress the monster list occasionally */
-		if (m_cnt + 32 < m_max)
+		if (cave_monster_count(cave) + 32 < cave_monster_max(cave))
 			compact_monsters(0);
 
 
@@ -2071,7 +2071,7 @@ static void dungeon(void)
 				p_ptr->energy = 100;
 
 				/* Give the player more energy than any monster */
-				for (i = m_max - 1; i >= 1; i--) {
+				for (i = cave_monster_max(cave) - 1; i >= 1; i--) {
 					/* Access the monster */
 					m_ptr = cave_monster(cave, i);
 

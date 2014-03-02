@@ -2045,7 +2045,7 @@ bool detect_monsters_normal(int range, bool show)
 		animate_detect(range);
 
 	/* Scan monsters */
-	for (i = 1; i < m_max; i++) {
+	for (i = 1; i < cave_monster_max(cave); i++) {
 		monster_type *m_ptr = cave_monster(cave, i);
 		monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
@@ -2120,7 +2120,7 @@ bool detect_monsters_invis(int range, bool show)
 		animate_detect(range);
 
 	/* Scan monsters */
-	for (i = 1; i < m_max; i++) {
+	for (i = 1; i < cave_monster_max(cave); i++) {
 		monster_type *m_ptr = cave_monster(cave, i);
 		monster_race *r_ptr = &r_info[m_ptr->r_idx];
 		monster_lore *l_ptr = &l_list[m_ptr->r_idx];
@@ -2206,7 +2206,7 @@ bool detect_monsters_evil(int range, bool show)
 		animate_detect(range);
 
 	/* Scan monsters */
-	for (i = 1; i < m_max; i++) {
+	for (i = 1; i < cave_monster_max(cave); i++) {
 		monster_type *m_ptr = cave_monster(cave, i);
 		monster_race *r_ptr = &r_info[m_ptr->r_idx];
 		monster_lore *l_ptr = &l_list[m_ptr->r_idx];
@@ -2294,7 +2294,7 @@ bool detect_monsters_living(int range, bool show)
 		animate_detect(range);
 
 	/* Scan monsters */
-	for (i = 1; i < m_max; i++) {
+	for (i = 1; i < cave_monster_max(cave); i++) {
 		monster_type *m_ptr = cave_monster(cave, i);
 		monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
@@ -3856,7 +3856,7 @@ bool listen_to_natural_creatures(void)
 	int count = 0;
 
 	/* Check all the monsters */
-	for (i = 1; i < m_max; i++) {
+	for (i = 1; i < cave_monster_max(cave); i++) {
 		monster_type *m_ptr = cave_monster(cave, i);
 		monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
@@ -4110,7 +4110,7 @@ bool project_los_not_player(int y1, int x1, int dam, int typ)
 	bool obvious = FALSE;
 
 	/* Affect all (nearby) monsters */
-	for (i = 1; i < m_max; i++) {
+	for (i = 1; i < cave_monster_max(cave); i++) {
 		monster_type *m_ptr = cave_monster(cave, i);
 
 		/* Paranoia -- Skip dead monsters */
@@ -4158,7 +4158,7 @@ static bool project_hack(int typ, int dam)
 
 
 	/* Affect all (nearby) monsters */
-	for (i = 1; i < m_max; i++) {
+	for (i = 1; i < cave_monster_max(cave); i++) {
 		monster_type *m_ptr = cave_monster(cave, i);
 
 		/* Paranoia -- Skip dead monsters */
@@ -4373,7 +4373,7 @@ bool aggravate_monsters(int who, bool the_entire_level)
 	bool known = FALSE;
 
 	/* Aggravate everyone nearby */
-	for (i = 1; i < m_max; i++) {
+	for (i = 1; i < cave_monster_max(cave); i++) {
 		monster_type *m_ptr = cave_monster(cave, i);
 		monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
@@ -4456,7 +4456,7 @@ bool genocide(void)
 		return (FALSE);
 
 	/* Delete the monsters of that "type" */
-	for (i = 1; i < m_max; i++) {
+	for (i = 1; i < cave_monster_max(cave); i++) {
 		monster_type *m_ptr = cave_monster(cave, i);
 		monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
@@ -4498,7 +4498,7 @@ bool mass_genocide(void)
 	int i;
 
 	/* Delete the (nearby) monsters */
-	for (i = 1; i < m_max; i++) {
+	for (i = 1; i < cave_monster_max(cave); i++) {
 		monster_type *m_ptr = cave_monster(cave, i);
 		monster_race *r_ptr = &r_info[m_ptr->r_idx];
 
@@ -4544,7 +4544,7 @@ bool probing(void)
 
 
 	/* Probe all (nearby) monsters */
-	for (i = 1; i < m_max; i++) {
+	for (i = 1; i < cave_monster_max(cave); i++) {
 		monster_type *m_ptr = cave_monster(cave, i);
 		monster_race *r_ptr = &r_info[m_ptr->r_idx];
 

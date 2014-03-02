@@ -123,9 +123,6 @@ bool repair_mflag_mark;			/* Hack -- repair monster flags (mark) */
 s16b o_max = 1;					/* Number of allocated objects */
 s16b o_cnt = 0;					/* Number of live objects */
 
-s16b m_max = 1;					/* Number of allocated monsters */
-s16b m_cnt = 0;					/* Number of live monsters */
-
 u16b group_id = 1;				/* Number of group IDs allocated */
 
 /*

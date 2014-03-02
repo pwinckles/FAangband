@@ -508,7 +508,7 @@ void generate_cave(void)
 
 		/* Reset monsters and objects */
 		o_max = 1;
-		m_max = 1;
+		cave->mon_max = 1;
 
 
 		/* Clear flags and flow information. */
@@ -671,7 +671,7 @@ void generate_cave(void)
 		}
 
 		/* Prevent monster over-flow */
-		if (m_max >= z_info->m_max) {
+		if (cave_monster_max(cave) >= z_info->m_max) {
 			/* Message */
 			why = "too many monsters";
 

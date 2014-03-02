@@ -990,7 +990,7 @@ void map_info(unsigned y, unsigned x, grid_data * g)
 
 	assert(g->f_idx <= z_info->f_max);
 	if (!g->hallucinate)
-		assert(g->m_idx < (u32b) m_max);
+		assert(g->m_idx < (u32b) cave_monster_max(cave));
 	assert(g->first_k_idx < z_info->k_max);
 	/* All other g fields are 'flags', mostly booleans. */
 }

@@ -3564,7 +3564,7 @@ static void apply_monster_trap(monster_type *m_ptr, int y, int x,
 				msg("%s vanishes!", m_name);
 
 			/* Delete the monsters of that "type" */
-			for (i = 1; i < m_max; i++) {
+			for (i = 1; i < cave_monster_max(cave); i++) {
 				monster_type *n_ptr = cave_monster(cave, i);
 				monster_race *r1_ptr = &r_info[n_ptr->r_idx];
 
@@ -4007,7 +4007,7 @@ static void process_move(monster_type *m_ptr, int ty, int tx, bool bash)
 			monster_race *nr_ptr;
 
 			/* Scan all other monsters */
-			for (i = m_max - 1; i >= 1; i--) {
+			for (i = cave_monster_max(cave) - 1; i >= 1; i--) {
 				/* Access the monster */
 				n_ptr = cave_monster(cave, i);
 				nr_ptr = &r_info[n_ptr->r_idx];
@@ -5077,7 +5077,7 @@ void process_monsters(byte minimum_energy)
 	}
 
 	/* Process the monsters (backwards) */
-	for (i = m_max - 1; i >= 1; i--) {
+	for (i = cave_monster_max(cave) - 1; i >= 1; i--) {
 		/* Player is dead or leaving the current level */
 		if (p_ptr->leaving)
 			break;
@@ -5131,7 +5131,7 @@ void reset_monsters(void)
 	monster_type *m_ptr;
 
 	/* Process the monsters (backwards) */
-	for (i = m_max - 1; i >= 1; i--) {
+	for (i = cave_monster_max(cave) - 1; i >= 1; i--) {
 		/* Access the monster */
 		m_ptr = cave_monster(cave, i);
 

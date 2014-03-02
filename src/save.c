@@ -1002,10 +1002,10 @@ void wr_monsters(void)
 		return;
 
 	/* Total monsters */
-	wr_u16b(m_max);
+	wr_u16b(cave_monster_max(cave));
 
 	/* Dump the monsters */
-	for (i = 1; i < m_max; i++) {
+	for (i = 1; i < cave_monster_max(cave); i++) {
 		monster_type *m_ptr = cave_monster(cave, i);
 
 		/* Dump it */
