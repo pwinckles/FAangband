@@ -576,7 +576,7 @@ static void grid_get_attr(grid_data * g, int *a)
 
 	/* Trap detect edge, but don't colour traps themselves, or treasure */
 	if (g->trapborder && tf_has(f_ptr->flags, TF_FLOOR) &&
-		!((int) g->trap < trap_max)) {
+		!((int) g->trap < cave_trap_max(cave))) {
 		*a += MAX_COLORS * BG_TRAP;
 	} else if (tf_has(f_ptr->flags, TF_TORCH)) {
 		if (g->lighting == FEAT_LIGHTING_TORCH) {
@@ -667,7 +667,7 @@ void grid_data_as_text(grid_data * g, int *ap, wchar_t * cp, byte * tap,
 
 
 	/* There is a trap in this grid, and we are not hallucinating */
-	if (((int) g->trap < trap_max) && (!g->hallucinate)) {
+	if (((int) g->trap < cave_trap_max(cave)) && (!g->hallucinate)) {
 		/* Change graphics to indicate a trap (if visible) */
 		if (get_trap_graphics(cave, g->trap, &a, &c, TRUE)) {
 			/* Ignore objects stacked on top of this trap */
@@ -897,7 +897,7 @@ void map_info(unsigned y, unsigned x, grid_data * g)
 
 	/* Default "clear" values, others will be set later where appropriate. */
 	g->first_k_idx = 0;
-	g->trap = trap_max;
+	g->trap = cave_trap_max(cave);
 	g->multiple_objects = FALSE;
 	g->lighting = FEAT_LIGHTING_DARK;
 
@@ -933,9 +933,9 @@ void map_info(unsigned y, unsigned x, grid_data * g)
 		int i;
 
 		/* Scan the current trap list */
-		for (i = 0; i < trap_max; i++) {
+		for (i = 0; i < cave_trap_max(cave); i++) {
 			/* Point to this trap */
-			trap_type *t_ptr = &trap_list[i];
+			trap_type *t_ptr = cave_trap(cave, i);
 
 			/* Find a trap in this position */
 			if ((t_ptr->fy == y) && (t_ptr->fx == x)) {
@@ -3454,7 +3454,6 @@ struct cave *cave_new(void) {
 
 	c->traps = mem_zalloc(z_info->l_max * sizeof(struct trap_type));
 	c->trap_max = 1;
-	c->trap_cnt = 0;
 
 	c->created_at = 1;
 
@@ -3894,6 +3893,20 @@ int cave_monster_max(struct cave *c) {
  */
 int cave_monster_count(struct cave *c) {
 	return c->mon_cnt;
+}
+
+/**
+ * Get a trap on the current level by its index.
+ */
+struct trap_type *cave_trap(struct cave *c, int idx) {
+	return &c->traps[idx];
+}
+
+/**
+ * The maximum number of traps allowed in the level.
+ */
+int cave_trap_max(struct cave *c) {
+	return c->trap_max;
 }
 
 /**

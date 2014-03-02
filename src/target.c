@@ -952,7 +952,7 @@ static ui_event target_set_interactive_aux(int y, int x, int mode)
 
 		/* A trap */
 		if (square_visible_trap(cave, y, x)) {
-			trap_type *t_ptr = &trap_list[visible_trap_idx(cave, y, x)];
+			trap_type *t_ptr = cave_trap(cave, visible_trap_idx(cave, y, x));
 
 			/* Not boring */
 			boring = FALSE;

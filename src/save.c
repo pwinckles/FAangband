@@ -1059,10 +1059,10 @@ void wr_traps(void)
 	int i;
 
 	wr_byte(TRF_SIZE);
-	wr_s16b(trap_max);
+	wr_s16b(cave_trap_max(cave));
 
-	for (i = 0; i < trap_max; i++) {
-		trap_type *t_ptr = &trap_list[i];
+	for (i = 0; i < cave_trap_max(cave); i++) {
+		trap_type *t_ptr = cave_trap(cave, i);
 
 		wr_trap(t_ptr);
 	}

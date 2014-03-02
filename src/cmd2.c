@@ -2206,7 +2206,7 @@ extern bool do_cmd_disarm_aux(int y, int x)
 	/* Choose trap */
 	if (!get_trap(cave, y, x, &idx))
 		return (FALSE);
-	t_ptr = &trap_list[idx];
+	t_ptr = cave_trap(cave, idx);
 
 	/* Get the "disarm" factor */
 	i = p_ptr->state.skills[SKILL_DISARM];

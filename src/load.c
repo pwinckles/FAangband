@@ -2269,10 +2269,10 @@ int rd_traps(void)
 	u32b tmp32u;
 
 	rd_byte(&trf_size);
-	rd_s16b(&trap_max);
+	rd_s16b(&cave->trap_max);
 
-	for (i = 0; i < trap_max; i++) {
-		trap_type *t_ptr = &trap_list[i];
+	for (i = 0; i < cave_trap_max(cave); i++) {
+		trap_type *t_ptr = cave_trap(cave, i);
 
 		rd_trap(t_ptr);
 	}

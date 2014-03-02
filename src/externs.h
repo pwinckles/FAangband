@@ -100,8 +100,6 @@ extern s16b o_max;
 extern s16b o_cnt;
 extern s16b m_max;
 extern s16b m_cnt;
-extern s16b trap_max;
-extern s16b trap_cnt;
 extern u16b group_id;
 extern u16b feeling;
 extern bool do_feeling;
@@ -126,7 +124,6 @@ extern int update_center_y;
 extern int update_center_x;
 extern int cost_at_center;
 
-extern trap_type *trap_list;
 extern object_type *o_list;
 extern monster_lore *l_list;
 extern struct store_type *store;

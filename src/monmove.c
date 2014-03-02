@@ -3313,10 +3313,10 @@ static void apply_monster_trap(monster_type *m_ptr, int y, int x,
 	if (!square_monster_trap(cave, y, x))
 		return;
 
-	if ((trap < 0) || (trap >= trap_max))
+	if ((trap < 0) || (trap >= cave_trap_max(cave)))
 		return;
 	else
-		t_ptr = &trap_list[trap];
+		t_ptr = cave_trap(cave, trap);
 
 	/* Get "the monster" or "it" */
 	monster_desc(m_name, sizeof(m_name), m_ptr, 0x100);
