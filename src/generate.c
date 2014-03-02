@@ -428,37 +428,37 @@ static void town_gen(void)
 /**
  * Clear the dungeon, ready for generation to begin.
  */
-static void clear_cave(void)
+static void cave_clear(struct cave *c, struct player *p)
 {
 	int i, x, y;
 
 	wipe_o_list();
-	wipe_m_list(cave, p_ptr);
-	wipe_trap_list(cave);
+	wipe_m_list(c, p_ptr);
+	wipe_trap_list(c);
 	/* Clear flags and flow information. */
 	for (y = 0; y < DUNGEON_HGT; y++) {
 		for (x = 0; x < DUNGEON_WID; x++) {
 			/* No features */
-			cave->feat[y][x] = 0;
+			c->feat[y][x] = 0;
 
 			/* No flags */
-			sqinfo_wipe(cave->info[y][x]);
+			sqinfo_wipe(c->info[y][x]);
 
 			/* No flow */
-			cave->cost[y][x] = 0;
-			cave->when[y][x] = 0;
+			c->cost[y][x] = 0;
+			c->when[y][x] = 0;
 
 			/* Clear any left-over monsters (should be none) and the player. */
-			cave->m_idx[y][x] = 0;
+			c->m_idx[y][x] = 0;
 		}
 	}
 
 	/* Wipe feature counts */
 	for (i = 0; i < z_info->f_max + 1; i++)
-		cave->feat_count[i] = 0;
+		c->feat_count[i] = 0;
 
 	/* Mega-Hack -- no player in dungeon yet */
-	p_ptr->px = p_ptr->py = 0;
+	p->px = p->py = 0;
 
 	/* Hack -- illegal panel */
 	Term->offset_y = DUNGEON_HGT;
@@ -489,7 +489,7 @@ void generate_cave(void)
 
 	level_hgt = DUNGEON_HGT;
 	level_wid = DUNGEON_WID;
-	clear_cave();
+	cave_clear(cave, p_ptr);
 
 	/* The dungeon is not ready */
 	character_dungeon = FALSE;

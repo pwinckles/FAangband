@@ -128,7 +128,6 @@ extern int cost_at_center;
 
 extern trap_type *trap_list;
 extern object_type *o_list;
-extern monster_type *m_list;
 extern monster_lore *l_list;
 extern struct store_type *store;
 extern const char *** name_sections;

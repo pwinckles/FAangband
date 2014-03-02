@@ -221,11 +221,6 @@ trap_type *trap_list;
 object_type *o_list;
 
 /**
- * Array[z_info->m_max] of dungeon monsters
- */
-monster_type *m_list;
-
-/**
  * Array[z_info->m_max] of monster lore
  */
 monster_lore *l_list;
