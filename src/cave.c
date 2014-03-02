@@ -2652,7 +2652,7 @@ void map_area(int y, int x, bool extended)
 				continue;
 
 			/* All passable grids are checked */
-			if (tf_has(f_ptr->flags, TF_PASSABLE)) {
+			if (square_ispassable(cave, y, x)) {
 				/* Memorize interesting features */
 				if (!tf_has(f_ptr->flags, TF_FLOOR) ||
 					tf_has(f_ptr->flags, TF_INTERESTING)) {
@@ -2734,7 +2734,7 @@ void wiz_light(bool wizard)
 			feature_type *f_ptr = &f_info[cave->feat[y][x]];
 
 			/* Process all passable grids (or all grids, if a wizard) */
-			if (tf_has(f_ptr->flags, TF_PASSABLE)) {
+			if (square_ispassable(cave, y, x)) {
 				/* Paranoia -- stay in bounds */
 				if (!in_bounds_fully(y, x))
 					continue;
@@ -2752,7 +2752,7 @@ void wiz_light(bool wizard)
 					/* If not a wizard, do not mark passable grids in vaults */
 					if ((!wizard)
 						&& sqinfo_has(cave->info[yy][xx], SQUARE_ICKY)) {
-						if (tf_has(f_ptr->flags, TF_PASSABLE))
+						if (square_ispassable(cave, yy, xx))
 							continue;
 					}
 
@@ -3229,7 +3229,6 @@ byte projectable(int y1, int x1, int y2, int x2, int flg)
 
 	int grid_n = 0;
 	u16b grid_g[512];
-	feature_type *f_ptr;
 
 	/* Check the projection path */
 	grid_n = project_path(grid_g, MAX_RANGE, y1, x1, y2, x2, flg);
@@ -3247,8 +3246,7 @@ byte projectable(int y1, int x1, int y2, int x2, int flg)
 		return (PROJECT_NO);
 
 	/* Must end in a passable grid. */
-	f_ptr = &f_info[cave->feat[y][x]];
-	if (!tf_has(f_ptr->flags, TF_PASSABLE))
+	if (!square_ispassable(cave, y, x))
 		return (PROJECT_NO);
 
 

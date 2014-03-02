@@ -275,13 +275,10 @@ static void prt_binary(const bitflag * flags, int offset, int row, int col,
 
 
 /**
- * Hack -- Teleport to the target.  Oangband asks for a target after 
- * the command.
+ * Teleport to the target.  Oangband asks for a target after the command.
  */
 static void do_cmd_wiz_bamf(void)
 {
-	feature_type *f_ptr;
-
 	/* target starts at player. */
 	s16b ny = 0;
 	s16b nx = 0;
@@ -294,8 +291,7 @@ static void do_cmd_wiz_bamf(void)
 	target_get(&nx, &ny);
 
 	/* Test for passable terrain. */
-	f_ptr = &f_info[cave->feat[ny][nx]];
-	if (!tf_has(f_ptr->flags, TF_PASSABLE)) {
+	if (!square_ispassable(cave, ny, nx)) {
 		msg("The square you are aiming for is impassable.");
 	}
 

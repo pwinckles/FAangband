@@ -3167,7 +3167,6 @@ bool summon_specific(int y1, int x1, bool scattered, int lev, int type)
 	int i, j, x, y, d, r_idx;
 
 	bool found = FALSE;
-	feature_type *f_ptr;
 
 	/* Prepare to look at a greater distance if necessary */
 	for (j = 0; j < 3; j++) {
@@ -3183,8 +3182,7 @@ bool summon_specific(int y1, int x1, bool scattered, int lev, int type)
 			scatter(&y, &x, y1, x1, d, 0);
 
 			/* Require passable terrain, with no other creature or player. */
-			f_ptr = &f_info[cave->feat[y][x]];
-			if (!tf_has(f_ptr->flags, TF_PASSABLE))
+			if (!square_ispassable(cave, y, x))
 				continue;
 			if (cave->m_idx[y][x] != 0)
 				continue;
@@ -3255,7 +3253,6 @@ bool summon_specific(int y1, int x1, bool scattered, int lev, int type)
 bool summon_questor(int y1, int x1)
 {
 	int i, x, y, d;
-	feature_type *f_ptr;
 
 	/* Look for a location */
 	for (i = 0; i < 20; ++i) {
@@ -3266,8 +3263,7 @@ bool summon_questor(int y1, int x1)
 		scatter(&y, &x, y1, x1, d, 0);
 
 		/* Require passable terrain, with no other creature or player. */
-		f_ptr = &f_info[cave->feat[y][x]];
-		if (!tf_has(f_ptr->flags, TF_PASSABLE))
+		if (!square_ispassable(cave, y, x))
 			continue;
 		if (cave->m_idx[y][x] != 0)
 			continue;

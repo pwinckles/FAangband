@@ -3789,7 +3789,6 @@ void tap_magical_energy(void)
 void do_starlight(int burst_number, int dam, bool strong)
 {
 	int i, j, y, x;
-	feature_type *f_ptr;
 
 	/* Is the player in a square already magically lit? */
 	bool player_lit =
@@ -3816,8 +3815,7 @@ void do_starlight(int burst_number, int dam, bool strong)
 				continue;
 
 			/* Require passable terrain */
-			f_ptr = &f_info[cave->feat[y][x]];
-			if (!tf_has(f_ptr->flags, TF_PASSABLE))
+			if (!square_ispassable(cave, y, x))
 				continue;
 
 			/* Spot chosen. */
@@ -4039,7 +4037,6 @@ void ele_air_smite(void)
 {
 	byte i, j;
 	int y, x;
-	feature_type *f_ptr;
 
 	/* Due warning. */
 	msg("The powers of Air rain down destruction!");
@@ -4065,8 +4062,7 @@ void ele_air_smite(void)
 				continue;
 
 			/* Require passable terrain */
-			f_ptr = &f_info[cave->feat[y][x]];
-			if (!tf_has(f_ptr->flags, TF_PASSABLE))
+			if (!square_ispassable(cave, y, x))
 				continue;
 
 			/* Slight preference for actual monsters. */

@@ -2820,7 +2820,7 @@ static bool do_cmd_walk_test(int y, int x)
 	}
 
 	/* Require open space */
-	if (!tf_has(f_ptr->flags, TF_PASSABLE)) {
+	if (!square_ispassable(cave, y, x)) {
 		/* Door */
 		if (tf_has(f_ptr->flags, TF_DOOR_CLOSED)) {
 			/* If OPT(easy_alter)_door option is on, doors are legal. */

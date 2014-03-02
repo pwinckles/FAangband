@@ -809,7 +809,7 @@ void move_player(int dir)
 	}
 
 	/* Some terrain is impassable for the player, such as stone walls. */
-	else if (!tf_has(f_ptr->flags, TF_PASSABLE)) {
+	else if (!square_ispassable(cave, y, x)) {
 		/* Disturb the player */
 		disturb(0, 0);
 

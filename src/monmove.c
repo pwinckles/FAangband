@@ -1188,7 +1188,7 @@ int choose_ranged_attack(int m_idx, bool archery_only, int shape_rate)
  * generation as well as movement, it cannot accept monster-specific
  * data, but must rely solely on racial information.
  */
-bool cave_exist_mon(monster_race * r_ptr, int y, int x, bool occupied_ok)
+bool cave_exist_mon(monster_race *r_ptr, int y, int x, bool occupied_ok)
 {
 	int feat;
 	feature_type *f_ptr;
@@ -1214,7 +1214,7 @@ bool cave_exist_mon(monster_race * r_ptr, int y, int x, bool occupied_ok)
 	/*** Check passability of various features. ***/
 
 	/* Feature is passable */
-	if (tf_has(f_ptr->flags, TF_PASSABLE)) {
+	if (square_ispassable(cave, y, x)) {
 		/* Floor -- safe for everything */
 		if (tf_has(f_ptr->flags, TF_FLOOR))
 			return (TRUE);
@@ -1376,7 +1376,7 @@ static int cave_passable_mon(monster_type * m_ptr, int y, int x,
 	/*** Check passability of various features. ***/
 
 	/* Feature techincally passable */
-	if (tf_has(f_ptr->flags, TF_PASSABLE)) {
+	if (square_ispassable(cave, y, x)) {
 		if (tf_has(f_ptr->flags, TF_WATERY)) {
 			/* Flying monsters can always cross water */
 			if (rf_has(r_ptr->flags, RF_FLYING))
@@ -2358,7 +2358,6 @@ static bool get_move(monster_type * m_ptr, int *ty, int *tx, bool * fear,
 			 * calculated this turn, calculate it now.
 			 */
 			if (p_ptr->vulnerability == 0) {
-				feature_type *f_ptr;
 
 				/* Count passable grids next to target */
 				for (i = 0; i < 8; i++) {
@@ -2370,8 +2369,7 @@ static bool get_move(monster_type * m_ptr, int *ty, int *tx, bool * fear,
 						continue;
 
 					/* Count passable grids */
-					f_ptr = &f_info[cave->feat[y][x]];
-					if (tf_has(f_ptr->flags, TF_PASSABLE))
+					if (square_ispassable(cave, y, x))
 						p_ptr->vulnerability++;
 				}
 

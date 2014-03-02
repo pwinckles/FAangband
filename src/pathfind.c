@@ -788,7 +788,7 @@ static bool run_test(void)
 
 			/* Open doors */
 			if (tf_has(f_ptr->flags, TF_DOOR_ANY) &&
-				tf_has(f_ptr->flags, TF_PASSABLE)) {
+				square_ispassable(cave, row, col)) {
 				/* Option -- ignore */
 				if (OPT(run_ignore_doors))
 					notice = FALSE;

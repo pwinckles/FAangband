@@ -368,10 +368,9 @@ static void thrust_away(int who, int t_y, int t_x, int grids_away)
 			}
 
 			/* Check for obstruction. */
-			f_ptr = &f_info[cave->feat[yy][xx]];
 			if (!cave_project(yy, xx)) {
 				/* Some features allow entrance, but not exit. */
-				if (tf_has(f_ptr->flags, TF_PASSABLE)) {
+				if (square_ispassable(cave, yy, xx)) {
 					/* Travel down the path. */
 					monster_swap(y, x, yy, xx);
 
@@ -558,8 +557,7 @@ void teleport_player(int dis, bool safe)
 					continue;
 			} else {
 				/* Require any terrain capable of holding the player. */
-				f_ptr = &f_info[cave->feat[y][x]];
-				if (!tf_has(f_ptr->flags, TF_PASSABLE))
+				if (!square_ispassable(cave, y, x))
 					continue;
 
 				/* Must be unoccupied. */
@@ -710,7 +708,6 @@ void teleport_player_to(int ny, int nx, bool friendly)
 	int y, x;
 
 	int dis = 0, ctr = 0;
-	feature_type *f_ptr;
 
 	/* Initialize */
 	y = py;
@@ -734,8 +731,7 @@ void teleport_player_to(int ny, int nx, bool friendly)
 		}
 
 		/* Acceptable grids */
-		f_ptr = &f_info[cave->feat[y][x]];
-		if ((cave->m_idx[y][x] == 0) && (tf_has(f_ptr->flags, TF_PASSABLE)))
+		if ((cave->m_idx[y][x] == 0) && square_ispassable(cave, y, x))
 			break;
 
 		/* Occasionally advance the distance */
@@ -760,6 +756,8 @@ void teleport_player_to(int ny, int nx, bool friendly)
 	monster_swap(py, px, y, x);
 
 	if (!friendly) {
+		feature_type *f_ptr = &f_info[cave->feat[y][x]];
+
 		/* The player may hit a tree, slam into rubble, or even land in lava. */
 		if (tf_has(f_ptr->flags, TF_TREE) && (randint0(2) == 0)) {
 			msg("You hit a tree!");
@@ -3864,7 +3862,7 @@ static bool project_m(int who, int y, int x, int dam, int typ, int flg)
 		return (FALSE);
 
 	/* Walls and doors entirely protect monsters, rubble and trees do not. */
-	if (!tf_has(f_ptr->flags, TF_PASSABLE))
+	if (!square_ispassable(cave, y, x))
 		return (FALSE);
 
 	/* Never affect projector */
@@ -8186,11 +8184,9 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg,
 
 				int ny = GRID_Y(path_g[i]);
 				int nx = GRID_X(path_g[i]);
-				feature_type *f_ptr = &f_info[cave->feat[ny][nx]];
-
 
 				/* Hack -- Balls explode before reaching walls. */
-				if (!tf_has(f_ptr->flags, TF_PASSABLE) && (rad > 0))
+				if (!square_ispassable(cave, ny, nx) && (rad > 0))
 					break;
 
 				/* Advance */
@@ -8316,7 +8312,6 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg,
 		 */
 		for (y = y0 - rad; y <= y0 + rad; y++) {
 			for (x = x0 - rad; x <= x0 + rad; x++) {
-				feature_type *f_ptr;
 
 				/* Center grid has already been stored. */
 				if ((y == y0) && (x == x0))
@@ -8330,12 +8325,9 @@ bool project(int who, int rad, int y, int x, int dam, int typ, int flg,
 				if (!in_bounds(y, x))
 					continue;
 
-				f_ptr = &f_info[cave->feat[y][x]];
-
 				/* Some explosions are allowed to affect one layer of walls */
 				/* All exposions can affect one layer of rubble or trees -BR- */
-				if ((flg & (PROJECT_THRU)) ||
-					(tf_has(f_ptr->flags, TF_PASSABLE))) {
+				if ((flg & (PROJECT_THRU)) || square_ispassable(cave, y, x)) {
 					/* If this is a wall grid, ... */
 					if (!cave_project(y, x)) {
 						/* Check neighbors */

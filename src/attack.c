@@ -1742,10 +1742,9 @@ void do_cmd_fire(cmd_code code, cmd_arg args[])
 	for (i = 0; i < path_n; ++i) {
 		int ny = GRID_Y(path_g[i]);
 		int nx = GRID_X(path_g[i]);
-		feature_type *f_ptr = &f_info[cave->feat[ny][nx]];
 
 		/* Hack -- Stop before hitting walls */
-		if (!tf_has(f_ptr->flags, TF_PASSABLE))
+		if (!square_ispassable(cave, ny, nx))
 			break;
 
 		/* Advance */
@@ -2288,10 +2287,9 @@ void do_cmd_throw(cmd_code code, cmd_arg args[])
 	for (i = 0; i < path_n; ++i) {
 		int ny = GRID_Y(path_g[i]);
 		int nx = GRID_X(path_g[i]);
-		feature_type *f_ptr = &f_info[cave->feat[ny][nx]];
 
 		/* Hack -- Stop before hitting walls */
-		if (!tf_has(f_ptr->flags, TF_PASSABLE))
+		if (!square_ispassable(cave, ny, nx))
 			break;
 
 		/* Advance */
