@@ -430,7 +430,7 @@ static void town_gen(void)
  */
 static void clear_cave(void)
 {
-	int x, y;
+	int i, x, y;
 
 	wipe_o_list();
 	wipe_m_list(cave, p_ptr);
@@ -452,6 +452,10 @@ static void clear_cave(void)
 			cave->m_idx[y][x] = 0;
 		}
 	}
+
+	/* Wipe feature counts */
+	for (i = 0; i < z_info->f_max + 1; i++)
+		cave->feat_count[i] = 0;
 
 	/* Mega-Hack -- no player in dungeon yet */
 	p_ptr->px = p_ptr->py = 0;

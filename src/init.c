@@ -1564,19 +1564,27 @@ static errr finish_parse_f(struct parser *p)
 {
 	struct feature *f, *n;
 
-	f_info = mem_zalloc(z_info->f_max * sizeof(*f));
-	for (f = parser_priv(p); f; f = f->next) {
-		if (f->fidx >= z_info->f_max)
-			continue;
-		memcpy(&f_info[f->fidx], f, sizeof(*f));
-	}
-
+	/* scan the list for the max id */
+	z_info->f_max = 0;
 	f = parser_priv(p);
 	while (f) {
-		n = f->next;
-		mem_free(f);
-		f = n;
+		if (f->fidx > z_info->f_max)
+			z_info->f_max = f->fidx;
+		f = f->next;
 	}
+
+	/* allocate the direct access list and copy the data to it */
+	f_info = mem_zalloc((z_info->f_max+1) * sizeof(*f));
+	for (f = parser_priv(p); f; f = n) {
+		memcpy(&f_info[f->fidx], f, sizeof(*f));
+		n = f->next;
+		if (n)
+			f_info[f->fidx].next = &f_info[n->fidx];
+		else
+			f_info[f->fidx].next = NULL;
+		mem_free(f);
+	}
+	z_info->f_max += 1;
 
 	parser_destroy(p);
 	return 0;
