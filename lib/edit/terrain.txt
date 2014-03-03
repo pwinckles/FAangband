@@ -671,7 +671,7 @@ D:A path to the neighbouring region.
 N:112:lava
 G:#:r
 P:14
-F:LOS | PROJECT | PASSABLE | NO_SCENT | FIERY
+F:LOS | PROJECT | PASSABLE | NO_SCENT | FIERY | SMOOTH
 D:Can be passed by any character, but inflicts substantial fire damage (less 
 D:for players with feather fall - they're light on their feet).  All monsters 
 D:other than fiery or strong flying creatures will not cross.  Water and 
@@ -684,7 +684,7 @@ D:a target in lava.  Lava may freeze to rubble or normal floor.
 N:113:water
 G:.:b
 P:6
-F:LOS | PROJECT | PASSABLE | NO_SCENT | EXPOSE | WATERY
+F:LOS | PROJECT | PASSABLE | NO_SCENT | EXPOSE | WATERY | SMOOTH
 D:Cannot be passed by fiery, earthbound monsters, slows down most other 
 D:monsters.  Slows you down if you are carrying too much.  You and your 
 D:enemies are easier to hit when in water, and most spells (especially 

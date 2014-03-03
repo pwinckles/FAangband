@@ -105,7 +105,6 @@ static void spread_traps(int num, int y0, int x0, int dy, int dx)
 	int i, j;					/* Limits on loops */
 	int count;
 	int y = y0, x = x0;
-	feature_type *f_ptr;
 
 	/* Try to create traps within our rectangle of effect. */
 	for (count = 0, i = 0; ((count < num) && (i < 50)); i++) {
@@ -130,8 +129,7 @@ static void spread_traps(int num, int y0, int x0, int dy, int dx)
 		}
 
 		/* Require "naked" floor grids */
-		f_ptr = &f_info[cave->feat[y][x]];
-		if (!(cave_naked_bold(y, x) && tf_has(f_ptr->flags, TF_TRAP)))
+		if (!(square_isempty(cave, y, x) && square_istrappable(cave, y, x)))
 			continue;
 
 		/* Place the trap */
@@ -745,56 +743,45 @@ extern bool generate_starburst_room(int y1, int x1, int y2, int x2,
 						max_dist = arc[i][1];
 
 						/* Must be within effect range. */
-						if (max_dist >= dist) {
-							/* If new feature is not passable, or floor, always 
-							 * place it. */
-							if ((tf_has(f_ptr->flags, TF_FLOOR))
-								|| (!passable(feat))) {
-								square_set_feat(cave, y, x, feat);
+						if (max_dist < dist) continue;
 
-								if (tf_has(f_ptr->flags, TF_FLOOR))
-									sqinfo_on(cave->info[y][x],
-											  SQUARE_ROOM);
-								else
-									sqinfo_off(cave->info[y][x],
-											   SQUARE_ROOM);
+						/* If new feature is not passable, or floor, always 
+						 * place it. */
+						if (tf_has(f_ptr->flags, TF_FLOOR) || !passable(feat)) {
+							square_set_feat(cave, y, x, feat);
 
-								if (light)
-									sqinfo_on(cave->info[y][x],
-											  SQUARE_GLOW);
-								else
-									sqinfo_off(cave->info[y][x],
-											   SQUARE_GLOW);
+							if (tf_has(f_ptr->flags, TF_FLOOR))
+								sqinfo_on(cave->info[y][x], SQUARE_ROOM);
+							else
+								sqinfo_off(cave->info[y][x], SQUARE_ROOM);
+
+							if (light)
+								sqinfo_on(cave->info[y][x], SQUARE_GLOW);
+							else
+								sqinfo_off(cave->info[y][x], SQUARE_GLOW);
+						}
+
+						/* If new feature is non-floor passable terrain,
+						 * place it only over floor. */
+						else {
+							/* Replace old feature in some cases. */
+							if ((feat == FEAT_TREE)	|| (feat == FEAT_TREE2)
+								|| (feat == FEAT_RUBBLE)) {
+								/* Make denser in the middle. */
+								if ((tf_has(f_info[cave->feat[y][x]].flags,
+											TF_FLOOR))
+									&& (randint1(max_dist + 5) >= dist + 5))
+									square_set_feat(cave, y, x, feat);
+							}
+							if ((feat == FEAT_WATER) || (feat == FEAT_LAVA)) {
+								if (tf_has(f_info[cave->feat[y][x]].flags,
+									 TF_FLOOR))
+									square_set_feat(cave, y, x, feat);
 							}
 
-							/* If new feature is non-floor passable terrain,
-							 * place it only over floor. */
-							else {
-								/* Replace old feature in some cases. */
-								if ((feat == FEAT_TREE)
-									|| (feat == FEAT_TREE2)
-									|| (feat == FEAT_RUBBLE)) {
-									/* Make denser in the middle. */
-									if ((tf_has
-										 (f_info[cave->feat[y][x]].flags,
-										  TF_FLOOR))
-										&& (randint1(max_dist + 5) >=
-											dist + 5))
-										square_set_feat(cave, y, x, feat);
-								}
-								if ((feat == FEAT_WATER)
-									|| (feat == FEAT_LAVA)) {
-									if (tf_has
-										(f_info[cave->feat[y][x]].flags,
-										 TF_FLOOR))
-										square_set_feat(cave, y, x, feat);
-								}
-
-								/* Light grid. */
-								if (light)
-									sqinfo_on(cave->info[y][x],
-											  SQUARE_GLOW);
-							}
+							/* Light grid. */
+							if (light)
+								sqinfo_on(cave->info[y][x], SQUARE_GLOW);
 						}
 
 						/* Arc found.  End search */
@@ -2266,7 +2253,7 @@ static bool build_type6(void)
 
 
 	/* Turn all walls and magma not adjacent to floor into dungeon granite. */
-	/* Turn all floors and adjacent grids into rooms, sometimes lighting them. */
+	/* Turn all floors and adjacent grids into rooms, sometimes lighting them */
 	for (y = (y1 - 1 > 0 ? y1 - 1 : 0);
 		 y < (y2 + 2 < DUNGEON_HGT ? y2 + 2 : DUNGEON_HGT); y++) {
 		for (x = (x1 - 1 > 0 ? x1 - 1 : 0);
@@ -2314,7 +2301,7 @@ static bool build_type6(void)
 	}
 
 
-	/* Turn all inner wall grids adjacent to dungeon granite into outer walls. */
+	/* Turn all inner wall grids adjacent to dungeon granite into outer walls */
 	for (y = (y1 - 1 > 0 ? y1 - 1 : 0);
 		 y < (y2 + 2 < DUNGEON_HGT ? y2 + 2 : DUNGEON_HGT); y++) {
 		for (x = (x1 - 1 > 0 ? x1 - 1 : 0);

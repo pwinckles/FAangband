@@ -136,7 +136,6 @@ static void build_streamer(int feat, int chance)
 
 	/* Place streamer into dungeon */
 	while (TRUE) {
-		feature_type *f_ptr;
 
 		/* Advance streamer width steps on the table. */
 		table_start += width;
@@ -151,11 +150,8 @@ static void build_streamer(int feat, int chance)
 				if (!square_in_bounds(cave, y, dx))
 					continue;
 
-				f_ptr = &f_info[cave->feat[y][dx]];
-
 				/* Only convert "granite" walls */
-				if (!tf_has(f_ptr->flags, TF_GRANITE) ||
-					tf_has(f_ptr->flags, TF_DOOR_ANY))
+				if (square_isrock(cave, y, x))
 					continue;
 
 				i = table_start + dx - x;
@@ -189,11 +185,8 @@ static void build_streamer(int feat, int chance)
 				if (!square_in_bounds(cave, dy, x))
 					continue;
 
-				f_ptr = &f_info[cave->feat[dy][x]];
-
 				/* Only convert "granite" walls */
-				if (!tf_has(f_ptr->flags, TF_GRANITE) ||
-					tf_has(f_ptr->flags, TF_DOOR_ANY))
+				if (square_isrock(cave, y, x))
 					continue;
 
 				i = table_start + dy - y;
@@ -567,19 +560,6 @@ static void rand_dir(int *row_dir, int *col_dir, int y, int x)
 }
 
 
-/** Terrain type is unalterable and impassable. */
-static bool unalterable(byte feat)
-{
-
-	/* A few features are unalterable. */
-	if (tf_has(f_info[feat].flags, TF_PERMANENT)) {
-		return (TRUE);
-	}
-
-	/* Assume alterable */
-	return (FALSE);
-}
-
 /**
  * Given a set of coordinates, return the index number of the room occupying 
  * the dungeon block this location is in.
@@ -651,7 +631,7 @@ static bool find_entrance(int row_dir, int col_dir, int *row1, int *col1)
 				}
 
 				/* Look in chosen direction. */
-				if ((!unalterable(cave->feat[y + dy][x + dx]))
+				if (!square_isperm(cave, y + dy, x + dx)
 					&& (cave->feat[y + dy][x + dx] != FEAT_WALL_OUTER)) {
 					/* 
 					 * Check the grid after this one.  If it belongs 
@@ -666,7 +646,7 @@ static bool find_entrance(int row_dir, int col_dir, int *row1, int *col1)
 				}
 
 				/* Look again. */
-				else if (unalterable(cave->feat[y + dy][x + dx])) {
+				else if (square_isperm(cave, y + dy, x + dx)) {
 					break;
 				}
 
@@ -715,7 +695,7 @@ static bool find_entrance(int row_dir, int col_dir, int *row1, int *col1)
 				}
 
 				/* Next grid is alterable, and not outer wall. */
-				else if (!unalterable(cave->feat[y + dy][x + dx])) {
+				else if (!square_isperm(cave, y + dy, x + dx)) {
 					/* 
 					 * Check the grid after this one.  If it belongs 
 					 * to the same room, we've found an entrance.
@@ -791,11 +771,9 @@ static void try_entrance(int y0, int x0)
 		/* Extract the location */
 		int y = y0 + ddy_ddd[i];
 		int x = x0 + ddx_ddd[i];
-		feature_type *f_ptr = &f_info[cave->feat[y][x]];
 
 		/* Ignore non-walls. */
-		if (!tf_has(f_ptr->flags, TF_WALL) ||
-			tf_has(f_ptr->flags, TF_DOOR_ANY))
+		if (square_isstrongwall(cave, y, x))
 			continue;
 
 		/* We require at least two walls. */
@@ -812,11 +790,9 @@ static void try_door(int y0, int x0)
 {
 	int i, y, x;
 	int k = 0;
-	feature_type *f_ptr = &f_info[cave->feat[y0][x0]];
-
 
 	/* Ignore non-floors */
-	if (!tf_has(f_ptr->flags, TF_FLOOR))
+	if (!square_isfloor(cave, y0, x0))
 		return;
 
 	/* Ignore room grids */
@@ -830,10 +806,9 @@ static void try_door(int y0, int x0)
 			/* Extract the location */
 			y = y0 + ddy_ddd[i];
 			x = x0 + ddx_ddd[i];
-			f_ptr = &f_info[cave->feat[y][x]];
 
 			/* Skip grids without clear space */
-			if (!tf_has(f_ptr->flags, TF_PROJECT))
+			if (!square_isprojectable(cave, y, x))
 				continue;
 
 			/* Skip grids inside rooms */
@@ -850,9 +825,7 @@ static void try_door(int y0, int x0)
 
 			/* Check Vertical */
 			for (i = -1; i <= 1; i += 2) {
-				f_ptr = &f_info[cave->feat[y0 + i][x0]];
-				if (tf_has(f_ptr->flags, TF_WALL) &&
-					!tf_has(f_ptr->flags, TF_DOOR_ANY))
+				if (square_isstrongwall(cave, y0 + i, x0))
 					walls++;
 			}
 
@@ -864,9 +837,7 @@ static void try_door(int y0, int x0)
 			/* Check Horizontal */
 			walls = 0;
 			for (i = -1; i <= 1; i += 2) {
-				f_ptr = &f_info[cave->feat[y0][x0 + i]];
-				if (tf_has(f_ptr->flags, TF_WALL) &&
-					!tf_has(f_ptr->flags, TF_DOOR_ANY))
+				if (square_isstrongwall(cave, y0, x0 + i))
 					walls++;
 			}
 
@@ -1128,7 +1099,7 @@ void build_tunnel(int start_room, int end_room)
 			/* Navigate around various kinds of walls */
 			if ((cave->feat[y0][x0] == FEAT_WALL_SOLID)
 				|| (cave->feat[y0][x0] == FEAT_WALL_INNER)
-				|| (unalterable(cave->feat[y0][x0]))) {
+				|| square_isperm(cave, y0, x0)) {
 				for (i = 0; i < 2; i++) {
 					if (i == 0) {
 						/* Check the more direct route first. */
@@ -1155,7 +1126,7 @@ void build_tunnel(int start_room, int end_room)
 						tmp_col = col1 - col_dir;
 					}
 
-					if ((!unalterable(cave->feat[tmp_row][tmp_col]))
+					if (!square_isperm(cave, tmp_row, tmp_col)
 						&& (cave->feat[tmp_row][tmp_col] != FEAT_WALL_SOLID)
 						&& (cave->feat[tmp_row][tmp_col] != FEAT_WALL_OUTER)
 						&& (cave->feat[tmp_row][tmp_col] !=
@@ -1221,7 +1192,7 @@ void build_tunnel(int start_room, int end_room)
 							tmp_col = col1 - col_dir;
 						}
 
-						if ((!unalterable(cave->feat[tmp_row][tmp_col]))
+						if (!square_isperm(cave, tmp_row, tmp_col)
 							&& (cave->feat[tmp_row][tmp_col] !=
 								FEAT_WALL_SOLID)
 							&& (cave->feat[tmp_row][tmp_col] !=
@@ -1264,7 +1235,7 @@ void build_tunnel(int start_room, int end_room)
 			}
 
 			/* Forbid re-entry near this piercing. */
-			if ((!unalterable(cave->feat[row1 + row_dir][col1 + col_dir]))
+			if (!square_isperm(cave, row1 + row_dir, col1 + col_dir)
 				&& sqinfo_has(cave->info[row1][col1], SQUARE_ROOM)) {
 				if (row_dir) {
 					for (x = col1 - 3; x <= col1 + 3; x++) {
@@ -1313,7 +1284,7 @@ void build_tunnel(int start_room, int end_room)
 		/* 
 		 * We've hit a feature that can't be altered.
 		 */
-		else if (unalterable(cave->feat[tmp_row][tmp_col])) {
+		else if (square_isperm(cave, tmp_row, tmp_col)) {
 			/* We don't know what to do. */
 			if (!head_for_entrance) {
 				/* Get the room that occupies this block. */
@@ -1409,7 +1380,7 @@ void build_tunnel(int start_room, int end_room)
 
 
 					/* Check to see if grid to this side is alterable. */
-					if (!unalterable(cave->feat[row1 + dy][col1 + dx])) {
+					if (!square_isperm(cave, row1 + dy, col1 + dx)) {
 						/* Change direction. */
 						row_dir = dy;
 						col_dir = dx;
@@ -1474,7 +1445,7 @@ void build_tunnel(int start_room, int end_room)
 					tmp_col = col1 - col_dir;
 				}
 
-				if ((!unalterable(cave->feat[tmp_row][tmp_col]))
+				if (!square_isperm(cave, tmp_row, tmp_col)
 					&& (cave->feat[tmp_row][tmp_col] != FEAT_WALL_SOLID)) {
 					/* Accept the location */
 					row1 = tmp_row;

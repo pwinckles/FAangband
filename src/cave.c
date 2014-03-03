@@ -3652,6 +3652,20 @@ bool square_istrap(struct cave *c, int y, int x) {
 }
 
 /**
+ * True if the square can contain a trap.
+ */
+bool feat_istrappable(int feat) {
+	return tf_has(f_info[feat].flags, TF_TRAP);
+}
+
+/**
+ * True if the square can contain a trap.
+ */
+bool square_istrappable(struct cave *c, int y, int x) {
+	return feat_istrappable(c->feat[y][x]);
+}
+
+/**
  * True if the feature is a shop entrance.
  */
 bool feature_isshop(int feat) {
@@ -3706,10 +3720,10 @@ int square_shopnum(struct cave *c, int y, int x) {
  */
 
 /**
- * True if the square is open (a floor square not occupied by a monster).
+ * True if the square is open (not occupied by a monster).
  */
 bool square_isopen(struct cave *c, int y, int x) {
-	return square_isfloor(c, y, x) && !c->m_idx[y][x];
+	return !c->m_idx[y][x];
 }
 
 /**
@@ -3717,6 +3731,20 @@ bool square_isopen(struct cave *c, int y, int x) {
  */
 bool square_isempty(struct cave *c, int y, int x) {
 	return square_isopen(c, y, x) && !c->o_idx[y][x];
+}
+
+/**
+ * True if the square is open (a floor square not occupied by a monster).
+ */
+bool square_isopenfloor(struct cave *c, int y, int x) {
+	return square_isfloor(c, y, x) && square_isopen(c, y, x);
+}
+
+/**
+ * True if the square is empty (an open floor square without any items).
+ */
+bool square_isemptyfloor(struct cave *c, int y, int x) {
+	return square_isfloor(c, y, x) && square_isempty(c, y, x);
 }
 
 /**

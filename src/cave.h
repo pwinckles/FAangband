@@ -349,6 +349,8 @@ extern bool square_issecrettrap(struct cave *c, int y, int x);
 extern bool feat_is_wall(int feat);
 extern bool square_isknowntrap(struct cave *c, int y, int x);
 extern bool square_istrap(struct cave *c, int y, int x);
+extern bool feat_istrappable(int feat);
+extern bool square_istrappable(struct cave *c, int y, int x);
 extern bool feature_isshop(int feat);
 extern bool square_isstairs(struct cave *c, int y, int x);
 extern bool square_isupstairs(struct cave *c, int y, int x);
@@ -359,6 +361,8 @@ extern bool square_isglyph(struct cave *c, int y, int x);
 /* BEHAVIOR PREDICATES */
 extern bool square_isopen(struct cave *c, int y, int x);
 extern bool square_isempty(struct cave *c, int y, int x);
+extern bool square_isopenfloor(struct cave *c, int y, int x);
+extern bool square_isemptyfloor(struct cave *c, int y, int x);
 extern bool square_canputitem(struct cave *c, int y, int x);
 extern bool square_isdiggable(struct cave *c, int y, int x);
 extern bool feat_is_monster_walkable(feature_type *feature);
